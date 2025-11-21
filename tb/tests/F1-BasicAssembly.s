@@ -1,19 +1,16 @@
 init:
-    addi s1, zero, 1        # trigger value
-    addi s2, zero, 0xFF     # all lights ON target
+    addi s2, zero, 0xFF     # all lights on pattern
     j    rst
 
 rst:
     addi a0, zero, 0        # lights = 0
-    addi t0, zero, 0        # trigger = 0
-    j    mainloop
+    j    on_seq
 
-mainloop:
-    beq  t0, s1, fsm        # wait for trigger
-    j    mainloop
+# Turn lights ON one-by-one (single cycle per step)
+on_seq:
+    slli t1, a0, 1
+    addi a0, t1, 1          # add next light (fill from LSB up)
+    bne  a0, s2, on_seq     # loop until all bits are 1
 
-fsm:
-    slli t1, a0, 1          # shift
-    addi a0, t1, 1          # add new '1'
-    bne  a0, s2, fsm        # stop when a0 == 0xFF
+    # all lights on → turn them all off instantly
     j    rst
