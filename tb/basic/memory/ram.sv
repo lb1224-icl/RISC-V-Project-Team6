@@ -10,19 +10,21 @@ module ram #(
 
 logic [DATA_WIDTH-1:0] data_array [2**SIZE-1:0];
 
+wire [16:0] index = adr[16:0];
+
 assign read_data = {
-    data_array[adr[16:0] + 3],
-    data_array[adr[16:0] + 2],
-    data_array[adr[16:0] + 1],
-    data_array[adr[16:0] + 0]
+    data_array[index + 3],
+    data_array[index + 2],
+    data_array[index + 1],
+    data_array[index + 0]
 };
 
 always_ff @(posedge clk) begin
     if(write_enable == 1'b1) begin
-        data_array[adr[16:0] + 0] <= write_data[7:0];
-        data_array[adr[16:0] + 1] <= write_data[15:8];
-        data_array[adr[16:0] + 2] <= write_data[23:16];
-        data_array[adr[16:0] + 3] <= write_data[31:24];
+        data_array[index + 0] <= write_data[7:0];
+        data_array[index + 1] <= write_data[15:8];
+        data_array[index + 2] <= write_data[23:16];
+        data_array[index + 3] <= write_data[31:24];
     end
 end   
 
