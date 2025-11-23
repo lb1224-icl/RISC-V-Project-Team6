@@ -1,7 +1,7 @@
 module ram #(
-    parameter WIDTH = 32, DATA_WIDTH = 8, SIZE = 17
+    parameter WIDTH = 32, DATA_WIDTH = 8, SIZE = 17 // 2^17 = 128 KB
 )(
-    input  logic [WIDTH-1:0] adr,
+    input  logic [WIDTH-1:0] addr,
     input  logic [WIDTH-1:0] write_data,
     input  logic             clk,
     input  logic             write_enable,
@@ -10,7 +10,7 @@ module ram #(
 
 logic [DATA_WIDTH-1:0] data_array [2**SIZE-1:0];
 
-wire [16:0] index = adr[16:0];
+wire [16:0] index = addr[16:0];
 
 assign read_data = {
     data_array[index + 3],
