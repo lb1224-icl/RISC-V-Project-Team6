@@ -18,22 +18,29 @@ on_seq:
 
     j    random_wait
 
-# Random delay using LFSR
 random_wait:
-    beq  a4, a3, rst
-
-    # 4-bit LFSR update in a3
+    # generate the random number ONCE
+    # LFSR update
     srli a2, a3, 3
     andi a2, a2, 1
     xor  a2, a2, a3
     andi a2, a2, 1
     slli a3, a3, 1
     or   a3, a3, a2
-    andi a3, a3, 0xF
+    andi a3, a3, 0xF    # now a3 is the random delay target
 
-    jal  ra, delay          # fixed delay per count
-    addi a4, a4, 1
-    j    random_wait
+    addi a4, zero, 0   # reset counter
+
+    j    random_loop
+
+random_loop:
+    beq  a4, a3, rst   # stop when counter == random number
+
+    jal  ra, delay     # delay one tick
+    addi a4, a4, 1     # increment counter
+
+    j random_loop
+
 
 
 # Simple delay loop: runs s3 iterations
