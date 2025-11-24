@@ -2,12 +2,12 @@ init:
     addi s2, zero, 0xFF     # all lights on pattern
     addi s3, zero, 3        # delay length (tune this)
     addi a3, zero, 1        # LFSR seed
-    j    rst
+    j    rst                # actual assembly: jal zero, rst
 
 rst:
     addi a0, zero, 0        # lights = 0
     addi a4, zero, 0        # random delay counter
-    j    on_seq
+    j    on_seq             # # actual assembly: jal zero, on_seq
 
 # Turn lights ON one-by-one with delay between each
 on_seq:
@@ -16,7 +16,7 @@ on_seq:
     addi a0, t1, 1
     bne  a0, s2, on_seq
 
-    j    random_wait
+    j    random_wait        # actual assembly: jal zero, random_wait
 
 random_wait:
     # generate the random number ONCE
@@ -30,17 +30,17 @@ random_wait:
     or   a3, a3, a2
     andi a3, a3, 0xF    # now a3 is the random delay target
 
-    addi a4, zero, 0   # reset counter
+    addi a4, zero, 0    # reset counter
 
-    j    random_loop
+    j    random_loop    # actual assembly: jal zero, random_loop
 
 random_loop:
-    beq  a4, a3, rst   # stop when counter == random number
+    beq  a4, a3, rst    # stop when counter == random number
+ 
+    jal  ra, delay      # delay one tick
+    addi a4, a4, 1      # increment counter
 
-    jal  ra, delay     # delay one tick
-    addi a4, a4, 1     # increment counter
-
-    j random_loop
+    j random_loop       # actual assembly: jal zero, random_loop
 
 
 
@@ -49,4 +49,6 @@ delay:
     addi a1, a1, 1
     bne  a1, s3, delay
     addi a1, zero, 0
-    ret
+    ret                 # actual assembly: jalr zero, 0(ra)
+
+## Commented any pseuodo instructions converted to actual assembly language so I know what instructions are absolutely neccessary on the control unit
