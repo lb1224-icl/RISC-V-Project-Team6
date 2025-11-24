@@ -21,10 +21,11 @@ on_seq:
 random_wait:
     # generate the random number ONCE
     # LFSR update
-    srli a2, a3, 3
-    andi a2, a2, 1
+    srli a2, a3, 2
+    andi a2, a2, 2
     xor  a2, a2, a3
-    andi a2, a2, 1
+    andi a2, a2, 2
+    srli a2, a2, 1
     slli a3, a3, 1
     or   a3, a3, a2
     andi a3, a3, 0xF    # now a3 is the random delay target
