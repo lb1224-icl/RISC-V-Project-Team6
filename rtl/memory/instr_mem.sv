@@ -13,8 +13,6 @@ initial begin
     $readmemh("instr.mem", mem_array);
 end;
 
-always_ff @(posedge addr)
-
-    dout <= mem_array [addr];
+assign dout = mem_array [addr];
 
 endmodule
