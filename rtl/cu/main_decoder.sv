@@ -1,5 +1,5 @@
 module main_decoder #(
-    WIDTH = 32
+
 )(
     input logic  [6:0]        opcode,        // first 7 bits of ins to determine op type
     input logic               eq,            // jump/branch condition
@@ -9,8 +9,9 @@ module main_decoder #(
     output logic              alu_src,       // whether 2nd ALU input is a register data or immediate
     output logic [1:0]        imm_src,       // type of ins: R, I, S, B
     output logic              reg_write,     // register write enable
-    output logic [1:0]        alu_op         // internal cu logic to be used in alu_decoder
+    output logic [1:0]        alu_op         // internal cu logic to be used in alu_decoder: ADD=0, SUB=1, and eveything else = 2
 );
+
 
 //--------     DECODER      --------//
 
@@ -44,7 +45,7 @@ case (opcode)       // to determine the operation type
                 alu_src <= 1;       
                 imm_src <= 0;
                 reg_write <= 1; 
-                alu_op <= 0;   /////    CHECK  !!!!  
+                alu_op <= 2;   /////    CHECK  !!!!  
             end
 
     7'd35:  begin     // S type
@@ -68,24 +69,26 @@ case (opcode)       // to determine the operation type
             end
 
     7'd103: begin     // J type -> jalr 
-                pc_src <= 1;    ///// CHECK !!!!  i.e does it always jump without condition eq?
+                pc_src <= 1;   
                 // result_src <= X;
                 mem_write <= 0;    
                 alu_src <= 1;       
                 imm_src <= 3;       // J-type sign extension is mode 3
                 reg_write <= 0; 
-                alu_op <= 1;    //// CHECK !!!!  Does jump even have an alu_op value?
+                alu_op <= 0;        // PC <- rs1 + Imm so therefore requires the ADD ALU Operation
             end
 
     7'd111: begin     // J type -> jal
-                pc_src <= 1;    ///// CHECK !!!!  i.e does it always jump without condition eq?
+                pc_src <= 1;  
                 // result_src <= X;
                 mem_write <= 0;    
                 alu_src <= 1;       
                 imm_src <= 3;       // J-type sign extension is mode 3
                 reg_write <= 0; 
-                alu_op <= 1;    //// CHECK !!!!  Does jump even have an alu_op value?
+                // alu_op <= X;    // Doesn't require ALU calc or result because PC <- Imm
             end
+
+    default: // ignore the instruction and do nothing with it
     
 endcase
 

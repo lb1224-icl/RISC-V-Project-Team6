@@ -1,55 +1,42 @@
 module alu_decoder #(
-    WIDTH = 32
+
 ) (
+    input logic  [2:0]        alu_op,           // logic condition
     input logic               opcode_5,         // logic condition
     input logic  [2:0]        funct3,           // logic condition
     input logic               funct7_5,         // logic condition
-    output logic [2:0]        alu_ctrl          // ALU operation: add, sub, OR...
+    output logic [2:0]        alu_ctrl          // ALU operation signal
 );
-    
-assign opcode = ins[6:0];   // always true
-assign funct3 = ins[14:12]; // true for all except U&I type
 
 //--------     DECODER      --------//
 
 always_comb
-case (opcode)       // to determine the instruction type
+case (alu_op)       // to determine the ALU operation type
 
-    7'd51: begin
-        funct3 <= ins[14:12];
-        funct7_5 <= ins[30]; 
+    2'b00:   alu_ctrl = 3'b000;     // memory addressing calucations e.g. lw, sw  
 
-        case(funct3)
-            3'd4: begin     // xor
-                reg_write <= 1; 
-                // imm_src <= XX
-                alu_src <= 0;       // uses rs2
-                mem_write <= 0;
-                result_src <= 0;
-                pc_src <= 0;
-                alu_op <= 2; 
-            end
+    2'b01:   alu_ctrl = 3'b001;     // B-type ins
 
-            3'd6:
-        endcase
-    end
+    2'b10:  if (funct3 == 3'b000)   // R-type ins and other logical/arithemetic based instructions
+                if ({opcode_5, funct7_5} == 2'b11) 
+                    alu_ctrl = 3'b001;      // sub
+                else
+                    alu_ctrl = 3'b000;      // add
+            
+            else if (funct3 == 3'b010)
+                alu_ctrl = 3'b101;          // set less than
 
+            else if (funct3 == 3'b110)
+                alu_ctrl = 3'b011;          // or
+            
+            else if (funct3 == 3'b111)
+                alu_ctrl = 3'b010;          // and
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            else
+                //include error statememt that no such funct3 operation exists
     
+    default: // error message that no such alu_op exists
+
 endcase
 
 endmodule 
