@@ -72,7 +72,6 @@ always_comb begin
     endcase
 end
 
-// most of these are somewhat unecessary but good for expanding as not all cache and memory are perfectly mapped
 assign mem_addr  = cpu_addr;
 assign mem_wdata = cpu_wdata;
 assign mem_we    = cpu_valid && cpu_we;
@@ -82,16 +81,55 @@ assign cpu_ready = cpu_valid; // currently single cycle so this is sufficient
 always_comb begin
     if (cpu_valid && !cpu_we) begin
         if (cache_hit) begin
-            cpu_rdata = line_word;       // served from cache
+            cpu_rdata = line_word;       // hit → use cache
         end else begin
-            cpu_rdata = mem_rdata;       // served from memory on miss (rn it is single cycle so this will work, when we pipeline make this dependent on a FSM and we only read when we have a miss)
+            cpu_rdata = mem_rdata;       // miss → bypass RAM (single-cycle, future we change this)
         end
     end else begin
         cpu_rdata = '0;
     end
 end
 
-// need to do write functionality
+always_ff @(posedge clk) begin
+    if (rst) begin
+        // invalidate cache
+        for (int i = 0; i < LINES; i++) begin
+            valid_array[i] <= 0;
+            tag_array[i]   <= 0;
+            data_array[i]  <= 0;
+        end
+    end 
+    else if (cpu_valid) begin
+
+        // WRITE HIT: update cache + write-through to memory
+        if (cpu_we && cache_hit) begin
+            case (word_index)
+                0: data_array[addr_index][31:0]     <= cpu_wdata;
+                1: data_array[addr_index][63:32]    <= cpu_wdata;
+                2: data_array[addr_index][95:64]    <= cpu_wdata;
+                3: data_array[addr_index][127:96]   <= cpu_wdata;
+            endcase
+        end
+
+        // READ MISS: fill the cache line
+        else if (!cpu_we && !cache_hit) begin
+            // For single-cycle model, memory returns only the accessed word.
+            // We store that one word and leave the rest unchanged.
+            case (word_index)
+                0: data_array[addr_index][31:0]     <= mem_rdata;
+                1: data_array[addr_index][63:32]    <= mem_rdata; // need to do spacial locality to get all 4
+                2: data_array[addr_index][95:64]    <= mem_rdata;
+                3: data_array[addr_index][127:96]   <= mem_rdata;
+            endcase
+
+            tag_array[addr_index]   <= addr_tag;
+            valid_array[addr_index] <= 1;
+        end
+
+        // WRITE MISS: (write-no-allocate)
+        // Do nothing to cache. Memory already receives write-through.
+    end
+end
 
 
 
