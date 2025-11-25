@@ -15,6 +15,6 @@ initial begin
     $readmemh("instr.mem", mem_array);
 end;
 
-assign dout = mem_array [addr];
+assign dout = mem_array [addr+OFFSET];
 
 endmodule
