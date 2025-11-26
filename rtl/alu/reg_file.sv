@@ -1,4 +1,4 @@
-module ram2 #(
+module reg_file #(
     parameter D_WIDTH = 32, ADDRESS_WIDTH = 5
 )(
     input  logic                     clk,

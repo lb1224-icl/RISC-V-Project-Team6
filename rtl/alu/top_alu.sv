@@ -5,12 +5,11 @@ module reg_file #(
     input  logic [A_WIDTH-1:0] ad2,
     input  logic [A_WIDTH-1:0] ad3,
     input  logic               we3,
-    input  logic [D_WIDTH-1:0] imm_op,
+    input  logic [D_WIDTH-1:0] imm_Ext, //imm_op
     input  logic               alusrc,
     input  logic [2:0]         aluctrl,
     input  logic               clk,
-    output logic [D_WIDTH-1:0] a0,
-    output logic               eq
+    output logic               zero //eq
 );
 
 logic [D_WIDTH-1:0] aluout;
