@@ -6,42 +6,50 @@ module reg_file #(
     input  logic [A_WIDTH-1:0] ad3,
     input  logic               we3,
     input  logic [D_WIDTH-1:0] imm_Ext, //imm_op
-    input  logic               alusrc,
-    input  logic [2:0]         aluctrl,
+    input  logic               alu_src,
+    input  logic               result_src,
+    input  logic [2:0]         alu_ctrl,
     input  logic               clk,
     output logic               zero //eq
 );
 
-logic [D_WIDTH-1:0] aluout;
-logic [D_WIDTH-1:0] aluop1;
-logic [D_WIDTH-1:0] aluop2;
-logic [D_WIDTH-1:0] regop2;
+logic [D_WIDTH-1:0] alu_result;  //aluout
+logic [D_WIDTH-1:0] src_a;      //aluop1
+logic [D_WIDTH-1:0] src_b;      //aluop2;
+logic [D_WIDTH-1:0] write_data; //regop2;
+logic [D_WIDTH-1:0] read_data;
+logic [D_WIDTH-1:0] result;
 
-ram2 registers (
+reg_file registers (
     .clk(clk),
     .wr_en(we3),
     .wr_addr(ad3),
     .rd1_addr(ad1),
     .rd2_addr(ad2),
-    .din(aluout),
-    .dout1(aluop1),
-    .dout2(regop2),
-    .a0(a0)
+    .din(result),
+    .dout1(src_a),
+    .dout2(write_data),
 );
 
 mux_2 imm_mux (
-    .in0(regop2),
-    .in1(imm_op),
+    .in0(write_data),
+    .in1(imm_Ext),
     .sel(alusrc),
-    .out(aluop2)
+    .out(src_b)
 );
 
 alu ALU (
-    .aluop1(aluop1),
-    .aluop2(aluop2),
-    .aluctrl(aluctrl),
-    .aluout(aluout),
-    .eq(eq)
+    .aluop1(src_a),
+    .aluop2(src_b),
+    .aluctrl(alu_ctrl),
+    .aluout(alu_result),
+    .eq(zero)
 );
 
+mux_2 result_mux (
+    .in0(alu_result),
+    .in1(read_data),
+    .sel(result_src),
+    .out(result)
+)
 endmodule

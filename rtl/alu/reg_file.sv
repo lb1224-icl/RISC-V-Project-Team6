@@ -9,7 +9,6 @@ module reg_file #(
     input  logic [D_WIDTH-1:0]       din,
     output logic [D_WIDTH-1:0]       dout1,
     output logic [D_WIDTH-1:0]       dout2,
-    output logic [D_WIDTH-1:0]       a0
 );
 
 logic [D_WIDTH-1:0] ram_array [2**ADDRESS_WIDTH-1:0];
@@ -22,7 +21,7 @@ initial begin
     end
 end
 
-always_ff @(posedge clk) begin
+always_ff @(negedge clk) begin
     // synchronous write only; reads are provided combinationally below
     // do not allow writes to x0 (address 0)
     if (wr_en == 1'b1 && wr_addr != {ADDRESS_WIDTH{1'b0}})
@@ -35,7 +34,5 @@ end
 always_comb begin
     dout1 = ram_array[rd1_addr];
     dout2 = ram_array[rd2_addr];
-    // a0 is register x10 in RISC-V convention
-    a0    = ram_array[5'd10];
 end
 endmodule
