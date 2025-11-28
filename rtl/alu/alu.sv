@@ -34,7 +34,8 @@ end
 
 always_comb begin
     case (alu_ctrl)
-        
+    
+    endcase
 end
 
 
