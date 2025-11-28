@@ -7,7 +7,7 @@ module main_decoder #(
     output logic              result_src,    // whether we are taking the ALU result or data memory
     output logic              mem_write,     // write enable for data memory
     output logic              alu_src,       // whether 2nd ALU input is a register data or immediate
-    output logic [1:0]        imm_src,       // type of ins: R, I, S, B....
+    output logic [2:0]        imm_src,       // type of ins: R, I, S, B....
     output logic              reg_write,     // register write enable
     output logic [1:0]        alu_op         // internal cu logic to be used in alu_decoder: ADD=0, SUB=1, and eveything else = 2
 );
