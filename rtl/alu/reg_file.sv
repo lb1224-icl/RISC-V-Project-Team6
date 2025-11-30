@@ -8,7 +8,7 @@ module reg_file #(
     input  logic [ADDRESS_WIDTH-1:0] rd2_addr,
     input  logic [D_WIDTH-1:0]       din,
     output logic [D_WIDTH-1:0]       dout1,
-    output logic [D_WIDTH-1:0]       dout2,
+    output logic [D_WIDTH-1:0]       dout2
 );
 
 logic [D_WIDTH-1:0] ram_array [2**ADDRESS_WIDTH-1:0];
