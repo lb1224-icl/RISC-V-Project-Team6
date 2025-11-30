@@ -4,7 +4,7 @@ module main_decoder #(
     input logic  [6:0]        opcode,        // first 7 bits of ins to determine op type
     input logic               eq,            // branch condition
     output logic              pc_src,        // pc branches or increments
-    output logic              result_src,    // whether we are taking the ALU result or data memory
+    output logic [1:0]        result_src,    // whether we are taking the ALU result or data memory
     output logic              mem_write,     // write enable for data memory
     output logic              alu_src,       // whether 2nd ALU input is a register data or immediate
     output logic [2:0]        imm_src,       // type of ins: R, I, S, B....
@@ -70,21 +70,21 @@ case (opcode)       // to determine the operation type
 
     7'd103: begin     // J type -> jalr 
                 pc_src <= 1;   
-                // result_src <= X;
+                result_src <= 2;
                 mem_write <= 0;    
                 alu_src <= 1;       
                 imm_src <= 3;       // J-type sign extension is mode 3
-                reg_write <= 0; 
+                reg_write <= 1; 
                 alu_op <= 0;        // PC <- rs1 + Imm so therefore requires the ADD ALU Operation
             end
 
     7'd111: begin     // J type -> jal
                 pc_src <= 1;  
-                // result_src <= X;
+                result_src <= 2;
                 mem_write <= 0;    
                 alu_src <= 1;       
                 imm_src <= 3;       // J-type sign extension is mode 3
-                reg_write <= 0; 
+                reg_write <= 1; 
                 // alu_op <= X;    // Doesn't require ALU calc or result because PC <- Imm
             end
 
