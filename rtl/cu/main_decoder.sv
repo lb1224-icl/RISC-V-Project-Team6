@@ -83,7 +83,7 @@ always_comb begin
             result_src = 2;    // PC+4
             mem_write  = 0;
             alu_src    = 1; 
-            imm_src    = 3;    // J-type immediate
+            imm_src    = 0;    // I-type immediate
             reg_write  = 1;
             alu_op     = 0;    // ADD for PC = rs1 + imm
         end

@@ -59,7 +59,7 @@ control_unit cu (
     .dout1      (rd_1),
     .dout2      (rd_2),
     .a0         (a0),
-    .a1_         (a1_)
+    .a1_        (a1_)
 );
 
 sign_extend se (     
