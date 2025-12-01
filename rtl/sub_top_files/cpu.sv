@@ -3,7 +3,8 @@ module cpu #(
 )(
     input  logic clk,
     input  logic rst,
-    output logic  [WIDTH-1:0] a0
+    output logic  [WIDTH-1:0] a0,
+    output logic  [WIDTH-1:0] a1
 );
 
     logic [WIDTH-1:0] pc_f;
@@ -75,7 +76,8 @@ module cpu #(
         .rd_d(rd_d),
         .imm_ext_d(imm_ext_d),
         .pc_plus_4d_o(pc_plus_4d_o),
-        .a0(a0)
+        .a0(a0),
+        .a1_(a1)
     );
 
     execute #(.D_WIDTH(WIDTH)) u_execute (
