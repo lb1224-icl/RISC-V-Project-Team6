@@ -21,7 +21,9 @@ assign opcode = ins[6:0];
 assign funct7 = ins[31:25];
 assign funct3 = ins[14:12];
 
-main_decoder decoder_1 (     
+main_decoder decoder_1 (    
+    .funct7(funct7),
+    .funct3(funct3),
     .opcode     (opcode),
     .eq         (eq),
     .pc_src     (pc_src),      

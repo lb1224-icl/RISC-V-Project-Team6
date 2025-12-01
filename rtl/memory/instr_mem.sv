@@ -15,6 +15,12 @@ initial begin
     $display("Loaded Instruction Memory!");
 end
 
+always_comb begin
+    if (addr[SIZE+1:2] >= (1<<SIZE))
+        $display("ERROR: PC out of instruction memory range! PC=%h", addr);
+end
+
+
 // Word addressing: PC >> 2
 assign dout = mem_array[addr[SIZE+1:2]];
 

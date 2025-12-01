@@ -1,6 +1,8 @@
 module main_decoder #(
 
 )(
+    input logic [31:25] funct7,
+    input logic [2:0] funct3,
     input logic  [6:0]        opcode,        // first 7 bits of ins to determine op type
     input logic               eq,            // branch condition
     output logic              pc_src,        // pc branches or increments
@@ -19,7 +21,7 @@ always_latch
 case (opcode)       // to determine the operation type
 
     7'd51:  begin     // R type
-    $display ("Hit R");
+    $display ("Hit R %0d", funct7, funct3);
                 pc_src = 0;
                 result_src = 0;  // we want the ALU result into reg_file
                 mem_write = 0;
@@ -30,7 +32,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd3:   begin     // I type -> load op
-    $display ("Hit I (load op)");
+    $display ("Hit I (load op) %0d", funct7, funct3);
                 pc_src = 0;
                 result_src = 1;    // we want the Data Memory result into reg_file
                 mem_write = 0;
@@ -41,7 +43,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd19:  begin     // I type -> logic op
-    $display ("Hit I (logic op)");
+    $display ("Hit I (logic op) %0d", funct7, funct3);
                 pc_src = 0;
                 result_src = 0;
                 mem_write = 0;
@@ -52,7 +54,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd35:  begin     // S type
-    $display ("Hit S");
+    $display ("Hit S %0d", funct7, funct3);
                 pc_src = 0;
                 // result_src = X; 
                 mem_write = 1;     // want to store a register value into data memory
@@ -63,7 +65,7 @@ case (opcode)       // to determine the operation type
             end
     
     7'd99:  begin     // B type
-    $display ("Hit B");
+    $display ("Hit B %0d", funct7, funct3);
                 pc_src = eq;
                 // result_src = X;
                 mem_write = 0;    
@@ -74,7 +76,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd103: begin     // J type -> jalr 
-    $display ("Hit JALR");
+    $display ("Hit JALR %0d", funct7, funct3);
                 pc_src = 1;   
                 result_src = 2;
                 mem_write = 0;    
@@ -85,7 +87,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd111: begin     // J type -> jal
-                $display ("Hit JAL");
+                $display ("Hit JAL %0d", funct7, funct3);
                 pc_src = 1;  
                 result_src = 2;
                 mem_write = 0;    
@@ -95,7 +97,7 @@ case (opcode)       // to determine the operation type
                 // alu_op = X;    // Doesn't require ALU calc or result because PC <- Imm
             end
 
-    7'd000: $display ("Hit a zero?");
+    7'd000: $display ("Hit a zero? %0d", funct7, funct3);
 
     default: $error ("OPcode out of range!");
     

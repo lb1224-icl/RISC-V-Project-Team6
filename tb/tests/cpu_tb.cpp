@@ -21,6 +21,7 @@ int main(int argc, char **argv, char **env) {
   vbdSetMode(1);        
 
   cpu->clk = 1;
+  cpu->rst = 1;
   
   for (simcyc=0; simcyc<MAX_SIM_CYC; simcyc++) {
     for (tick=0; tick<2; tick++) {
@@ -28,9 +29,11 @@ int main(int argc, char **argv, char **env) {
       cpu->clk = !cpu->clk;
       cpu->eval ();
     } 
-
+    
     vbdBar(cpu->a0);
     vbdCycle(simcyc);
+    cpu->rst = 0;
+  
 
     if ((Verilated::gotFinish()) || (vbdGetkey()=='q')) 
       exit(0);
