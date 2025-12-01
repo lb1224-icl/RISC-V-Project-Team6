@@ -7,7 +7,7 @@
 
 #include "vbuddy.cpp"
 
-#define MAX_SIM_CYC 100
+#define MAX_SIM_CYC 100000
 
 int main(int argc, char **argv, char **env) {
 
@@ -36,7 +36,6 @@ int main(int argc, char **argv, char **env) {
 
     for (int cyc = 0; cyc < MAX_SIM_CYC; cyc++) {
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         // FALLING EDGE
         cpu->clk = 0;
@@ -51,8 +50,8 @@ int main(int argc, char **argv, char **env) {
         vbdBar(cpu->a0 & 0xFF);
         vbdCycle(cyc);
 
-        printf("Cycle %d, RA: %d, JALR: %d, A0: %d\n",
-               cyc, cpu->a1, cpu->jalr_o, cpu->a0);
+        printf("Cycle %d, A4: %d, JALR: %d, A3: %d, EQ: %d\n",
+               cyc, cpu->a1, cpu->jalr_o, cpu->a0, cpu->zero_e_o);
 
         if (Verilated::gotFinish() || vbdGetkey()=='q')
             break;

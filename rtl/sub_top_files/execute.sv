@@ -14,6 +14,7 @@ module execute #(
     input logic [D_WIDTH-1:0]   pc_plus_4e_i,
 
     input logic [2:0]           ins_3,
+    input logic                 jalr,
 
     output logic                zero_e, //eq
     output logic                reg_write_e_o,
@@ -27,6 +28,8 @@ module execute #(
 );
 
 logic [D_WIDTH-1:0] src_b_e;
+logic [D_WIDTH-1:0] alu_res;
+logic [D_WIDTH-1:0] pc_imm;
 
 assign reg_write_e_o = reg_write_e_i;
 assign result_src_e_o = result_src_e_i;
@@ -34,13 +37,14 @@ assign mem_write_e_o = mem_write_e_i;
 assign write_data_e = rd2_e;
 assign rd_e_o = rd_e_i;
 assign pc_plus_4e_o = pc_plus_4e_i;
+assign alu_result = alu_res;
 
 alu ALU (
     .aluop1(rd1_e),
     .aluop2(src_b_e),
     .aluctrl(alu_ctrl_e),
     .ins_3(ins_3),
-    .aluout(alu_result),
+    .aluout(alu_res),
     .eq(zero_e)
 );
 
@@ -54,7 +58,14 @@ mux_2 imm_mux (
 pc_branch #(.WIDTH(D_WIDTH)) u_branch (
     .pc(pc_e),
     .imm(imm_ext_e),
-    .branch_pc(pc_target_e)
+    .branch_pc(pc_imm)
+);
+
+mux_2 pc_mux (
+    .in0(pc_imm),
+    .in1(alu_res),
+    .sel(jalr),
+    .out(pc_target_e)
 );
 
 endmodule

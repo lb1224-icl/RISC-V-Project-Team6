@@ -4,7 +4,9 @@ module cpu #(
     input  logic clk,
     input  logic rst,
     output logic  [WIDTH-1:0] a0,
-    output logic  [WIDTH-1:0] a1
+    output logic  [WIDTH-1:0] a1,
+    output logic              zero_e_o,
+    output logic              jalr_o
 );
 
     logic [WIDTH-1:0] pc_f;
@@ -25,6 +27,7 @@ module cpu #(
     logic [WIDTH-1:0]        pc_plus_4d_o;
 
     logic [2:0]              funct3_int;
+    logic                    jalr;
 
     logic                    zero_e;
     logic                    reg_write_e_o;
@@ -46,6 +49,9 @@ module cpu #(
     logic                    reg_write_w_o;
     logic [4:0]              rd_w_o;
     logic [WIDTH-1:0]        result_w;
+
+    assign jalr_o = jalr;
+    assign zero_e_o = zero_e;
 
     fetch #(.WIDTH(WIDTH)) u_fetch (
         .clk(clk),
@@ -80,7 +86,8 @@ module cpu #(
         .pc_plus_4d_o(pc_plus_4d_o),
         .a0(a0),
         .a1_(a1),
-        .funct3(funct3_int)
+        .funct3(funct3_int),
+        .jalr(jalr)
     );
 
     execute #(.D_WIDTH(WIDTH)) u_execute (
@@ -104,7 +111,8 @@ module cpu #(
         .rd_e_o(rd_e_o),
         .pc_plus_4e_o(pc_plus_4e_o),
         .pc_target_e(pc_target_e),
-        .ins_3(funct3_int)
+        .ins_3(funct3_int),
+        .jalr(jalr)
     );
 
     memory #(.WIDTH(WIDTH)) u_memory (

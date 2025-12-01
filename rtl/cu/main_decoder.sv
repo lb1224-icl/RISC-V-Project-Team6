@@ -23,7 +23,8 @@ always_comb begin
     imm_src    = 0;
     reg_write  = 0;
     alu_op     = 0;
-
+    jalr       = 0;
+    
     unique case (opcode)
 
         7'd51: begin
@@ -81,7 +82,7 @@ always_comb begin
         7'd103: begin
             $display("Hit JALR %0d %0d", funct7, funct3);
             pc_src     = 1;
-            result_src = 2;    // PC+4
+            result_src = 0;    // ALU result
             mem_write  = 0;
             alu_src    = 1; 
             imm_src    = 0;    // I-type immediate
@@ -98,6 +99,7 @@ always_comb begin
             alu_src    = 1; 
             imm_src    = 3;    // J-type immediate
             reg_write  = 1;
+            jalr       = 0;
         end
 
         7'd0: begin

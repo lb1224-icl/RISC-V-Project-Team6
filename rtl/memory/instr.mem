@@ -1,6 +1,7 @@
 0ff00913  // addi s2, x0, 0xff
 00300993  // addi s3, x0, 3
 00100693  // addi a3, x0, 1
+00100613  // addi a2, x0, 1
 0040006f  // jal x0, rst (offset = +4 bytes → PC=0x10)
 00000513  // rst: addi a0, x0, 0
 00000713  // addi a4, x0, 0
@@ -8,23 +9,23 @@
 04C000ef  // on_seq: jal ra, delay  (offset = +76)
 00151513  // slli a0, a0, 1
 00150513  // addi a0, a0, 1
-fe951ae3  // bne a0, s2, on_seq (negative branch)
-0180006f  // jal x0, random_wait (offset = +24 → PC=0x38)
-00265613  // random_wait: srli a2, a3, 2
-00267613  // andi a2, a2, 2
-02c64633  // xor  a2, a2, a3
-00267613  // andi a2, a2, 2
-00165613  // srli a2, a2, 1
-00169693  // slli a3, a3, 1
+ff251ae3  // bne a0, s2, on_seq (negative branch)
+0040006f  // jal x0, random_wait (offset = +24 → PC=0x38)
+0016d613   // random wait: srli a2, a3, 1
+00467613   // andi a2, a2, 4
+00d64633   // xor  a2, a2, a3
+00467613   // andi a2, a2, 4
+00265613   // srli a2, a2, 2
+00169693   // slli a3, a3, 1
 02c6e6b3  // or   a3, a3, a2
-0016f693  // andi a3, a3, 0xF
+00f6f693  // andi a3, a3, 0xF
 00000713  // addi a4, x0, 0
 0040006f  // jal x0, random_loop (offset −36 bytes)
 010000ef  // random_loop: jal ra, delay
 00170713  // addi a4, a4, 1
-ff9710e3  // beq a4, a3, rst (negative offset)
+f6d700e3  // beq a4, a3, rst (negative offset)
 fd9ff06f  // jal x0, random_loop (negative offset)
 00158593  // delay: addi a1, a1, 1 00000593
-ff359ee3  //! bne a1, s3, delay
+ff359ee3  // bne a1, s3, delay
 00000593  // addi a1, zero, 0
 00008067  // ret → jalr x0, 0(ra)
