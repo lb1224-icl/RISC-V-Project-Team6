@@ -1,6 +1,7 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
 #include "Vcpu.h"
+#include "Vcpu___024root.h"
 
 #include "vbuddy.cpp"    
 #define MAX_SIM_CYC 1000000
@@ -29,7 +30,7 @@ int main(int argc, char **argv, char **env) {
       cpu->eval ();
     } 
 
-    vbdBar(cpu->u_fetch__DOT__u_pc_reg__DOT__ram_array[0]);
+    vbdBar(cpu->rootp->u_fetch__DOT__u_pc_reg__DOT__ram_array[10]);
     vbdCycle(simcyc);
 
     if ((Verilated::gotFinish()) || (vbdGetkey()=='q')) 
