@@ -1,20 +1,21 @@
 module instr_mem #(
-    parameter  ADDRESS_WIDTH = 32,
-               DATA_WIDTH = 32,
-               SIZE = 12
+    parameter ADDRESS_WIDTH = 32,
+    parameter DATA_WIDTH    = 32,
+    parameter SIZE          = 12       // 2^12 = 4096 words
 )(
-    input logic  [ADDRESS_WIDTH-1:0] addr,
+    input  logic [ADDRESS_WIDTH-1:0] addr,
     output logic [DATA_WIDTH-1:0]    dout
 );
 
-logic [DATA_WIDTH-1:0]  mem_array [2**SIZE-1:0];
+logic [DATA_WIDTH-1:0] mem_array [0:(1<<SIZE)-1];
 
 initial begin
-    $display("Loading Instruction Memory.");
+    $display("Loading Instruction Memory...");
     $readmemh("../../rtl/memory/instr.mem", mem_array);
     $display("Loaded Instruction Memory!");
 end
 
-assign dout = mem_array [addr];
+// Word addressing: PC >> 2
+assign dout = mem_array[addr[SIZE+1:2]];
 
 endmodule
