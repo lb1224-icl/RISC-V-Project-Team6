@@ -19,6 +19,7 @@ always_latch
 case (opcode)       // to determine the operation type
 
     7'd51:  begin     // R type
+    $display ("Hit R");
                 pc_src = 0;
                 result_src = 0;  // we want the ALU result into reg_file
                 mem_write = 0;
@@ -29,6 +30,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd3:   begin     // I type -> load op
+    $display ("Hit I (load op)");
                 pc_src = 0;
                 result_src = 1;    // we want the Data Memory result into reg_file
                 mem_write = 0;
@@ -39,6 +41,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd19:  begin     // I type -> logic op
+    $display ("Hit I (logic op)");
                 pc_src = 0;
                 result_src = 0;
                 mem_write = 0;
@@ -49,6 +52,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd35:  begin     // S type
+    $display ("Hit S");
                 pc_src = 0;
                 // result_src = X; 
                 mem_write = 1;     // want to store a register value into data memory
@@ -59,6 +63,7 @@ case (opcode)       // to determine the operation type
             end
     
     7'd99:  begin     // B type
+    $display ("Hit B");
                 pc_src = eq;
                 // result_src = X;
                 mem_write = 0;    
@@ -69,6 +74,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd103: begin     // J type -> jalr 
+    $display ("Hit JALR");
                 pc_src = 1;   
                 result_src = 2;
                 mem_write = 0;    
@@ -79,6 +85,7 @@ case (opcode)       // to determine the operation type
             end
 
     7'd111: begin     // J type -> jal
+                $display ("Hit JAL");
                 pc_src = 1;  
                 result_src = 2;
                 mem_write = 0;    
@@ -87,6 +94,8 @@ case (opcode)       // to determine the operation type
                 reg_write = 1; 
                 // alu_op = X;    // Doesn't require ALU calc or result because PC <- Imm
             end
+
+    7'd000: $display ("Hit a zero?");
 
     default: $error ("OPcode out of range!");
     

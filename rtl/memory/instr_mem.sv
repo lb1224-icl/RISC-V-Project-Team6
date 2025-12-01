@@ -11,7 +11,7 @@ logic [DATA_WIDTH-1:0]  mem_array [2**SIZE-1:0];
 
 initial begin
     $display("Loading Instruction Memory.");
-    $readmemh("instr.mem", mem_array);
+    $readmemh("../../rtl/memory/instr.mem", mem_array);
     $display("Loaded Instruction Memory!");
 end
 
