@@ -12,7 +12,7 @@ module writeback # (
     output logic [D_WIDTH-1:0]    result_w
 );
 
-assign reg_write_w_i = reg_write_w_o;
+assign reg_write_w_o = reg_write_w_i;
 assign rd_w_o = rd_w_i;
 
 mux_4 writeback_mux (

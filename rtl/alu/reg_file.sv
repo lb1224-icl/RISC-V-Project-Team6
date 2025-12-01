@@ -11,6 +11,7 @@ module reg_file #(
     output logic [D_WIDTH-1:0]       dout2
 );
 
+// verilator public_flat
 logic [D_WIDTH-1:0] ram_array [2**ADDRESS_WIDTH-1:0];
 
 initial begin

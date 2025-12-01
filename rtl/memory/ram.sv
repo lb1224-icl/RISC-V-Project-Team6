@@ -20,7 +20,7 @@ assign read_data = {
 };
 
 always_ff @(posedge clk) begin
-    if(write_enable == 1'b1, && index != 0) begin
+    if(write_enable == 1'b1 && index != 0) begin
         data_array[index + 0] <= write_data[7:0];
         data_array[index + 1] <= write_data[15:8];
         data_array[index + 2] <= write_data[23:16];

@@ -2,7 +2,7 @@ module fetch #(
     parameter WIDTH = 32
 )(
     input  logic             clk,
-    input  logic             rst
+    input  logic             rst,
 
     // From decode/execute for jumps/branches
     input  logic [WIDTH-1:0] pc_target_ext,

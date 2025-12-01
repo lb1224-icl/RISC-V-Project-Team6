@@ -32,10 +32,10 @@ always_comb begin
             aluout = aluop1 | aluop2;
         end
         4'b0101: begin //set less than
-            aluout = $signed(aluop1) < $signed(aluop2);
+            aluout = {{D_WIDTH-1{1'b0}}, $signed(aluop1) < $signed(aluop2)};
         end
         4'b0110: begin //set less than unsigned
-            aluout = aluop1 < aluop2;
+            aluout = {{D_WIDTH-1{1'b0}}, aluop1 < aluop2};
         end
         4'b1001: begin //shift right arthimetic
             aluout = $signed(aluop1) >>> aluop2;
@@ -47,7 +47,7 @@ always_comb begin
 end
 
 always_comb begin
-    case (alu_ctrl)
+    case (aluctrl)
         4'b0001: begin //subtract
             eq = (aluop1 - aluop2) == 32'b0;
         end
@@ -61,10 +61,10 @@ always_comb begin
             eq = (aluop1 | aluop2) == 32'b1;
         end
         4'b0101: begin //set less than
-            eq = ($signed(aluop1) < $signed(aluop2)) == 32'b1;
+            eq = {{D_WIDTH-1{1'b0}}, ($signed(aluop1) < $signed(aluop2))} == 32'b1;
         end
         4'b0110: begin //set less than unsigned
-            eq = (aluop1 < aluop2) == 32'b1;
+            eq = {{D_WIDTH-1{1'b0}}, (aluop1 < aluop2)} == 32'b1;
         end
         default: begin
             eq = 1'b0;

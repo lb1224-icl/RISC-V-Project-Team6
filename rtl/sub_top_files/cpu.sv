@@ -13,7 +13,7 @@ module cpu #(
     logic [1:0]              result_src_d;
     logic                    mem_write_d;
     logic                    pc_src;
-    logic [2:0]              alu_control_d;
+    logic [3:0]              alu_control_d;
     logic                    alu_src_d;
     logic [WIDTH-1:0]        rd_1;
     logic [WIDTH-1:0]        rd_2;

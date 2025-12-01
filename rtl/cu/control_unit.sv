@@ -15,11 +15,11 @@ module control_unit #(
 logic [6:0]     opcode;
 logic [6:0]     funct7;
 logic [2:0]     funct3;
-logic [1:0]     alu_logic;
+logic [2:0]     alu_logic;
 
 assign opcode = ins[6:0];
 assign funct7 = ins[31:25];
-assign funct7 = ins[14:12];
+assign funct3 = ins[14:12];
 
 main_decoder decoder_1 (     
     .opcode     (opcode),

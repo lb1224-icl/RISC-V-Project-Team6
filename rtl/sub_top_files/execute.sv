@@ -4,7 +4,7 @@ module execute #(
     input logic                 reg_write_e_i,
     input logic [1:0]           result_src_e_i,
     input logic                 mem_write_e_i,
-    input logic [2:0]           alu_ctrl_e,
+    input logic [3:0]           alu_ctrl_e,
     input logic                 alu_src_e,
     input logic [D_WIDTH-1:0]   rd1_e,
     input logic [D_WIDTH-1:0]   rd2_e,
