@@ -11,7 +11,7 @@ verilator -Wall --cc --trace \
     -Wno-UNUSED -Wno-UNOPTFLAT \
     --top-module cpu \
     -F filenames.f \
-    --exe cpu_tb.cpp vbuddy.cpp \
+    --exe cpu_tb.cpp \
     -o Vcpu
 
 # Build
