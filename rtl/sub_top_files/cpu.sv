@@ -130,4 +130,10 @@ module cpu #(
         .result_w(result_w)
     );
 
+    always_ff @(posedge clk) begin
+        if (!rst) begin
+            $display("INST @ PC=%h : %h", pc_f, ins);
+        end
+    end
+
 endmodule

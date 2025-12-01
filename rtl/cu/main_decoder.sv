@@ -25,7 +25,6 @@ always_comb begin
 
     unique case (opcode)
 
-        // ---------------------- R-type ----------------------
         7'd51: begin
             $display("Hit R %0d %0d", funct7, funct3);
             pc_src     = 0;
@@ -36,7 +35,6 @@ always_comb begin
             alu_op     = 2;    // ALU decider will choose ADD/SUB/etc.
         end
 
-        // ---------------------- I-type LOAD ----------------------
         7'd3: begin
             $display("Hit I (load op) %0d %0d", funct7, funct3);
             pc_src     = 0;
@@ -48,7 +46,6 @@ always_comb begin
             alu_op     = 0;    // ADD for address calculation
         end
 
-        // ---------------------- I-type ALU ----------------------
         7'd19: begin
             $display("Hit I (logic op) %0d %0d", funct7, funct3);
             pc_src     = 0;
@@ -60,7 +57,6 @@ always_comb begin
             alu_op     = 2;    // handled in ALU decoder
         end
 
-        // ---------------------- S-type STORE ----------------------
         7'd35: begin
             $display("Hit S %0d %0d", funct7, funct3);
             pc_src     = 0;
@@ -71,7 +67,6 @@ always_comb begin
             alu_op     = 0;
         end
 
-        // ---------------------- B-type BRANCH ----------------------
         7'd99: begin
             $display("Hit B %0d %0d", funct7, funct3);
             pc_src     = eq;   // branch taken?
@@ -82,7 +77,6 @@ always_comb begin
             alu_op     = 1;    // SUB for compare
         end
 
-        // ---------------------- JALR ----------------------
         7'd103: begin
             $display("Hit JALR %0d %0d", funct7, funct3);
             pc_src     = 1;
@@ -94,7 +88,6 @@ always_comb begin
             alu_op     = 0;    // ADD for PC = rs1 + imm
         end
 
-        // ---------------------- JAL ----------------------
         7'd111: begin
             $display("Hit JAL %0d %0d", funct7, funct3);
             pc_src     = 1;
@@ -105,12 +98,10 @@ always_comb begin
             reg_write  = 1;
         end
 
-        // ---------------------- ALL ZERO ----------------------
         7'd0: begin
             $display("Hit a zero? %0d %0d", funct7, funct3);
         end
 
-        // ---------------------- INVALID OPCODE ----------------------
         default: begin
             $display("ERROR: Invalid opcode %0d", opcode);
         end
