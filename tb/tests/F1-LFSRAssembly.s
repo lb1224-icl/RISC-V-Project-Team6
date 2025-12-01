@@ -32,7 +32,7 @@ random_wait:
 
     addi a4, zero, 0    # reset counter
 
-    j    random_loop    # actual assembly: jal zero, random_loop
+    j random_loop    # actual assembly: jal zero, random_loop
 
 random_loop:
     beq  a4, a3, rst    # stop when counter == random number
