@@ -1,6 +1,6 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "Vtop.h"
+#include "Vcpu.h"
 
 #include "vbuddy.cpp"    
 #define MAX_SIM_CYC 1000000
@@ -10,30 +10,26 @@ int main(int argc, char **argv, char **env) {
   int tick;       
 
   Verilated::commandArgs(argc, argv);
-  Vtop* top = new Vtop;
+  Vcpu* cpu = new Vcpu;
   Verilated::traceEverOn(true);
   VerilatedVcdC* tfp = new VerilatedVcdC;
-  top->trace (tfp, 99);
-  tfp->open ("top.vcd");
+  cpu->trace (tfp, 99);
+  tfp->open ("cpu.vcd");
  
   if (vbdOpen()!=1) return(-1);
   vbdHeader("RISC-V:F1-Random");
   vbdSetMode(1);        
 
-  top->clk = 1;
-  top->rst = 0;
-  top->trigger = 0;
+  cpu->clk = 1;
   
   for (simcyc=0; simcyc<MAX_SIM_CYC; simcyc++) {
     for (tick=0; tick<2; tick++) {
       tfp->dump (2*simcyc+tick);
-      top->clk = !top->clk;
-      top->eval ();
-    }
+      cpu->clk = !cpu->clk;
+      cpu->eval ();
+    } 
 
-    top->trigger = vbdFlag();   
-
-    vbdBar(top->data_out);
+    vbdBar(cpu->fetch->u_pc_reg->ram_array[0]);
     vbdCycle(simcyc);
 
     if ((Verilated::gotFinish()) || (vbdGetkey()=='q')) 
