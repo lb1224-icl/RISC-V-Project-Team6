@@ -13,6 +13,8 @@ module execute #(
     input logic [D_WIDTH-1:0]   imm_ext_e,
     input logic [D_WIDTH-1:0]   pc_plus_4e_i,
 
+    input logic [2:0]           ins_3,
+
     output logic                zero_e, //eq
     output logic                reg_write_e_o,
     output logic [1:0]          result_src_e_o,
@@ -37,6 +39,7 @@ alu ALU (
     .aluop1(rd1_e),
     .aluop2(src_b_e),
     .aluctrl(alu_ctrl_e),
+    .ins_3(ins_3),
     .aluout(alu_result),
     .eq(zero_e)
 );

@@ -24,6 +24,8 @@ module cpu #(
     logic [WIDTH-1:0]        imm_ext_d;
     logic [WIDTH-1:0]        pc_plus_4d_o;
 
+    logic [2:0]              funct3_int;
+
     logic                    zero_e;
     logic                    reg_write_e_o;
     logic [1:0]              result_src_e_o;
@@ -77,7 +79,8 @@ module cpu #(
         .imm_ext_d(imm_ext_d),
         .pc_plus_4d_o(pc_plus_4d_o),
         .a0(a0),
-        .a1_(a1)
+        .a1_(a1),
+        .funct3(funct3_int)
     );
 
     execute #(.D_WIDTH(WIDTH)) u_execute (
@@ -100,7 +103,8 @@ module cpu #(
         .write_data_e(write_data_e),
         .rd_e_o(rd_e_o),
         .pc_plus_4e_o(pc_plus_4e_o),
-        .pc_target_e(pc_target_e)
+        .pc_target_e(pc_target_e),
+        .ins_3(funct3_int)
     );
 
     memory #(.WIDTH(WIDTH)) u_memory (

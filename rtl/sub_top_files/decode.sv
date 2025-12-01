@@ -24,6 +24,8 @@ module decode #(
     output logic [DATA_WIDTH-1:0]   pc_plus_4d_o,
     output logic [DATA_WIDTH-1:0]   a0,
     output logic [DATA_WIDTH-1:0]   a1_
+
+    output logic [2:0]              funct3;
 );
 
 // Datapaths that just pass through //
@@ -43,7 +45,8 @@ control_unit cu (
     .alu_ctrl   (alu_control_d), 
     .alu_src    (alu_src_d),     
     .imm_src    (imm_src_d),      
-    .reg_write  (reg_write_d)
+    .reg_write  (reg_write_d),
+    .funct3     (funct3)
 );
 
  reg_file rf (     
