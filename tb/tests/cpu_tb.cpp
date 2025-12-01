@@ -29,7 +29,7 @@ int main(int argc, char **argv, char **env) {
       cpu->eval ();
     } 
 
-    vbdBar(cpu->u_fetch__DOT__u_pc_reg__DOT__ram_array[0]);
+    vbdBar(cpu->a0);
     vbdCycle(simcyc);
 
     if ((Verilated::gotFinish()) || (vbdGetkey()=='q')) 
