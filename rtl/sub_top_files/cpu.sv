@@ -47,7 +47,7 @@ module cpu #(
 
     // Branch / Jump PC Source
     logic pc_src;
-    assign pc_src = (branch_d & zero_e) | jump_d;
+    // assign pc_src = (branch_d & zero_e) | jump_d;   --> cant have this because the pc_src logic is built into control unit.
 
     fetch fetch (
         .clk(clk),
