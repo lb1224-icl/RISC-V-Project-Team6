@@ -36,7 +36,7 @@ int main(int argc, char **argv, char **env) {
 
     for (int cyc = 0; cyc < MAX_SIM_CYC; cyc++) {
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         // FALLING EDGE
         cpu->clk = 0;
@@ -51,8 +51,8 @@ int main(int argc, char **argv, char **env) {
         vbdBar(cpu->a0 & 0xFF);
         vbdCycle(cyc);
 
-        printf("Cycle %d\n",
-               cyc);
+        printf("Cycle %d, A1: %d, A0: %d\n",
+               cyc, cpu->a1, cpu->a0);
 
         if (Verilated::gotFinish() || vbdGetkey()=='q')
             break;
