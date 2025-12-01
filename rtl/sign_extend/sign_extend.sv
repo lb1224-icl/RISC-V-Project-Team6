@@ -18,13 +18,16 @@ always_comb begin
         3'd2: imm_op = {{19{ins[31]}}, ins[31], ins[7], ins[30:25], ins[11:8], 1'b0};
 
         // J-type: imm = {ins[31], ins[19:12], ins[20], ins[30:21], 0}
-        3'd3: imm_op = {{11{ins[31]}}, ins[31], ins[19:12], ins[20], ins[30:21], 1'b0};
+        3'd3: begin imm_op = {{11{ins[31]}}, ins[31], ins[19:12], ins[20], ins[30:21], 1'b0};
+                    $display("IMM_OP: %0d", imm_op);
+        end
 
         // U-type: imm = ins[31:12] << 12
         3'd4: imm_op = {ins[31:12], 12'b0};
 
         default: $error("Immediate Module Error: imm_src value outside of range!");
     endcase
+
 end
 
 
