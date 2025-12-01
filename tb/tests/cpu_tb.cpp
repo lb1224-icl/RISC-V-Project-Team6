@@ -48,8 +48,6 @@ int main(int argc, char **argv, char **env) {
         cpu->eval();
         tfp->dump(2*cyc+1);
 
-        // Only log **once per cycle**, after rising edge
-
         vbdBar(cpu->a0 & 0xFF);
         vbdCycle(cyc);
 

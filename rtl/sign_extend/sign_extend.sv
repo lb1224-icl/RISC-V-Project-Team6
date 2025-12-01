@@ -6,36 +6,26 @@ module sign_extend #(
     output logic [WIDTH-1:0]       imm_op    // output sign extended imm
 );
 
-always_comb
-case (imm_src)   // R type -> do no care as this instruction doesn't use immediates
+always_comb begin
+    case (imm_src)
+        // I-type: imm[11:0] = ins[31:20]
+        3'd0: imm_op = {{20{ins[31]}}, ins[31:20]};
 
-    0:  begin if (ins[31])    // I type
-            imm_op = {{WIDTH-12{1'b1}}, ins[31:20]};
-        else 
-            imm_op = {{WIDTH-12{1'b0}}, ins[31:20]};
-    end
-    1:  begin if (ins[31])    // S type
-            imm_op = {{WIDTH-12{1'b1}}, ins[31:25], ins[11:7]};
-        else 
-            imm_op = {{WIDTH-12{1'b0}}, ins[31:20]};
-    end
-    2:  begin if (ins[31])    // B type
-            imm_op = {{WIDTH-13{1'b1}}, ins[31], ins[7], ins[30:25], ins[11:8], 1'b0};
-        else 
-            imm_op = {{WIDTH-13{1'b0}}, ins[31], ins[7], ins[30:25], ins[11:8], 1'b0};
-    end
-    3:  begin if (ins[31])    // J type
-            imm_op = {{WIDTH-21{1'b1}}, ins[31], ins[19:12], ins[20], ins[30:21], 1'b0};
-        else 
-            imm_op = {{WIDTH-21{1'b0}}, ins[31], ins[19:12], ins[20], ins[30:21], 1'b0};
-    end
-    4:  begin if (ins[31])    // U type
-            imm_op = {{WIDTH-20{1'b1}}, ins[31:12]};
-        else 
-            imm_op = {{WIDTH-20{1'b0}}, ins[31:12]};
-    end
-    default: $error("Immediate Module Error: imm_src value outside of range!");
+        // S-type: imm = {ins[31:25], ins[11:7]}
+        3'd1: imm_op = {{20{ins[31]}}, ins[31:25], ins[11:7]};
 
-endcase
+        // B-type: imm = {ins[31], ins[7], ins[30:25], ins[11:8], 0}
+        3'd2: imm_op = {{19{ins[31]}}, ins[31], ins[7], ins[30:25], ins[11:8], 1'b0};
+
+        // J-type: imm = {ins[31], ins[19:12], ins[20], ins[30:21], 0}
+        3'd3: imm_op = {{11{ins[31]}}, ins[31], ins[19:12], ins[20], ins[30:21], 1'b0};
+
+        // U-type: imm = ins[31:12] << 12
+        3'd4: imm_op = {ins[31:12], 12'b0};
+
+        default: $error("Immediate Module Error: imm_src value outside of range!");
+    endcase
+end
+
 
 endmodule
