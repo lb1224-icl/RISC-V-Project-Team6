@@ -34,7 +34,8 @@ main_decoder decoder_1 (
     .alu_src    (alu_src),     
     .imm_src    (imm_src),      
     .reg_write  (reg_write),    
-    .alu_op     (alu_logic) 
+    .alu_op     (alu_logic),
+    .jalr       (jalr)
 );
 
 alu_decoder decoder_2 (
