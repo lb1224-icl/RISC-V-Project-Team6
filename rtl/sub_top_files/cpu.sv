@@ -1,8 +1,7 @@
 module cpu #(
     parameter WIDTH = 32
 )(
-    input  logic clk,
-    input  logic rst
+    input  logic clk
 );
 
     logic [WIDTH-1:0] pc_f;
