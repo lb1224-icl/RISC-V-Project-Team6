@@ -7,7 +7,7 @@
 
 #include "vbuddy.cpp"
 
-#define MAX_SIM_CYC 1000000
+#define MAX_SIM_CYC 100
 
 int main(int argc, char **argv, char **env) {
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv, char **env) {
 
     for (int cyc = 0; cyc < MAX_SIM_CYC; cyc++) {
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         // FALLING EDGE
         cpu->clk = 0;
