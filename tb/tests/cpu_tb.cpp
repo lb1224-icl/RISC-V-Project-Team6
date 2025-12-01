@@ -44,14 +44,12 @@ int main(int argc, char **argv, char **env) {
         tfp->dump(2*cyc+1);
 
         // Only log **once per cycle**, after rising edge
-        uint32_t pc      = cpu->rootp->u_fetch__DOT__pc_f;
-        uint32_t instr   = cpu->rootp->u_fetch__DOT__ins;
 
         vbdBar(cpu->a0);
         vbdCycle(cyc);
 
-        printf("Cycle %d  PC=0x%08x  INS=0x%08x\n",
-               cyc, pc, instr);
+        printf("Cycle %d\n",
+               cyc);
 
         if (Verilated::gotFinish() || vbdGetkey()=='q')
             break;
