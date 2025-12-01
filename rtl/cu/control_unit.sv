@@ -10,7 +10,8 @@ module control_unit #(
     output logic              alu_src,    // whether 2nd ALU input is a register data or immediate
     output logic [2:0]        imm_src,    // type of ins: R, I, S, B...
     output logic              reg_write,  // register write enable
-    output logic [2:0]        funct3      // neccessary logic for branching to differentiate between bne beq...
+    output logic [2:0]        funct3,     // neccessary logic for branching to differentiate between bne beq...
+    output logic              jalr
 );
 
 logic [6:0]     opcode;

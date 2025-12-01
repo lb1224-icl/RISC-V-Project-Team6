@@ -10,7 +10,8 @@ module main_decoder (
     output logic         alu_src,
     output logic [2:0]   imm_src,
     output logic         reg_write,
-    output logic [2:0]   alu_op
+    output logic [2:0]   alu_op,
+    output logic         jalr   
 );
 
 always_comb begin
@@ -86,6 +87,7 @@ always_comb begin
             imm_src    = 0;    // I-type immediate
             reg_write  = 1;
             alu_op     = 0;    // ADD for PC = rs1 + imm
+            jalr       = 1;
         end
 
         7'd111: begin
