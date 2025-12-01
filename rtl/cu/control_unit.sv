@@ -9,12 +9,13 @@ module control_unit #(
     output logic [3:0]        alu_ctrl,   // ALU operation: add, sub, OR...
     output logic              alu_src,    // whether 2nd ALU input is a register data or immediate
     output logic [2:0]        imm_src,    // type of ins: R, I, S, B...
-    output logic              reg_write   // register write enable
+    output logic              reg_write,  // register write enable
+    output logic [2:0]        funct3      // neccessary logic for branching to differentiate between bne beq...
 );
 
 logic [6:0]     opcode;
 logic [6:0]     funct7;
-logic [2:0]     funct3;
+// logic [2:0]     funct3;
 logic [2:0]     alu_logic;
 
 assign opcode = ins[6:0];
@@ -22,8 +23,8 @@ assign funct7 = ins[31:25];
 assign funct3 = ins[14:12];
 
 main_decoder decoder_1 (    
-    .funct7(funct7),
-    .funct3(funct3),
+    .funct7     (funct7),
+    .funct3     (funct3),
     .opcode     (opcode),
     .eq         (eq),
     .pc_src     (pc_src),      

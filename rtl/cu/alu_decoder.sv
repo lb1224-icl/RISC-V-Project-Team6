@@ -15,7 +15,7 @@ case (alu_op)       // to determine the ALU operation type
 
     3'b0:   alu_ctrl = 4'b0;     // memory addressing calucations e.g. lw, sw  
 
-    3'b1:   alu_ctrl = 4'b1;     // B-type ins
+    3'b1:   alu_ctrl = 4'b1;     // b-type
 
     3'b10: begin if (funct3 == 3'b0)   // R-type ins and other logical/arithemetic based instructions
                 if (funct7_5 == 0) 
