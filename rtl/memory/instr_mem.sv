@@ -13,6 +13,7 @@ logic [DATA_WIDTH-1:0]  mem_array [OFFSET+2**SIZE-1:OFFSET];
 initial begin
     $display("Loading Instruction Memory.");
     $readmemh("instr.mem", mem_array);
+    $display("Loaded Instruction Memory!");
 end;
 
 assign dout = mem_array [addr+OFFSET];
