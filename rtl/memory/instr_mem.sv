@@ -1,9 +1,9 @@
 module instr_mem #(
     parameter ADDRESS_WIDTH = 32,
     parameter DATA_WIDTH    = 32,
-    parameter SIZE          = 12       // 2^12 = 4096 words
+    parameter SIZE          = 12
 )(
-    input  logic [ADDRESS_WIDTH-1:0] addr,
+    input  logic [ADDRESS_WIDTH-1:0] addr,  // byte address
     output logic [DATA_WIDTH-1:0]    dout
 );
 
