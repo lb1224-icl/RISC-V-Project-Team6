@@ -2,7 +2,6 @@ module fetch_stage #(
     parameter WIDTH = 32
 )(
     input  logic             clk,
-    input  logic             rst,
 
     // From decode/execute for jumps/branches
     input  logic [WIDTH-1:0] pc_target_ext,
@@ -33,7 +32,6 @@ module fetch_stage #(
 
     pc_reg #(.WIDTH(WIDTH)) u_pc_reg (
         .clk   (clk),
-        .rst   (rst),
         .pc_in (next_pc),
         .pc_out(pc_f)
     );
