@@ -1,7 +1,8 @@
 module cpu #(
     parameter WIDTH = 32
 )(
-    input  logic clk
+    input  logic clk,
+    input  logic rst
 );
 
     logic [WIDTH-1:0] pc_f;
@@ -44,6 +45,7 @@ module cpu #(
 
     fetch #(.WIDTH(WIDTH)) u_fetch (
         .clk(clk),
+        .rst(rst),
         .pc_target_ext(pc_target_e),
         .pc_src(pc_src),
         .pc_plus_4f(pc_plus_4f),
