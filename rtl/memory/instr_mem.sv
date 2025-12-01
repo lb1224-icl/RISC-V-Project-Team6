@@ -1,21 +1,20 @@
 module instr_mem #(
     parameter  ADDRESS_WIDTH = 32,
                DATA_WIDTH = 32,
-               SIZE = 12,
-               OFFSET = 32'hBFC00000
+               SIZE = 12
 )(
     input logic  [ADDRESS_WIDTH-1:0] addr,
     output logic [DATA_WIDTH-1:0]    dout
 );
 
-logic [DATA_WIDTH-1:0]  mem_array [OFFSET+2**SIZE-1:OFFSET];
+logic [DATA_WIDTH-1:0]  mem_array [2**SIZE-1:0];
 
 initial begin
     $display("Loading Instruction Memory.");
     $readmemh("instr.mem", mem_array);
     $display("Loaded Instruction Memory!");
-end;
+end
 
-assign dout = mem_array [addr+OFFSET];
+assign dout = mem_array [addr];
 
 endmodule
