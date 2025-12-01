@@ -2,7 +2,8 @@ module cpu #(
     parameter WIDTH = 32
 )(
     input  logic clk,
-    input  logic rst
+    input  logic rst,
+    output logic  [WIDTH-1:0] a0
 );
 
     logic [WIDTH-1:0] pc_f;
@@ -73,7 +74,8 @@ module cpu #(
         .pc_d_o(pc_d_o),
         .rd_d(rd_d),
         .imm_ext_d(imm_ext_d),
-        .pc_plus_4d_o(pc_plus_4d_o)
+        .pc_plus_4d_o(pc_plus_4d_o),
+        .a0(a0)
     );
 
     execute #(.D_WIDTH(WIDTH)) u_execute (

@@ -21,8 +21,8 @@ module decode #(
     output logic [DATA_WIDTH-1:0]   pc_d_o,
     output logic [4:0]              rd_d,
     output logic [DATA_WIDTH-1:0]   imm_ext_d,
-    output logic [DATA_WIDTH-1:0]   pc_plus_4d_o
-
+    output logic [DATA_WIDTH-1:0]   pc_plus_4d_o,
+    output logic [DATA_WIDTH-1:0]   a0
 );
 
 // Datapaths that just pass through //
@@ -53,7 +53,8 @@ control_unit cu (
     .a2         (ins[24:20]),
     .din        (result_w),
     .dout1      (rd_1),
-    .dout2      (rd_2)
+    .dout2      (rd_2),
+    .a0         (a0)
 );
 
 sign_extend se (     

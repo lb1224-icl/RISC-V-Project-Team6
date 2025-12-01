@@ -8,10 +8,10 @@ module reg_file #(
     input  logic [ADDRESS_WIDTH-1:0] a2,
     input  logic [D_WIDTH-1:0]       din,
     output logic [D_WIDTH-1:0]       dout1,
-    output logic [D_WIDTH-1:0]       dout2
+    output logic [D_WIDTH-1:0]       dout2,
+    output logic [D_WIDTH-1:0]       a0
 );
 
-// verilator public_flat
 logic [D_WIDTH-1:0] ram_array [2**ADDRESS_WIDTH-1:0];
 
 initial begin
@@ -35,5 +35,6 @@ end
 always_comb begin
     dout1 = ram_array[a1];
     dout2 = ram_array[a2];
+    a0    = ram_array[10];
 end
 endmodule
