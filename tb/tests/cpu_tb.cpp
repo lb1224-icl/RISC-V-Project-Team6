@@ -51,8 +51,8 @@ int main(int argc, char **argv, char **env) {
         vbdBar(cpu->a0 & 0xFF);
         vbdCycle(cyc);
 
-        printf("Cycle %d, A1: %d, A0: %d\n",
-               cyc, cpu->a1, cpu->a0);
+        printf("Cycle %d, RA: %d, JALR: %d, A0: %d\n",
+               cyc, cpu->a1, cpu->jalr_o, cpu->a0);
 
         if (Verilated::gotFinish() || vbdGetkey()=='q')
             break;
