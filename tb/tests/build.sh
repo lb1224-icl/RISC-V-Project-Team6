@@ -8,8 +8,10 @@ rm -f cpu.vcd
 
 # Run Verilator from tb/tests/
 verilator -Wall --cc --trace \
+    -Wno-UNUSED -Wno-UNOPTFLAT \
+    --top-module cpu \
     -F filenames.f \
-    --exe top_tb.cpp vbuddy.cpp verify.cpp \
+    --exe cpu_tb.cpp vbuddy.cpp \
     -o Vcpu
 
 # Build
