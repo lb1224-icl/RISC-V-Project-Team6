@@ -23,9 +23,9 @@ module decode #(
     output logic [DATA_WIDTH-1:0]   imm_ext_d,
     output logic [DATA_WIDTH-1:0]   pc_plus_4d_o,
     output logic [DATA_WIDTH-1:0]   a0,
-    output logic [DATA_WIDTH-1:0]   a1_
+    output logic [DATA_WIDTH-1:0]   a1_,
 
-    output logic [2:0]              funct3;
+    output logic [2:0]              funct3
 );
 
 // Datapaths that just pass through //
