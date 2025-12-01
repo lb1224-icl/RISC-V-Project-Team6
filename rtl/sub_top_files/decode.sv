@@ -3,12 +3,12 @@ module decode #(
 ) (
     input logic                     clk,
     input logic                     zero_e,
-    input logic ;                   reg_write_w,
+    input logic                     reg_write_w,
     input logic [DATA_WIDTH-1:0]    ins,
     input logic [DATA_WIDTH-1:0]    pc_d_i,
     input logic [DATA_WIDTH-1:0]    pc_plus_4d_i,
     input logic [DATA_WIDTH-1:0]    result_w,
-    input logic [DATA_WIDTH-1:0]    rd_w,
+    input logic [4:0]               rd_w,
 
     output logic                    reg_write_d,
     output logic [1:0]              result_src_d,
@@ -19,7 +19,7 @@ module decode #(
     output logic [DATA_WIDTH-1:0]   rd_1,
     output logic [DATA_WIDTH-1:0]   rd_2,
     output logic [DATA_WIDTH-1:0]   pc_d_o,
-    output logic [DATA_WIDTH-1:0]   rd_d,
+    output logic [4:0]              rd_d,
     output logic [DATA_WIDTH-1:0]   imm_ext_d,
     output logic [DATA_WIDTH-1:0]   pc_plus_4d_o
 
