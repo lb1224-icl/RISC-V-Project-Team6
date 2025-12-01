@@ -1,4 +1,4 @@
-module fetch_stage #(
+module fetch #(
     parameter WIDTH = 32
 )(
     input  logic             clk,
