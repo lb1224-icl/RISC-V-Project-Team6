@@ -11,7 +11,7 @@ Created ram (data_memory) - byte addressed
 
 Single cycle come together:
 Worked on integration between all parts on single cycle (learnt should have done more frequent meetings as littered with name differences)
-Made cpu.sv the top file to bring together all stages
+Made cpu.sv the top file to bring together all stages and fetch.sv to complete fetch stage
 (Lot of time debugging as missing certain components e.g. mux for RET instruction)
 Tested against all other tests given and debugged specific areas
 
