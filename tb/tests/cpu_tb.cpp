@@ -50,9 +50,6 @@ int main(int argc, char **argv, char **env) {
         vbdBar(cpu->a0 & 0xFF);
         vbdCycle(cyc);
 
-        printf("Cycle %d, A4: %d, JALR: %d, A3: %d, EQ: %d\n",
-               cyc, cpu->a1, cpu->jalr_o, cpu->a0, cpu->zero_e_o);
-
         if (Verilated::gotFinish() || vbdGetkey()=='q')
             break;
     }
