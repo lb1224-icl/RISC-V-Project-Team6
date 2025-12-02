@@ -1,31 +1,31 @@
-0ff00913  // addi s2, x0, 0xff
-00300993  // addi s3, x0, 3
-00100693  // addi a3, x0, 1
-00100613  // addi a2, x0, 1
-0040006f  // jal x0, rst (offset = +4 bytes → PC=0x14)
-00000513  // rst: addi a0, x0, 0
-00000713  // addi a4, x0, 0
-0040006f  // jal x0, on_seq (offset = +4 bytes → PC=0x20)
-04C000ef  // on_seq: jal ra, delay  (offset = +76)
-00151513  // slli a0, a0, 1
-00150513  // addi a0, a0, 1
-ff251ae3  // bne a0, s2, on_seq (negative branch)
-0040006f  // jal x0, random_wait (offset = +4 → PC=0x34)
-0016d613  // random wait: srli a2, a3, 1
-00467613  // andi a2, a2, 4
-00d64633  // xor  a2, a2, a3
-00467613  // andi a2, a2, 4
-00265613  // srli a2, a2, 2
-00169693  // slli a3, a3, 1
-02c6e6b3  // or   a3, a3, a2
-00f6f693  // andi a3, a3, 0xF
-00000713  // addi a4, x0, 0
-0040006f  // jal x0, random_loop (offset −36 bytes)
-010000ef  // random_loop: jal ra, delay
-00170713  // addi a4, a4, 1
-fad708e3  // beq a4, a3, rst (negative offset)
-ff5ff06f  // jal x0, random_loop (negative offset)
-00158593  // delay: addi a1, a1, 1 
-ff359ee3  // bne a1, s3, delay
-00000593  // addi a1, zero, 0
-00008067  // ret → jalr x0, 0(ra)
+13 09 F0 0F    // addi s2, x0, 0xff        (0xff -> imm[11:0], rd=18)
+93 09 30 00    // addi s3, x0, 3
+93 06 10 00    // addi a3, x0, 1
+13 06 10 00    // addi a2, x0, 1
+6F 00 40 00    // jal x0, rst (+4 → PC=0x14)
+13 05 00 00    // rst: addi a0, x0, 0
+13 07 00 00    // addi a4, x0, 0
+6F 00 40 00    // jal x0, on_seq (+4 → PC=0x20)
+EF 00 C0 04    // on_seq: jal ra, delay (+76 bytes)
+13 15 15 00    // slli a0, a0, 1
+13 05 15 00    // addi a0, a0, 1
+E3 1A 25 FF    // bne a0, s2, on_seq
+6F 00 40 00    // jal x0, random_wait
+13 D6 16 00    // srli a2, a3, 1
+13 76 46 00    // andi a2, a2, 4
+33 46 D6 00    // xor  a2, a2, a3
+13 76 46 00    // andi a2, a2, 4
+13 56 26 00    // srli a2, a2, 2
+93 96 16 00    // slli a3, a3, 1
+B3 E6 C6 02    // or   a3, a3, a2
+93 F6 F6 00    // andi a3, a3, 0xF
+13 07 00 00    // addi a4, x0, 0
+6F 00 40 00    // jal x0, random_loop   (negative offset encoded)
+EF 00 00 01    // random_loop: jal ra, delay
+13 07 17 00    // addi a4, a4, 1
+E3 08 D7 FA    // beq a4, a3, rst
+6F F0 5F FF    // jal x0, random_loop (negative offset)
+93 85 15 00    // delay: addi a1, a1, 1
+E3 9E 35 FF    // bne a1, s3, delay
+93 05 00 00    // addi a1, zero, 0
+67 80 00 00    // ret (jalr x0, 0(ra))
