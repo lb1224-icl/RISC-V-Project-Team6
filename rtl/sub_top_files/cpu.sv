@@ -3,10 +3,7 @@ module cpu #(
 )(
     input  logic clk,
     input  logic rst,
-    output logic  [WIDTH-1:0] a0,
-    output logic  [WIDTH-1:0] a1,
-    output logic              zero_e_o,
-    output logic              jalr_o
+    output logic  [WIDTH-1:0] a0
 );
 
     logic [WIDTH-1:0] pc_f;
@@ -50,8 +47,6 @@ module cpu #(
     logic [4:0]              rd_w_o;
     logic [WIDTH-1:0]        result_w;
 
-    assign jalr_o = jalr;
-    assign zero_e_o = zero_e;
 
     fetch #(.WIDTH(WIDTH)) u_fetch (
         .clk(clk),
@@ -85,7 +80,6 @@ module cpu #(
         .imm_ext_d(imm_ext_d),
         .pc_plus_4d_o(pc_plus_4d_o),
         .a0(a0),
-        .a1_(a1),
         .funct3(funct3_int),
         .jalr(jalr)
     );
@@ -111,7 +105,7 @@ module cpu #(
         .rd_e_o(rd_e_o),
         .pc_plus_4e_o(pc_plus_4e_o),
         .pc_target_e(pc_target_e),
-        .ins_3(funct3_int),
+        .funct3(funct3_int),
         .jalr(jalr)
     );
 
@@ -143,11 +137,5 @@ module cpu #(
         .rd_w_o(rd_w_o),
         .result_w(result_w)
     );
-
-    always_ff @(posedge clk) begin
-        if (!rst) begin
-            $display("INST @ PC=%h : %h", pc_f, ins);
-        end
-    end
 
 endmodule

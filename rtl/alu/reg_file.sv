@@ -9,8 +9,7 @@ module reg_file #(
     input  logic [D_WIDTH-1:0]       din,
     output logic [D_WIDTH-1:0]       dout1,
     output logic [D_WIDTH-1:0]       dout2,
-    output logic [D_WIDTH-1:0]       a0,
-    output logic [D_WIDTH-1:0]       a1_
+    output logic [D_WIDTH-1:0]       a0
 );
 
 logic [D_WIDTH-1:0] ram_array [2**ADDRESS_WIDTH-1:0];
@@ -37,6 +36,5 @@ always_comb begin
     dout1 = ram_array[a1];
     dout2 = ram_array[a2];
     a0    = ram_array[5'd10];
-    a1_    = ram_array[5'd14];
 end
 endmodule

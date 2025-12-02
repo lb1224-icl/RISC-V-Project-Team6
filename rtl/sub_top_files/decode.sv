@@ -23,7 +23,6 @@ module decode #(
     output logic [DATA_WIDTH-1:0]   imm_ext_d,
     output logic [DATA_WIDTH-1:0]   pc_plus_4d_o,
     output logic [DATA_WIDTH-1:0]   a0,
-    output logic [DATA_WIDTH-1:0]   a1_,
 
     output logic [2:0]              funct3,
     output logic                    jalr
@@ -60,8 +59,7 @@ control_unit cu (
     .din        (result_w),
     .dout1      (rd_1),
     .dout2      (rd_2),
-    .a0         (a0),
-    .a1_        (a1_)
+    .a0         (a0)
 );
 
 sign_extend se (     

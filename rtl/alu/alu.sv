@@ -4,7 +4,7 @@ module alu #(
     input  logic [D_WIDTH-1:0] aluop1,
     input  logic [D_WIDTH-1:0] aluop2,
     input  logic [3:0]         aluctrl,
-    input  logic [2:0]         ins_3,
+    input  logic [2:0]         funct3,
     output logic [D_WIDTH-1:0] aluout,
     output logic               eq
 );
@@ -48,7 +48,7 @@ always_comb begin
 end
 
 always_comb begin
-    case (ins_3)
+    case (funct3)
         // BEQ (branch if equal)
         3'b000: eq = aluop1 == aluop2;
 

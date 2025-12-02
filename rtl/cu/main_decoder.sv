@@ -1,6 +1,4 @@
 module main_decoder (
-    input  logic [31:25] funct7,
-    input  logic [2:0]   funct3,
     input  logic [6:0]   opcode,
     input  logic         eq,
 
@@ -28,7 +26,6 @@ always_comb begin
     unique case (opcode)
 
         7'd51: begin
-            $display("Hit R %0d %0d", funct7, funct3);
             pc_src     = 0;
             result_src = 0; 
             mem_write  = 0;
@@ -38,7 +35,6 @@ always_comb begin
         end
 
         7'd3: begin
-            $display("Hit I (load op) %0d %0d", funct7, funct3);
             pc_src     = 0;
             result_src = 1;    // from memory
             mem_write  = 0;
@@ -49,7 +45,6 @@ always_comb begin
         end
 
         7'd19: begin
-            $display("Hit I (logic op) %0d %0d", funct7, funct3);
             pc_src     = 0;
             result_src = 0;
             mem_write  = 0;
@@ -60,7 +55,6 @@ always_comb begin
         end
 
         7'd35: begin
-            $display("Hit S %0d %0d", funct7, funct3);
             pc_src     = 0;
             mem_write  = 1;
             alu_src    = 1;
@@ -70,7 +64,6 @@ always_comb begin
         end
 
         7'd99: begin
-            $display("Hit B %0d %0d", funct7, funct3);
             pc_src     = eq;   // branch taken?
             mem_write  = 0;
             alu_src    = 0;
@@ -80,7 +73,6 @@ always_comb begin
         end
 
         7'd103: begin
-            $display("Hit JALR %0d %0d", funct7, funct3);
             pc_src     = 1;
             result_src = 0;    // ALU result
             mem_write  = 0;
@@ -92,7 +84,6 @@ always_comb begin
         end
 
         7'd111: begin
-            $display("Hit JAL %0d %0d", funct7, funct3);
             pc_src     = 1;
             result_src = 2;    // PC+4
             mem_write  = 0;
@@ -100,10 +91,6 @@ always_comb begin
             imm_src    = 3;    // J-type immediate
             reg_write  = 1;
             jalr       = 0;
-        end
-
-        7'd0: begin
-            $display("Hit a zero? %0d %0d", funct7, funct3);
         end
 
         default: begin
