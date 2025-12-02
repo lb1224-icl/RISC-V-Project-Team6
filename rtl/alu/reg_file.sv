@@ -36,7 +36,7 @@ end
 always_comb begin
     dout1 = ram_array[a1];
     dout2 = ram_array[a2];
-    a0    = ram_array[5'd13];
+    a0    = ram_array[5'd10];
     a1_    = ram_array[5'd14];
 end
 endmodule

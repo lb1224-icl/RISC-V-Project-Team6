@@ -23,8 +23,8 @@ ff251ae3  // bne a0, s2, on_seq (negative branch)
 0040006f  // jal x0, random_loop (offset −36 bytes)
 010000ef  // random_loop: jal ra, delay
 00170713  // addi a4, a4, 1
-f6d700e3  // beq a4, a3, rst (negative offset)
-fd9ff06f  // jal x0, random_loop (negative offset)
+fad708e3  // beq a4, a3, rst (negative offset)
+ff5ff06f  // jal x0, random_loop (negative offset)
 00158593  // delay: addi a1, a1, 1 00000593
 ff359ee3  // bne a1, s3, delay
 00000593  // addi a1, zero, 0
