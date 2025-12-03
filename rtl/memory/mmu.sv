@@ -87,7 +87,6 @@ module mmu #(
             fill_count     <= 2'd0;
             miss_addr_base <= '0;
             saved_mem_addr <= '0;
-            saved_mem_we   <= 1'b0;
             mem_r_data     <= '0;
             mem_ready      <= 1'b0;
         end else begin
@@ -115,7 +114,7 @@ module mmu #(
                                     {OFFSET_BITS{1'b0}}
                                 }; // put to first of 4 words
                                 fill_count <= 2'd0;
-                                state      <= S_FILL;
+                                state      <= FILL;
                             end
 
                         end else begin
@@ -133,9 +132,9 @@ module mmu #(
                     fill_addr <= miss_addr_base + {fill_count, 2'b00};
                     fill_data <= ram_r_data;
 
-                    if(fill_count == saved_mem_addr[OFFSET_BITS-1-:2]){
+                    if(fill_count == saved_mem_addr[OFFSET_BITS-1 -: 2])begin
                         mem_r_data      <= ram_r_data; // output right data from memory
-                    }
+                    end
 
                     if (fill_count == 2'd3) begin
                         fill_mark_valid <= 1'b1;
@@ -145,6 +144,8 @@ module mmu #(
                         fill_count <= fill_count + 2'd1;
                     end
                 end
+
+                default: $display("Not valid state");
 
             endcase
         end

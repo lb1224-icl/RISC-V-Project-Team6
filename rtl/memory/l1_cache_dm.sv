@@ -88,9 +88,9 @@ module l1_cache_dm #(
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             for (i = 0; i < LINES; i++) begin
-                valid_array[i] <= 1'b0;
-                tag_array[i]   <= '0;
-                data_array[i]  <= '0;
+                valid_array[i] = 1'b0;
+                tag_array[i]   = '0;
+                data_array[i]  = '0;
             end
         end else begin
             // CPU write-hit: update line word
