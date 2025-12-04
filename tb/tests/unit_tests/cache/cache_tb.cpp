@@ -45,27 +45,43 @@ TEST_F(CacheTestbench, WriteMissDoesNotAllocate) {
 
     // A = base address that we fill into cache first
     uint32_t A = 0x00000040;
+
+    // C = base address but next word so should be read hit
+    uint32_t C = 0x00000044;
+
     // B = same index, different tag (assuming 4KB/16B lines: index = bits [11:4])
     uint32_t B = 0x00100040;
 
     // 1) Fill line containing A
     uint32_t val_A1 = readWord(A, cycles1);
 
+    EXPECT_EQ(cycles1, 5); // read miss then 4 to fill words
+
+    uint32_t val_C1 = readWord(C, cycles1);
+
+    EXPECT_EQ(cycles1, 1); // read hit
+
     // 2) Write to B (no prior read → write miss → no allocate)
     uint32_t val_B = 0xCAFEBABEu;
     int write_cycles = writeWord(B, val_B);
     EXPECT_GE(write_cycles, 1);
+
+    
 
     // 3) Read A again: should still be a cache hit and unchanged
     uint32_t val_A2 = readWord(A, cycles2);
     EXPECT_EQ(val_A2, val_A1)
         << "Write-miss to B incorrectly evicted A (no-write-allocate violated)";
 
+    EXPECT_EQ(cycles2, 1);
+
     // 4) Read B now: this causes a read miss and block fill from RAM,
     // which should return what we previously wrote via write-through.
     uint32_t val_B2 = readWord(B, cycles3);
     EXPECT_EQ(val_B2, val_B)
         << "Write-through did not update RAM correctly on write-miss";
+
+    EXPECT_EQ(cycles3, 5); // read miss then 4 to fill words
 }
 
 // Standard gtest main
