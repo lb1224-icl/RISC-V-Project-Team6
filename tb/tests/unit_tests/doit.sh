@@ -4,7 +4,7 @@
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 TEST_DIR="$SCRIPT_DIR"
-RTL_DIR=$(realpath "$SCRIPT_DIR/../../../../rtl/memory")
+RTL_DIR=$(realpath "$SCRIPT_DIR/../../../rtl/memory")
 
 GREEN=$(tput setaf 2)
 RED=$(tput setaf 1)
@@ -21,7 +21,7 @@ passes=0
 fails=0
 
 # Find all *_tb.cpp testbenches
-FILES=("$TEST_DIR"/*_tb.cpp)
+FILES=("$TEST_DIR"/*/*_tb.cpp)
 
 if [[ ${#FILES[@]} -eq 0 ]]; then
     echo "${RED}No *_tb.cpp files found!${RESET}"
@@ -42,7 +42,6 @@ for tb in "${FILES[@]}"; do
     # Run Verilator with warning suppression
     verilator \
         -Wall \
-        -Wno-fatal \
         -Wno-WIDTH \
         -Wno-UNOPTFLAT \
         -Wno-LITENDIAN \
@@ -73,7 +72,7 @@ for tb in "${FILES[@]}"; do
         ((fails++))
         continue
     fi
-    
+
     # Run executable
     echo "Running $name..."
     "$TEST_DIR/obj_dir/Vmmu"
