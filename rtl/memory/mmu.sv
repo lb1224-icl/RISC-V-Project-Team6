@@ -34,11 +34,12 @@ module mmu #(
     logic [DATA_WIDTH-1:0] ram_w_data;
     logic                  ram_we;
 
-    l1_cache_dm #(
+    l1_cache_two_way #(
         .DATA_WIDTH (DATA_WIDTH),
         .ADDR_WIDTH (ADDR_WIDTH),
         .CACHE_SIZE (CACHE_SIZE),
-        .LINE_SIZE  (LINE_SIZE)
+        .LINE_SIZE  (LINE_SIZE),
+        .WAYS       (2)
     ) u_l1 (
         .clk           (clk),
         .rst           (rst),
