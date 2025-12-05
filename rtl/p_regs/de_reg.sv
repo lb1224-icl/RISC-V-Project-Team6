@@ -13,6 +13,8 @@ module de_register #(
     input  logic             alu_src_d,
     input  logic [2:0]       funct3_d,
     input  logic             jalr_d,
+    input  logic             rs1_used_d,
+    input  logic             rs2_used_d,
     
     // data from DECODE stage
     input  logic [WIDTH-1:0] rd1_d,
@@ -41,7 +43,11 @@ module de_register #(
     output logic [4:0]       rs1_e,
     output logic [4:0]       rs2_e,
     output logic [WIDTH-1:0] imm_ext_e,
-    output logic [WIDTH-1:0] pc_plus4_e
+    output logic [WIDTH-1:0] pc_plus4_e,
+
+    //control signals to hazard unit
+    output logic             rs1_used_e,
+    output logic             rs2_used_e
 );
 
 always_ff @(posedge clk) begin
