@@ -28,9 +28,9 @@ module decode #(
 
     output logic [2:0]            funct3,
     output logic                  jalr,
-
+    
     output logic                  rs1_used_e,
-    output logic                  rs2_used_e 
+    output logic                  rs2_used_e
 );
 
 // datapaths that just pass through
