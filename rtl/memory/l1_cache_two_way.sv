@@ -101,7 +101,7 @@ module l1_cache_two_way #(
     // fill address breakdown 
     wire [TAG_BITS-1:0]      fill_tag        = fill_addr[ADDR_WIDTH-1 -: TAG_BITS];
 
-    wire [SET_BITS-1:0]      fill_index      = fill_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
+    wire [SET_BITS-1:0]      fill_set      = fill_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
 
     wire [OFFSET_BITS-1:0]   fill_offset     = fill_addr[OFFSET_BITS-1:0];
 
@@ -124,12 +124,12 @@ module l1_cache_two_way #(
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             for (i = 0; i < SETS; i++) begin
-                for (w = 0; w < WAYS; w++) begin
-                    valid_array[i][w] <= 1'b0;
-                    tag_array[i][w]   <= '0;
-                    data_array[i][w]  <= '0;
+                for (int w = 0; w < WAYS; w++) begin
+                    valid_array[i][w] = 1'b0;
+                    tag_array[i][w]   = '0;
+                    data_array[i][w]  = '0;
                 end
-                lru_bit[i] <= 1'b0;
+                lru_bit[i] = 1'b0;
             end
         end else begin
             // CPU write-hit: update line word

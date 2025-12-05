@@ -75,7 +75,6 @@ for tb in "${TEST_BENCHES[@]}"; do
         -LDFLAGS "-lgtest -lgtest_main -lpthread" \
         -Wno-fatal -Wno-WIDTH -Wno-UNOPTFLAT -Wno-LITENDIAN \
         -Wno-MODDUP -Wno-CASEINCOMPLETE -Wno-UNUSED -Wno-BLKANDNBLK \
-        -Wno-BLKSEQ \
         -Wno-DECLFILENAME
 
     if [[ $? -ne 0 ]]; then
