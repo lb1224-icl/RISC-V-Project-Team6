@@ -10,11 +10,17 @@ module execute #(
     input logic [D_WIDTH-1:0]  rd2_e,
     input logic [D_WIDTH-1:0]  pc_e,
     input logic [4:0]          rd_e_i,
+    input logic [4:0]          rs1_e_i,
+    input logic [4:0]          rs2_e_i,
     input logic [D_WIDTH-1:0]  imm_ext_e,
     input logic [D_WIDTH-1:0]  pc_plus4_e_i,
 
     input logic [2:0]          funct3,
     input logic                jalr,
+
+    // forwarding inputs
+    input logic [D_WIDTH-1:0]  result_w,
+    input logic [D_WIDTH-1:0]  alu_result_m,
 
     output logic               zero_e, // eq
     output logic               reg_write_e_o,
@@ -23,10 +29,13 @@ module execute #(
     output logic [D_WIDTH-1:0] alu_result,
     output logic [D_WIDTH-1:0] write_data_e,
     output logic [4:0]         rd_e_o,
+    output logic [4:0]         rs1_e_o,
+    output logic [4:0]         rs2_e_o,
     output logic [D_WIDTH-1:0] pc_plus4_e_o,
     output logic [D_WIDTH-1:0] pc_target_e
 );
 
+logic [D_WIDTH-1:0] src_a;
 logic [D_WIDTH-1:0] src_b_e;
 logic [D_WIDTH-1:0] alu_res;
 logic [D_WIDTH-1:0] pc_imm;
@@ -36,6 +45,8 @@ assign result_src_e_o = result_src_e_i;
 assign mem_write_e_o  = mem_write_e_i;
 assign write_data_e   = rd2_e;
 assign rd_e_o         = rd_e_i;
+assign rs1_e_o        = rs1_e_i;
+assign rs2_e_o        = rs2_e_i;
 assign pc_plus4_e_o   = pc_plus4_e_i;
 assign alu_result     = alu_res;
 
@@ -67,5 +78,14 @@ mux_2 pc_mux (
     .sel       (jalr),
     .out       (pc_target_e)
 );
+
+mux_4 fwd_aluop1 (
+    .in0  (rd1_e),
+    .in1  (result_w),
+    .in2  (alu_result_m),
+    .in3  (32'b0),
+    .sel  (2'b00),
+    .out  (src_a)
+)
 
 endmodule

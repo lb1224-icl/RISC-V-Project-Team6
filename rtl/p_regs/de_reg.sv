@@ -19,6 +19,8 @@ module de_register #(
     input  logic [WIDTH-1:0] rd2_d,
     input  logic [WIDTH-1:0] pc_d,
     input  logic [4:0]       rd_d,
+    input  logic [4:0]       rs1_d,
+    input  logic [4:0]       rs2_d,
     input  logic [WIDTH-1:0] imm_ext_d,
     input  logic [WIDTH-1:0] pc_plus4_d,
     
@@ -36,6 +38,8 @@ module de_register #(
     output logic [WIDTH-1:0] rd2_e,
     output logic [WIDTH-1:0] pc_e,
     output logic [4:0]       rd_e,
+    output logic [4:0]       rs1_e,
+    output logic [4:0]       rs2_e,
     output logic [WIDTH-1:0] imm_ext_e,
     output logic [WIDTH-1:0] pc_plus4_e
 );

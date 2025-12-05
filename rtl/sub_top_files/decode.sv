@@ -20,6 +20,8 @@ module decode #(
     output logic [DATA_WIDTH-1:0] rd_2,
     output logic [DATA_WIDTH-1:0] pc_d_o,
     output logic [4:0]            rd_d,
+    output logic [4:0]            rs1_d,
+    output logic [4:0]            rs2_d,
     output logic [DATA_WIDTH-1:0] imm_ext_d,
     output logic [DATA_WIDTH-1:0] pc_plus4_d_o,
     output logic [DATA_WIDTH-1:0] a0,
@@ -32,6 +34,8 @@ module decode #(
 assign pc_d_o       = pc_d_i;
 assign pc_plus4_d_o = pc_plus4_d_i;
 assign rd_d         = instr_d[11:7];
+assign rs1_d        = instr_d[19:15];
+assign rs2_d        = instr_d[24:20];
 
 // internal logic
 logic [2:0] imm_src_d;
