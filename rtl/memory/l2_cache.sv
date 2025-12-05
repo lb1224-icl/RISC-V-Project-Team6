@@ -1,9 +1,9 @@
-module l1_cache_two_way #(
+module l2_cache #(
     parameter DATA_WIDTH  = 32,
     parameter ADDR_WIDTH  = 32,
-    parameter CACHE_SIZE  = 2048,   // bytes (half of brief as l2 about to exist)
+    parameter CACHE_SIZE  = 4096,   // bytes (size of brief)
     parameter LINE_SIZE   = 16,     // bytes (4 words)
-    parameter WAYS = 2
+    parameter WAYS = 4
 )(
     input  logic clk,
     input  logic rst,
