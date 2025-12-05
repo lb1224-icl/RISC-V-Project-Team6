@@ -15,8 +15,8 @@ module control_unit #(
     output logic [2:0]        funct3,     // neccessary logic for branching to differentiate between bne beq...
     output logic              jalr,       // neccessary logic for jumps to differentiate between jalr and jal
     // feed to hazard unit
-    output logic              rs1_used_e,
-    output logic              rs2_used_e 
+    output logic              rs1_signal,
+    output logic              rs2_signal 
 );
 
 logic [6:0]     opcode;
@@ -39,8 +39,8 @@ main_decoder decoder_1 (
     .reg_write  (reg_write),    
     .alu_op     (alu_logic),
     .jalr       (jalr),
-    .rs1_signal (rs1_used_e),
-    .rs2_signal (rs2_used_e)
+    .rs1_signal (rs1_signal),
+    .rs2_signal (rs2_signal)
 );
 
 alu_decoder decoder_2 (
