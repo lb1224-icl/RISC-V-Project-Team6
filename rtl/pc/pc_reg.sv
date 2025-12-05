@@ -7,9 +7,9 @@ module pc_reg #(
     output logic [WIDTH-1:0] pc_out
 );
 
-always_ff @(posedge clk or posedge rst) begin
+always_ff @(posedge clk, posedge rst) begin
     if (rst)
-        pc_out <= 'b0;
+        pc_out <= 0;
     else
         pc_out <= pc_in;
 end
