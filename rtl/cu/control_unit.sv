@@ -3,6 +3,7 @@ module control_unit #(
 ) (
     input logic  [WIDTH-1:0]  ins,        // entire instruction to decode
     input logic               eq,         // branch condition
+
     output logic              pc_src,     // pc branches or not
     output logic [1:0]        result_src, // whether we are taking the ALU result,  data memory or PC next
     output logic              mem_write,  // write enable for data memory
@@ -10,8 +11,12 @@ module control_unit #(
     output logic              alu_src,    // whether 2nd ALU input is a register data or immediate
     output logic [2:0]        imm_src,    // type of ins: R, I, S, B...
     output logic              reg_write,  // register write enable
+    // feed to alu
     output logic [2:0]        funct3,     // neccessary logic for branching to differentiate between bne beq...
-    output logic              jalr
+    output logic              jalr,       // neccessary logic for jumps to differentiate between jalr and jal
+    // feed to hazard unit
+    output logic              rs1_used_e,
+    output logic              rs2_used_e 
 );
 
 logic [6:0]     opcode;
@@ -33,7 +38,9 @@ main_decoder decoder_1 (
     .imm_src    (imm_src),      
     .reg_write  (reg_write),    
     .alu_op     (alu_logic),
-    .jalr       (jalr)
+    .jalr       (jalr),
+    .rs1_signal (rs1_used_e),
+    .rs2_signal (rs2_used_e)
 );
 
 alu_decoder decoder_2 (

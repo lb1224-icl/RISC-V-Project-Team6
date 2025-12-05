@@ -9,7 +9,9 @@ module main_decoder (
     output logic [2:0]   imm_src,
     output logic         reg_write,
     output logic [2:0]   alu_op,
-    output logic         jalr   
+    output logic         jalr,
+    output logic         rs1_signal,
+    output logic         rs2_Signal   
 );
 
 always_comb begin
@@ -22,19 +24,23 @@ always_comb begin
     reg_write  = 0;
     alu_op     = 0;
     jalr       = 0;
+    rs1_signal = 0;
+    rs2_signal = 0;
     
     unique case (opcode)
 
-        7'd51: begin
+        7'd51: begin        // R type
             pc_src     = 0;
             result_src = 0; 
             mem_write  = 0;
             alu_src    = 0;
             reg_write  = 1;
             alu_op     = 2;    // ALU decider will choose ADD/SUB/etc.
+            rs1_signal = 1;
+            rs2_signal = 1;
         end
 
-        7'd3: begin
+        7'd3: begin         // I type --> load op
             pc_src     = 0;
             result_src = 1;    // from memory
             mem_write  = 0;
@@ -42,9 +48,11 @@ always_comb begin
             imm_src    = 0;    // I-type immediate
             reg_write  = 1;
             alu_op     = 0;    // ADD for address calculation
+            rs1_signal = 1;
+            rs2_signal = 0;
         end
 
-        7'd19: begin
+        7'd19: begin        // I type --> logic op
             pc_src     = 0;
             result_src = 0;
             mem_write  = 0;
@@ -52,27 +60,33 @@ always_comb begin
             imm_src    = 0;
             reg_write  = 1;
             alu_op     = 2;    // handled in ALU decoder
+            rs1_signal = 1;
+            rs2_signal = 0;
         end
 
-        7'd35: begin
+        7'd35: begin        // S type 
             pc_src     = 0;
             mem_write  = 1;
             alu_src    = 1;
             imm_src    = 1;    // S-type immediate
             reg_write  = 0;
             alu_op     = 0;
+            rs1_signal = 1;
+            rs2_signal = 1;
         end
 
-        7'd99: begin
+        7'd99: begin        // B type
             pc_src     = eq;   // branch taken?
             mem_write  = 0;
             alu_src    = 0;
             imm_src    = 2;    // B-type immediate
             reg_write  = 0;
             alu_op     = 1;    // SUB for compare
+            rs1_signal = 1;
+            rs2_signal = 1;
         end
 
-        7'd103: begin
+        7'd103: begin       // I type --> jalr
             pc_src     = 1;
             result_src = 0;    // ALU result
             mem_write  = 0;
@@ -81,9 +95,11 @@ always_comb begin
             reg_write  = 1;
             alu_op     = 0;    // ADD for PC = rs1 + imm
             jalr       = 1;
+            rs1_signal = 1;
+            rs2_signal = 0;
         end
 
-        7'd111: begin
+        7'd111: begin       // J type --> jal
             pc_src     = 1;
             result_src = 2;    // PC+4
             mem_write  = 0;
@@ -91,6 +107,8 @@ always_comb begin
             imm_src    = 3;    // J-type immediate
             reg_write  = 1;
             jalr       = 0;
+            rs1_signal = 0;
+            rs2_signal = 0;       
         end
 
         default: begin
