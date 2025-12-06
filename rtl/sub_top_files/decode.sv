@@ -27,7 +27,10 @@ module decode #(
     output logic [DATA_WIDTH-1:0] a0,
 
     output logic [2:0]            funct3,
-    output logic                  jalr
+    output logic                  jalr,
+
+    output logic                  rs1_used_d,
+    output logic                  rs2_used_d
 );
 
 // datapaths that just pass through
@@ -51,7 +54,9 @@ control_unit cu (
     .imm_src    (imm_src_d),      
     .reg_write  (reg_write_d),
     .funct3     (funct3),
-    .jalr       (jalr)
+    .jalr       (jalr),
+    .rs1_signal (rs1_used_d),
+    .rs2_signal (rs2_used_d)
 );
 
  reg_file rf (     

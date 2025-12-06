@@ -13,6 +13,9 @@ module mw_register #(
     input  logic [WIDTH-1:0] read_data_m,
     input  logic [4:0]       rd_m,
     input  logic [WIDTH-1:0] pc_plus4_m,
+
+    // forwarding inputs
+    input  logic             fwd_ls_hu, // signal from hazard unit
     
     // control signals to WB stage
     output logic             reg_write_w,
@@ -22,7 +25,10 @@ module mw_register #(
     output logic [WIDTH-1:0] alu_result_w,
     output logic [WIDTH-1:0] read_data_w,
     output logic [4:0]       rd_w,
-    output logic [WIDTH-1:0] pc_plus4_w
+    output logic [WIDTH-1:0] pc_plus4_w,
+
+    // forwarding outputs
+    output logic             fwd_ls_w
 );
 
 always_ff @(posedge clk) begin
