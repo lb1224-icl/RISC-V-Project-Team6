@@ -1,9 +1,9 @@
 module memory #(
     parameter WIDTH = 32
 )(
+    input  logic             clk,
     input  logic [WIDTH-1:0] alu_result_m_i,
     input  logic [WIDTH-1:0] write_data_m,
-    input  logic             clk,
     input  logic             mem_write_m,
     input  logic             reg_write_m_i,
     input  logic [1:0]       result_src_m_i,
