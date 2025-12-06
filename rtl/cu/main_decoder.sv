@@ -82,7 +82,7 @@ always_comb begin
 
         7'd99: begin        // B type
             jump_d     = 0;
-            branch_d   = eq;   // branch taken?
+            branch_d   = 1;   // branch taken?
             mem_write  = 0;
             alu_src    = 0;
             imm_src    = 2;    // B-type immediate

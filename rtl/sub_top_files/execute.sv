@@ -14,6 +14,8 @@ module execute #(
     input logic [4:0]          rs2_e_i,
     input logic [D_WIDTH-1:0]  imm_ext_e,
     input logic [D_WIDTH-1:0]  pc_plus4_e_i,
+    input logic                branch_e,
+    input logic                jump_e,
 
     input logic [2:0]          funct3,
     input logic                jalr,
@@ -24,7 +26,6 @@ module execute #(
     input logic [1:0]          fwd_rs1,
     input logic [1:0]          fwd_rs2,
 
-    output logic               zero_e, // eq
     output logic               reg_write_e_o,
     output logic [1:0]         result_src_e_o,
     output logic               mem_write_e_o,
@@ -34,9 +35,11 @@ module execute #(
     output logic [4:0]         rs1_e_o,
     output logic [4:0]         rs2_e_o,
     output logic [D_WIDTH-1:0] pc_plus4_e_o,
-    output logic [D_WIDTH-1:0] pc_target_e
+    output logic [D_WIDTH-1:0] pc_target_e,
+    output logic               pc_src_e
 );
 
+logic               zero_e; // eq
 logic [D_WIDTH-1:0] src_a_e;
 logic [D_WIDTH-1:0] src_b_e;
 logic [D_WIDTH-1:0] alu_res;
@@ -52,6 +55,7 @@ assign rs1_e_o        = rs1_e_i;
 assign rs2_e_o        = rs2_e_i;
 assign pc_plus4_e_o   = pc_plus4_e_i;
 assign alu_result     = alu_res;
+assign pc_src_e = jump_e | (zero_e & branch_e)
 
 alu ALU (
     .aluop1    (src_a_e),

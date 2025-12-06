@@ -13,7 +13,7 @@ module cpu #(
     logic                    reg_write_d;
     logic [1:0]              result_src_d;
     logic                    mem_write_d;
-    logic                    pc_src;
+    logic                    pc_src_e;
     logic [3:0]              alu_control_d;
     logic                    alu_src_d;
     logic [WIDTH-1:0]        rd_1;
@@ -26,7 +26,6 @@ module cpu #(
     logic [2:0]              funct3_int;
     logic                    jalr;
 
-    logic                    zero_e;
     logic                    reg_write_e_o;
     logic [1:0]              result_src_e_o;
     logic                    mem_write_e_o;
@@ -52,7 +51,7 @@ module cpu #(
         .clk(clk),
         .rst(rst),
         .pc_target_ext(pc_target_e),
-        .pc_src(pc_src),
+        .pc_src(pc_src_e),
         .pc_plus_4f(pc_plus_4f),
         .pc_f(pc_f),
         .ins(ins)
@@ -60,7 +59,6 @@ module cpu #(
 
     decode #(.DATA_WIDTH(WIDTH)) u_decode (
         .clk(clk),
-        .zero_e(zero_e),
         .reg_write_w(reg_write_w_o),
         .ins(ins),
         .pc_d_i(pc_f),
@@ -70,7 +68,6 @@ module cpu #(
         .reg_write_d(reg_write_d),
         .result_src_d(result_src_d),
         .mem_write_d(mem_write_d),
-        .pc_src(pc_src),
         .alu_control_d(alu_control_d),
         .alu_src_d(alu_src_d),
         .rd_1(rd_1),
@@ -96,7 +93,6 @@ module cpu #(
         .rd_e_i(rd_d),
         .imm_ext_e(imm_ext_d),
         .pc_plus_4e_i(pc_plus_4d_o),
-        .zero_e(zero_e),
         .reg_write_e_o(reg_write_e_o),
         .result_src_e_o(result_src_e_o),
         .mem_write_e_o(mem_write_e_o),

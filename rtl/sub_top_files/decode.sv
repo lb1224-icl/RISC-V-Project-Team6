@@ -2,7 +2,6 @@ module decode #(
     DATA_WIDTH = 32
 ) (
     input  logic                  clk,
-    input  logic                  zero_e,
     input  logic                  reg_write_w,
     input  logic [DATA_WIDTH-1:0] instr_d,
     input  logic [DATA_WIDTH-1:0] pc_d_i,
@@ -13,7 +12,8 @@ module decode #(
     output logic                  reg_write_d,
     output logic [1:0]            result_src_d,
     output logic                  mem_write_d,
-    output logic                  pc_src,
+    output logic                  branch_d,
+    output logic                  jump_d,
     output logic [3:0]            alu_control_d,
     output logic                  alu_src_d,
     output logic [DATA_WIDTH-1:0] rd_1,
@@ -46,7 +46,8 @@ logic [2:0] imm_src_d;
 control_unit cu (     
     .ins        (instr_d),
     .eq         (zero_e),
-    .pc_src     (pc_src),      
+    .branch_d   (branch_d),    
+    .jump_d     (jump_d),     
     .result_src (result_src_d),   
     .mem_write  (mem_write_d),   
     .alu_ctrl   (alu_control_d), 
