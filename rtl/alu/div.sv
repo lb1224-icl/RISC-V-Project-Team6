@@ -1,5 +1,5 @@
 module div #(
-    parameter D_WIDTH = 32;
+    parameter D_WIDTH = 32
 )
 (
     input  logic clk,
@@ -26,9 +26,8 @@ state_t state, next_state;
 
 logic [D_WIDTH:0] rem;
 logic [D_WIDTH-1:0] quo;
+logic [D_WIDTH-1:0] div_shift;
 logic [D_WIDTH:0] den;
-
-logic [5:0] counter;
 
 logic sign_q;
 logic sign_r;
@@ -41,7 +40,7 @@ always_comb begin
         case (state)
             IDLE:   if (start) next_state = INIT;
             INIT:   next_state = DIVIDE;
-            DIVIDE:    if (count == 6'd32) next_state = DONE;
+            DIVIDE:    if (counter == 6'd31) next_state = DONE;
             DONE: next_state = IDLE;
         endcase
 end
@@ -54,34 +53,42 @@ always_ff @(posedge clk) begin
 end
 
 always_ff @(posedge clk) begin
-    division_done <= 0;
+    division_done <= 1'b0;
     case (state)
         IDLE: begin
-                counter <= 0;
+                counter <= 6'd0;
         end
         INIT: begin
-            rem <= 0;
+            rem <= 33'b0;
+            quo <= 32'b0;
+            counter <= 6'd0;
             if (is_signed) begin
                 sign_q <= numerator[31] ^ denominator[31];
                 sign_r <= numerator[31];
-                quo <= numerator[31] ? -numerator : numerator;
+                div_shift <= numerator[31] ? -numerator : numerator;
                 den <= {1'b0, denominator[31] ? -denominator : denominator};
             end
             else begin
-                sign_q <= 0;
-                sign_r <= 0;
-                quo <= numerator;
+                sign_q <= 1'b0;
+                sign_r <= 1'b0;
+                div_shift <= numerator;
                 den <= {1'b0, denominator};
             end
         end
         DIVIDE: begin
-            rem <= rem << 1;
-            rem[0] <= qup[D_WIDTH-1];
-            quo <= quo << 1;
-            quo[0] <= 1'b0; 
-            if (rem >= den) begin
-                quo[0] <= 1'b1;
-                rem <= rem - den;
+            logic [D_WIDTH:0] rem_next;
+            rem_next = { rem[D_WIDTH-1:0], div_shift[D_WIDTH-1] }; // shift left and bring top dividend bit
+
+            // shift dividend left (consume top bit)
+            div_shift <= div_shift << 1;
+
+            // decide subtract
+            if (rem_next >= den) begin
+                    rem <= rem_next - den;
+                    quo <= { quo[D_WIDTH-2:0], 1'b1 };
+            end else begin
+                    rem <= rem_next;
+                    quo <= { quo[D_WIDTH-2:0], 1'b0 };
             end
             counter <= counter + 1;
         end
@@ -90,8 +97,8 @@ always_ff @(posedge clk) begin
             case (div_ctrl)
                 2'b00:  result <= sign_q ? -quo : quo;            // DIV
                 2'b01:  result <= quo;                            // DIVU
-                2'b10:  result <= sign_r ? -rem[W-1:0] : rem[W-1:0]; // REM
-                2'b11:  result <= rem[W-1:0];                     // REMU
+                2'b10:  result <= sign_r ? -rem[D_WIDTH-1:0] : rem[D_WIDTH-1:0]; // REM
+                2'b11:  result <= rem[D_WIDTH-1:0];                     // REMU
             endcase
         end
     endcase
