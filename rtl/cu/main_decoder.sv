@@ -2,7 +2,8 @@ module main_decoder (
     input  logic [6:0]   opcode,
     input  logic         eq,
 
-    output logic         pc_src,
+    output logic         branch_d,
+    output logic         jump_d,
     output logic [1:0]   result_src,
     output logic         mem_write,
     output logic         alu_src,
@@ -30,7 +31,8 @@ always_comb begin
     unique case (opcode)
 
         7'd51: begin        // R type
-            pc_src     = 0;
+            jump_d     = 0;
+            branch_d   = 0;
             result_src = 0; 
             mem_write  = 0;
             alu_src    = 0;
@@ -41,7 +43,8 @@ always_comb begin
         end
 
         7'd3: begin         // I type --> load op
-            pc_src     = 0;
+            jump_d     = 0;
+            branch_d   = 0;
             result_src = 1;    // from memory
             mem_write  = 0;
             alu_src    = 1; 
@@ -53,7 +56,8 @@ always_comb begin
         end
 
         7'd19: begin        // I type --> logic op
-            pc_src     = 0;
+            jump_d     = 0;
+            branch_d   = 0;
             result_src = 0;
             mem_write  = 0;
             alu_src    = 1;
@@ -65,7 +69,8 @@ always_comb begin
         end
 
         7'd35: begin        // S type 
-            pc_src     = 0;
+            jump_d     = 0;
+            branch_d   = 0;
             mem_write  = 1;
             alu_src    = 1;
             imm_src    = 1;    // S-type immediate
@@ -76,7 +81,8 @@ always_comb begin
         end
 
         7'd99: begin        // B type
-            pc_src     = eq;   // branch taken?
+            jump_d     = 0;
+            branch_d   = eq;   // branch taken?
             mem_write  = 0;
             alu_src    = 0;
             imm_src    = 2;    // B-type immediate
@@ -87,7 +93,8 @@ always_comb begin
         end
 
         7'd103: begin       // I type --> jalr
-            pc_src     = 1;
+            jump_d     = 1;
+            branch_d   = 0;
             result_src = 0;    // ALU result
             mem_write  = 0;
             alu_src    = 1; 
@@ -100,7 +107,8 @@ always_comb begin
         end
 
         7'd111: begin       // J type --> jal
-            pc_src     = 1;
+            jump_d     = 1;
+            branch_d   = 0;
             result_src = 2;    // PC+4
             mem_write  = 0;
             alu_src    = 1; 
