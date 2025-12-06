@@ -34,7 +34,7 @@ module mmu #(
     logic [DATA_WIDTH-1:0] ram_w_data;
     logic                  ram_we;
 
-    l1_cache #(
+    l1_cache_n_way #(
         .DATA_WIDTH (DATA_WIDTH),
         .ADDR_WIDTH (ADDR_WIDTH),
         .CACHE_SIZE (CACHE_SIZE),
