@@ -39,7 +39,7 @@ module l2_cache_n_way #(
     logic                 valid_array [0:SETS-1][0:WAYS-1];
     logic [LINE_BITS-1:0] data_array  [0:SETS-1][0:WAYS-1];
 
-    logic [WAY_BITS-1:0]  rr_ptr      [0:SETS-1];
+    logic [WAY_BITS-1:0]  rr_ptr      [0:SETS-1]; // round robin pointer
 
     wire [TAG_BITS-1:0]    mem_tag   = mem_addr[ADDR_WIDTH-1 -: TAG_BITS];
     wire [SET_BITS-1:0]    mem_set   = mem_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
