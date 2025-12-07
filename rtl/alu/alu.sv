@@ -41,6 +41,9 @@ always_comb begin
         4'b1001: begin //shift right arthimetic
             aluout = $signed(aluop1) >>> aluop2;
         end
+        4'b1111: begin //lui (pass value straight through to be written to reg file)
+            aluout = aluop2;
+        end
         default: begin
             aluout = 32'b0;
         end

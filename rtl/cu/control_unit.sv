@@ -2,7 +2,6 @@ module control_unit #(
     WIDTH = 32
 ) (
     input logic  [WIDTH-1:0]  ins,        // entire instruction to decode
-
     output logic              jump_d,     // pc jumps or not
     output logic              branch_d,   // pc branches or not
     output logic [1:0]        result_src, // whether we are taking the ALU result,  data memory or PC next

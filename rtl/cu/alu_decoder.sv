@@ -50,6 +50,8 @@ case (alu_op)       // to determine the ALU operation type
             else
                $error("ALU_Decoder Error: funct3 out of range!");
     end
+
+    3'b11:   alu_ctrl = 4'b1111;     // lui
     
     default: $error("ALU_Decoder Error: alu_op out of range!");
 
