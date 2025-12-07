@@ -1,6 +1,6 @@
 module ram #(
     parameter WIDTH = 32, DATA_WIDTH = 8, SIZE = 17
-)(
+) (
     input  logic [WIDTH-1:0] adr,
     input  logic [WIDTH-1:0] write_data,
     input  logic             clk,

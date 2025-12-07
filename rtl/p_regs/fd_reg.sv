@@ -1,6 +1,6 @@
 module fd_register #(
     parameter WIDTH = 32
-)(
+) (
     input  logic             clk,
     input  logic             flush,
     input  logic             stall,

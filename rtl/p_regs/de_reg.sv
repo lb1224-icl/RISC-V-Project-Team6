@@ -1,6 +1,6 @@
 module de_register #(
     parameter WIDTH = 32
-)(
+) (
     input  logic             clk,
     input  logic             stall,
     input  logic             flush,

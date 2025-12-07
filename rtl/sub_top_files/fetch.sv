@@ -1,6 +1,6 @@
 module fetch #(
     parameter WIDTH = 32
-)(
+) (
     input  logic             clk,
     input  logic             rst,
 

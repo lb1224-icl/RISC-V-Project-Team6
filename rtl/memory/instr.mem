@@ -1,4 +1,4 @@
-13 09 F0 0F    // addi s2, x0, 0xff        (0xff -> imm[11:0], rd=18)
+13 09 F0 0F    // addi s2, x0, 0xff (0xff -> imm[11:0], rd=18)
 93 09 30 00    // addi s3, x0, 3
 93 06 10 00    // addi a3, x0, 1
 13 06 10 00    // addi a2, x0, 1
@@ -20,7 +20,7 @@ E3 1A 25 FF    // bne a0, s2, on_seq
 B3 E6 C6 02    // or   a3, a3, a2
 93 F6 F6 00    // andi a3, a3, 0xF
 13 07 00 00    // addi a4, x0, 0
-6F 00 40 00    // jal x0, random_loop   (negative offset encoded)
+6F 00 40 00    // jal x0, random_loop (negative offset encoded)
 EF 00 00 01    // random_loop: jal ra, delay
 13 07 17 00    // addi a4, a4, 1
 E3 08 D7 FA    // beq a4, a3, rst

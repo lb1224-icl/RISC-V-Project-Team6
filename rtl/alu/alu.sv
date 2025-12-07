@@ -11,34 +11,34 @@ module alu #(
 
 always_comb begin
     casez (aluctrl)
-        4'b0000: begin//add
+        4'b0000: begin // add
             aluout = aluop1 + aluop2;
         end
-        4'b0001: begin //subtract
+        4'b0001: begin // subtract
             aluout = aluop1 - aluop2;
         end
-        4'b0111: begin //shift left by x
+        4'b0111: begin // shift left by x
             aluout = aluop1 << aluop2;
         end
-        4'b1000: begin //shift right by x
+        4'b1000: begin // shift right by x
             aluout = aluop1 >> aluop2;
         end
-        4'b0100: begin //xor
+        4'b0100: begin // xor
             aluout = aluop1 ^ aluop2;
         end
-        4'b0010: begin //and
+        4'b0010: begin // and
             aluout = aluop1 & aluop2;
         end
-        4'b0011: begin //or
+        4'b0011: begin // or
             aluout = aluop1 | aluop2;
         end
-        4'b0101: begin //set less than
+        4'b0101: begin // set less than
             aluout = {{D_WIDTH-1{1'b0}}, $signed(aluop1) < $signed(aluop2)};
         end
-        4'b0110: begin //set less than unsigned
+        4'b0110: begin // set less than unsigned
             aluout = {{D_WIDTH-1{1'b0}}, aluop1 < aluop2};
         end
-        4'b1001: begin //shift right arthimetic
+        4'b1001: begin // shift right arthimetic
             aluout = $signed(aluop1) >>> aluop2;
         end
         default: begin
