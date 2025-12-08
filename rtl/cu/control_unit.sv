@@ -42,6 +42,8 @@ main_decoder decoder_1 (
     .reg_write  (reg_write),    
     .alu_op     (alu_logic),
     .jalr       (jalr),
+    .jump_d     (jump_d),
+    .branch_d   (branch_d),
     .rs1_signal (rs1_signal),
     .rs2_signal (rs2_signal),
     .mul_en     (mul_en),

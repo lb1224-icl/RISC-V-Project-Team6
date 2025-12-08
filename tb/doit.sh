@@ -45,7 +45,10 @@ for file in "${files[@]}"; do
                 -y ${RTL_FOLDER} \
                 --prefix "Vdut" \
                 -o Vdut \
-                -LDFLAGS "-lgtest -lgtest_main -lpthread"
+                -LDFLAGS "-lgtest -lgtest_main -lpthread" \
+                -Wno-fatal -Wno-WIDTH -Wno-UNOPTFLAT -Wno-LITENDIAN \
+                -Wno-MODDUP -Wno-CASEINCOMPLETE -Wno-UNUSED -Wno-BLKANDNBLK \
+                -Wno-DECLFILENAME -Wno-LATCH -Wno-UNDRIVEN -Wno-IMPLICIT -Wno-PINMISSING
 
     # Build C++ project with automatically generated Makefile
     make -j -C obj_dir/ -f Vdut.mk

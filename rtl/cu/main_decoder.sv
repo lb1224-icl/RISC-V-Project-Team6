@@ -28,8 +28,12 @@ always_comb begin
     reg_write  = 0;
     alu_op     = 0;
     jalr       = 0;
+    jump_d     = 0;
+    branch_d   = 0;
     rs1_signal = 0;
     rs2_signal = 0;
+    mul_en     = 0;
+    div_en     = 0;
     
     unique case (opcode)
 
