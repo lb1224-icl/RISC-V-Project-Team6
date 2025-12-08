@@ -10,9 +10,14 @@ module main_decoder (
     output logic [2:0]   imm_src,
     output logic         reg_write,
     output logic [2:0]   alu_op,
+
     output logic         jalr,
+
     output logic         rs1_signal,
-    output logic         rs2_Signal   
+    output logic         rs2_Signal,
+
+    output logic         mul_en,
+    output logic         div_en
 );
 
 always_comb begin
@@ -142,6 +147,34 @@ always_comb begin
             jalr       = 0;
             rs1_signal = 0;
             rs2_signal = 0;
+        end
+
+        7'd67: begin     // R type --> Multiply 
+            jump_d     = 0;
+            branch_d   = 0;
+            result_src = 0;   //ALU result
+            mem_write  = 0;
+            alu_src    = 1;  
+            reg_write  = 1;
+            jalr       = 0;
+            rs1_signal = 1;
+            rs2_signal = 1;
+            mul_en     = 1;
+            alu_op     = 4;
+        end
+
+        7'd68: begin     // R type --> Divide 
+            jump_d     = 0;
+            branch_d   = 0;
+            result_src = 0;   //ALU result
+            mem_write  = 0;
+            alu_src    = 1; 
+            reg_write  = 1;
+            jalr       = 0;
+            rs1_signal = 1;
+            rs2_signal = 1;
+            div_en     = 1;
+            alu_op     = 5;
         end
 
         default: begin

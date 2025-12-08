@@ -15,7 +15,13 @@ module control_unit #(
     output logic              jalr,       // neccessary logic for jumps to differentiate between jalr and jal
     // feed to hazard unit
     output logic              rs1_signal,
-    output logic              rs2_signal 
+    output logic              rs2_signal,
+    // multiply and divide signals
+    output logic [1:0]        mul_ctrl,
+    output logic [1:0]        div_ctrl,
+    output logic              mul_en,
+    output logic              div_en
+
 );
 
 logic [6:0]     opcode;
@@ -39,7 +45,9 @@ main_decoder decoder_1 (
     .alu_op     (alu_logic),
     .jalr       (jalr),
     .rs1_signal (rs1_signal),
-    .rs2_signal (rs2_signal)
+    .rs2_signal (rs2_signal),
+    .mul_en     (mul_en),
+    .div_en     (div_en)
 );
 
 alu_decoder decoder_2 (
@@ -47,7 +55,9 @@ alu_decoder decoder_2 (
     .opcode_5    (opcode[5]),
     .funct3      (funct3),
     .funct7_5    (funct7[5]),
-    .alu_ctrl    (alu_ctrl)
+    .alu_ctrl    (alu_ctrl),
+    .mul_ctrl    (mul_ctrl),
+    .div_ctrl    (div_ctrl)
 );
 
 endmodule 
