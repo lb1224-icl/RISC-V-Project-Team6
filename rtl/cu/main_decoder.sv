@@ -131,7 +131,7 @@ always_comb begin
             alu_src    = 1; 
             imm_src    = 4; // U-type immediate
             reg_write  = 1;
-            alu_op     = 0; // ADD: x0 + imm
+            alu_op     = 3; // ADD: x0 + imm
             jalr       = 0;
             rs1_signal = 0;
             rs2_signal = 0;

@@ -19,8 +19,6 @@ module execute #(
     input logic [D_WIDTH-1:0]  alu_result_m,
     input logic [1:0]          fwd_rs1,
     input logic [1:0]          fwd_rs2,
-    input logic                rs1_used_e,
-    input logic                rs2_used_e,
 
     output logic               pc_src_e,
     output logic [D_WIDTH-1:0] alu_result_e,
@@ -34,7 +32,6 @@ logic [D_WIDTH-1:0] src_b_e;
 logic [D_WIDTH-1:0] alu_res;
 logic [D_WIDTH-1:0] pc_imm;
 logic [D_WIDTH-1:0] fwd_aluop1_raw;
-logic [D_WIDTH-1:0] fwd_aluop2_raw;
 logic [D_WIDTH-1:0] fwd_aluop2_out;
 
 assign pc_src_e     = jump_e | (zero_e & branch_e);
@@ -85,11 +82,10 @@ mux_4 fwd_aluop2 (
     .in2       (alu_result_m),
     .in3       (32'b0),
     .sel       (fwd_rs2),
-    .out       (fwd_aluop2_raw)
+    .out       (fwd_aluop2_out)
 );
 
 // select operand sources: allow PC or zero when registers are unused
-assign src_a_e        = op1_pc_e   ? pc_e           : (rs1_used_e ? fwd_aluop1_raw : '0);
-assign fwd_aluop2_out = rs2_used_e ? fwd_aluop2_raw : '0;
+assign src_a_e = op1_pc_e ? pc_e : fwd_aluop1_raw;
 
 endmodule

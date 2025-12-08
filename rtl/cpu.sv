@@ -209,8 +209,6 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .alu_result_m  (alu_result_m),
     .fwd_rs1       (fwd_rs1),
     .fwd_rs2       (fwd_rs2),
-    .rs1_used_e    (rs1_used_e),
-    .rs2_used_e    (rs2_used_e),
 
     .pc_src_e      (pc_src_e),
     .alu_result_e  (alu_result_e),
