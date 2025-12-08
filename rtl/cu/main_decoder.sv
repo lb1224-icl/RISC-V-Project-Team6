@@ -136,6 +136,7 @@ always_comb begin
             result_src = 0;   //ALU result
             mem_write  = 0;
             alu_src    = 1; 
+            alu_op     = 3;
             imm_src    = 4;    // U-type immediate
             reg_write  = 1;
             jalr       = 0;
