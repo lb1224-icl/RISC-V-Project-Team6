@@ -36,6 +36,7 @@ public:
         top->mem_we    = 0;
         top->mem_addr  = 0;
         top->mem_w_data = 0;
+        top->mem_byte_en = 0;
 
         cycle(5);
         top->rst = 0;
@@ -65,11 +66,12 @@ public:
     }
 
     // write -> wait until mem_ready = 1
-    void writeWord(uint32_t addr, uint32_t data) {
+    void writeWord(uint32_t addr, uint32_t data, uint8_t byte_en = 0xF) {
         top->mem_valid  = 1;
         top->mem_we     = 1;
         top->mem_addr   = addr;
         top->mem_w_data = data;
+        top->mem_byte_en = byte_en;
 
         int guard = 0;
         while (!top->mem_ready && guard < MAX_SIM_CYC) {
@@ -81,6 +83,7 @@ public:
 
         top->mem_valid = 0;
         top->mem_we    = 0;
+        top->mem_byte_en = 0;
     }
 
     // read -> wait until mem_ready = 1, then sample mem_r_data
@@ -88,6 +91,7 @@ public:
         top->mem_valid = 1;
         top->mem_we    = 0;
         top->mem_addr  = addr;
+        top->mem_byte_en = 0;
 
         cycles_used = 0;
         int guard = 0;

@@ -31,6 +31,7 @@ public:
         top->mem_we    = 0;
         top->mem_addr  = 0;
         top->mem_w_data = 0;
+        top->mem_byte_en = 0;
 
         cycle(5);
         top->rst = 0;
@@ -56,24 +57,26 @@ public:
     }
 
     // write -> wait until mem_ready == 1, then drop request
-    void writeWord(uint32_t addr, uint32_t data, int &cycles_used) {
+    void writeWord(uint32_t addr, uint32_t data, int &cycles_used, uint8_t byte_en = 0xF) {
         top->mem_valid  = 1;
         top->mem_we     = 1;
         top->mem_addr   = addr;
         top->mem_w_data = data;
+        top->mem_byte_en = byte_en;
 
         cycles_used = 0;
         int guard = 0;
 
-        while (!top->mem_ready && guard < MAX_SIM_CYC) {
+        do {
             cycle();
             ++guard;
             ++cycles_used;
-        }
+        } while (!top->mem_ready && guard < MAX_SIM_CYC);
 
         // Drop the request
         top->mem_valid = 0;
         top->mem_we    = 0;
+        top->mem_byte_en = 0;
 
         // One extra cycle to let MMU return to IDLE
         cycle();
@@ -84,15 +87,16 @@ public:
         top->mem_valid = 1;
         top->mem_we    = 0;
         top->mem_addr  = addr;
+        top->mem_byte_en = 0;
 
         cycles_used = 0;
         int guard = 0;
 
-        while (!top->mem_ready && guard < MAX_SIM_CYC) {
+        do {
             cycle();
             ++guard;
             ++cycles_used;
-        }
+        } while (!top->mem_ready && guard < MAX_SIM_CYC);
 
         // mem_ready is high *now* – sample result & hit
         uint32_t r = top->mem_r_data;

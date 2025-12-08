@@ -1,4 +1,4 @@
-#include "mmu_basic.h"
+#include "mmu_tb_basic.h"
 
 // Test 1: simple read after reset
 // Assumes RAM is initialised to 0 in your ram.sv

@@ -9,7 +9,10 @@ public:
 
     static const int MAX_WAIT = 200;
 
-    MmuTb() { top = new Vmmu; }
+    MmuTb() { 
+        top = new Vmmu; 
+        top->mem_byte_en = 0;
+    }
     ~MmuTb() { delete top; }
 
     // One tick = full clock cycle
@@ -21,17 +24,19 @@ public:
     void reset() {
         top->clk = 0;
         top->rst = 1;
+        top->mem_byte_en = 0;
         tick();
         tick();
         top->rst = 0;
         tick();
     }
 
-    void writeWord(uint32_t addr, uint32_t data) {
+    void writeWord(uint32_t addr, uint32_t data, uint8_t byte_en = 0xF) {
         top->mem_valid = 1;
         top->mem_we    = 1;
         top->mem_addr  = addr;
         top->mem_w_data = data;
+        top->mem_byte_en = byte_en;
 
         tick();   
 
@@ -41,6 +46,7 @@ public:
         top->mem_valid = 1;
         top->mem_we    = 0;
         top->mem_addr  = addr;
+        top->mem_byte_en = 0;
 
         tick();  
 

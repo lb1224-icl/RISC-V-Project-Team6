@@ -25,6 +25,7 @@ public:
 
         top->clk = 0;
         top->rst = 1;
+        top->mem_byte_en = 0;
         cycle(5);
         top->rst = 0;
     }
@@ -45,11 +46,12 @@ public:
     }
 
     // write
-    void writeWord(uint32_t addr, uint32_t data, bool &hit_out) {
+    void writeWord(uint32_t addr, uint32_t data, bool &hit_out, uint8_t byte_en = 0xF) {
         top->mem_valid = 1;
         top->mem_we    = 1;
         top->mem_addr  = addr;
         top->mem_w_data= data;
+        top->mem_byte_en = byte_en;
 
         cycle();  // allow combinational hit to update
         hit_out = top->cache_hit;
@@ -61,6 +63,7 @@ public:
 
         // Drop valid *in the same cycle after ready*
         top->mem_valid = 0;
+        top->mem_byte_en = 0;
         cycle();
 
         if (hit_out) hit_count++;
@@ -72,6 +75,7 @@ public:
         top->mem_valid = 1;
         top->mem_we    = 0;
         top->mem_addr  = addr;
+        top->mem_byte_en = 0;
 
         cycle();  
         hit_out = top->cache_hit;

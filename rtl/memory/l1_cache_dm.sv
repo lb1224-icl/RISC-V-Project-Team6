@@ -12,6 +12,7 @@ module l1_cache_dm #(
     input  logic                  mem_we,
     input  logic [ADDR_WIDTH-1:0] mem_addr,
     input  logic [DATA_WIDTH-1:0] mem_w_data,
+    input  logic [(DATA_WIDTH/8)-1:0] mem_byte_en,
     output logic [DATA_WIDTH-1:0] mem_r_data,
     output logic                  cache_hit,
 
@@ -74,6 +75,16 @@ module l1_cache_dm #(
 
     assign mem_r_data = line_word;
 
+    // Expand byte enable mask
+    logic [DATA_WIDTH-1:0] byte_mask;
+    always_comb begin
+        for (int b = 0; b < BYTES_PER_WORD; b++) begin
+            byte_mask[b*8 +: 8] = {8{mem_byte_en[b]}};
+        end
+    end
+
+    wire [DATA_WIDTH-1:0] masked_write = mem_w_data & byte_mask;
+
     // fill address breakdown 
     wire [TAG_BITS-1:0]      fill_tag        = fill_addr[ADDR_WIDTH-1 -: TAG_BITS];
 
@@ -95,11 +106,24 @@ module l1_cache_dm #(
         end else begin
             // CPU write-hit: update line word
             if (mem_valid && mem_we && cache_hit) begin
+                logic [DATA_WIDTH-1:0] cur_word;
                 case (mem_word_index)
-                    0: data_array[mem_set][31:0]     <= mem_w_data;
-                    1: data_array[mem_set][63:32]    <= mem_w_data;
-                    2: data_array[mem_set][95:64]    <= mem_w_data;
-                    3: data_array[mem_set][127:96]   <= mem_w_data;
+                    0: begin
+                        cur_word = data_array[mem_set][31:0];
+                        data_array[mem_set][31:0]     <= (cur_word & ~byte_mask) | masked_write;
+                    end
+                    1: begin
+                        cur_word = data_array[mem_set][63:32];
+                        data_array[mem_set][63:32]    <= (cur_word & ~byte_mask) | masked_write;
+                    end
+                    2: begin
+                        cur_word = data_array[mem_set][95:64];
+                        data_array[mem_set][95:64]    <= (cur_word & ~byte_mask) | masked_write;
+                    end
+                    3: begin
+                        cur_word = data_array[mem_set][127:96];
+                        data_array[mem_set][127:96]   <= (cur_word & ~byte_mask) | masked_write;
+                    end
                 endcase
             end
 

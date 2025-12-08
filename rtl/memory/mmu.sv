@@ -11,11 +11,12 @@ module mmu #(
     input  logic                  mem_we,
     input  logic [ADDR_WIDTH-1:0] mem_addr,
     input  logic [DATA_WIDTH-1:0] mem_w_data,
+    input  logic [(DATA_WIDTH/8)-1:0] mem_byte_en,
 
     // MMU -> CPU
     output logic [DATA_WIDTH-1:0] mem_r_data,
     output logic                  mem_ready,   // 1 -> MMU can accept / complete an access
-    output logic                  cache_hit    // 1 -> last completed READ was a cache hit
+    output logic                  cache_hit    // 1 -> last completed READ was a cache hit (used in test benches)
 );
 
     localparam int BYTES_PER_WORD = DATA_WIDTH/8;
@@ -78,6 +79,7 @@ module mmu #(
         .mem_we         (mem_we),
         .mem_addr       (mem_addr),
         .mem_w_data     (mem_w_data),
+        .mem_byte_en    (mem_byte_en),
         .mem_r_data     (l1_r_word),
         .cache_hit      (l1_hit),
         .fill_en        (l1_fill_en),
@@ -99,6 +101,7 @@ module mmu #(
         .mem_we         (mem_we),
         .mem_addr       (mem_addr),
         .mem_w_data     (mem_w_data),
+        .mem_byte_en    (mem_byte_en),
         .mem_r_data     (l2_r_block),
         .cache_hit      (l2_hit),
         .fill_en        (l2_fill_en),
@@ -120,6 +123,7 @@ module mmu #(
         .mem_we         (mem_we),
         .mem_addr       (mem_addr),
         .mem_w_data     (mem_w_data),
+        .mem_byte_en    (mem_byte_en),
         .mem_r_data     (l3_r_block),
         .cache_hit      (l3_hit),
         .fill_en        (l3_fill_en),
@@ -133,6 +137,7 @@ module mmu #(
         .write_data   (ram_w_data),
         .clk          (clk),
         .write_enable (mem_we),
+        .byte_en      (mem_byte_en),
         .read_data    (ram_r_data)
     );
 

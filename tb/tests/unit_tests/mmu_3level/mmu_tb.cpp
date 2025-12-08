@@ -3,9 +3,7 @@
 #include <unordered_map>
 #include <random>
 
-// =====================
 // Test 1: Simple write/read
-// =====================
 TEST(MmuBasic, SimpleWriteRead) {
     MmuTb tb;
     tb.reset();
@@ -16,9 +14,7 @@ TEST(MmuBasic, SimpleWriteRead) {
     ASSERT_EQ(r, 0xAAAA5555);
 }
 
-// =====================
 // Test 2: Sequential block read
-// =====================
 TEST(MmuBasic, SequentialBlockReads) {
     MmuTb tb;
     tb.reset();
@@ -33,9 +29,7 @@ TEST(MmuBasic, SequentialBlockReads) {
     }
 }
 
-// =====================
 // Test 3: Overwrite test
-// =====================
 TEST(MmuBasic, OverwriteTest) {
     MmuTb tb;
     tb.reset();
@@ -49,9 +43,7 @@ TEST(MmuBasic, OverwriteTest) {
     ASSERT_EQ(r, 0x33333333);
 }
 
-// =====================
 // Test 4: Cross-line aliasing
-// =====================
 TEST(MmuBasic, CrossLineAlias) {
     MmuTb tb;
     tb.reset();
@@ -65,9 +57,7 @@ TEST(MmuBasic, CrossLineAlias) {
     ASSERT_EQ(tb.readWord(B), 0xBBBB0002);
 }
 
-// =====================
 // Test 5: Small random stress model-check
-// =====================
 TEST(MmuBasic, RandomModelCheck) {
     MmuTb tb;
     tb.reset();
@@ -94,4 +84,28 @@ TEST(MmuBasic, RandomModelCheck) {
                 << " iter=" << std::dec << i;
         }
     }
+}
+
+// Test 6: Byte-masked write
+TEST(MmuBasic, ByteMaskedWrite) {
+    MmuTb tb;
+    tb.reset();
+
+    uint32_t addr = 0x300;
+    tb.writeWord(addr, 0xCAFEBABE);
+    tb.writeWord(addr, 0x00000055, 0b0001); // update lowest byte only
+
+    ASSERT_EQ(tb.readWord(addr), 0xCAFEBA55u);
+}
+
+// Test 7: Halfword-masked write
+TEST(MmuBasic, HalfwordMaskedWrite) {
+    MmuTb tb;
+    tb.reset();
+
+    uint32_t addr = 0x320;
+    tb.writeWord(addr, 0x01020304);
+    tb.writeWord(addr, 0xABCD0000, 0b1100); // update upper halfword
+
+    ASSERT_EQ(tb.readWord(addr), 0xABCD0304u);
 }
