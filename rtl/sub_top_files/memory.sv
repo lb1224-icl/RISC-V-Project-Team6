@@ -14,7 +14,7 @@ logic [WIDTH-1:0] mem_word;
 logic [WIDTH-1:0] store_data;
 logic [3:0]       byte_en;
 logic [7:0]       selected_byte;
-logic [15:0]      selected_half;
+logic [15:0]      selected_half; 
 
 assign store_data = write_data_m;
 

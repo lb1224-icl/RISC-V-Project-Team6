@@ -16,6 +16,6 @@ mux_4 writeback_mux (
     .in3 (32'b0),
     .sel (result_src_w),
     .out (result_w)
-);
+); 
 
 endmodule
