@@ -6,7 +6,7 @@ module writeback # (
     input  logic [D_WIDTH-1:0] read_data_w,
     input  logic [D_WIDTH-1:0] pc_plus4_w,
 
-    output logic [D_WIDTH-1:0] result_w,
+    output logic [D_WIDTH-1:0] result_w
 );
 
 mux_4 writeback_mux (

@@ -23,8 +23,9 @@ end
 
 // synchronous write (x0 cannot be written)
 always_ff @(negedge clk) begin
-    if (wr_en && (a3 != 0))
+    if (wr_en && (a3 != 0)) begin
         ram_array[a3] <= din;
+    end
 end
 
 // combinational reads

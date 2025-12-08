@@ -11,13 +11,13 @@ module instr_mem #(
     logic [7:0] mem_array [0:(1 << SIZE) - 1];
 
     initial begin
-        $display("Loading Instruction Memory (byte-addressed)...");
-        $readmemh("../../rtl/memory/instr.mem", mem_array);
-        $display("Loaded Instruction Memory!");
+        $display("Loading Instruction Memory (byte-addressed) from program.hex...");
+        $readmemh("program.hex", mem_array);
+        $display("Loaded Instruction Memory from program.hex!");
     end
 
     // word index = address; PC must be aligned to 4 bytes
-    wire [SIZE-1:0] byte_addr = addr;
+    wire [SIZE-1:0] byte_addr = addr[SIZE-1:0];
 
     always_comb begin
         if (byte_addr + 3 >= (1 << SIZE))

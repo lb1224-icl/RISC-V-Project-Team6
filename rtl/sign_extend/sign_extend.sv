@@ -1,12 +1,19 @@
 module sign_extend #(
     WIDTH = 32
 ) (
-    input logic  [2:0]             imm_src, // type of instruction
-    input logic  [WIDTH-1:0]       ins,     // entire instruction word
-    output logic [WIDTH-1:0]       imm_op   // output sign extended imm
+    input logic  [2:0]       imm_src, // type of instruction
+    input logic  [WIDTH-1:0] ins,     // entire instruction word
+    output logic [WIDTH-1:0] imm_op   // output sign extended imm
 );
 
+/* verilator lint_off UNUSED */
+wire unused_opcode_bits = |ins[6:0];
+/* verilator lint_on UNUSED */
+
 always_comb begin
+    // default to avoid unintended latches
+    imm_op = '0;
+
     case (imm_src)
         // I-type (+jalr): imm[11:0] = ins[31:20]
         3'd0: imm_op = {{20{ins[31]}}, ins[31:20]};
@@ -23,10 +30,11 @@ always_comb begin
         // U-type: imm = ins[31:12] << 12
         3'd4: imm_op = {ins[31:12], 12'b0};
 
-        default: $error("Immediate Module Error: imm_src value outside of range!");
+        default: begin
+            $error("Error: imm_src value outside of range!");
+        end
     endcase
 
 end
-
 
 endmodule
