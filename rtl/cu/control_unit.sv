@@ -52,7 +52,6 @@ main_decoder decoder_1 (
 
 alu_decoder decoder_2 (
     .alu_op      (alu_logic),
-    .opcode_5    (opcode[5]),
     .funct3      (funct3),
     .funct7_5    (funct7[5]),
     .alu_ctrl    (alu_ctrl),
