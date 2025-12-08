@@ -45,7 +45,6 @@ logic [2:0] imm_src_d;
 
 control_unit cu (     
     .ins        (instr_d),
-    .eq         (zero_e),
     .branch_d   (branch_d),    
     .jump_d     (jump_d),     
     .result_src (result_src_d),   
