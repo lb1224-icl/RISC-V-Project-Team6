@@ -35,8 +35,8 @@ logic [D_WIDTH-1:0] pc_imm;
 logic [D_WIDTH-1:0] fwd_aluop2_out;
 
 assign write_data_e   = fwd_aluop2_out;
-assign alu_result     = alu_res;
-assign pc_src_e = jump_e | (zero_e & branch_e);
+assign alu_result_e   = alu_res;
+assign pc_src_e       = jump_e | (zero_e & branch_e);
 
 alu ALU (
     .aluop1    (src_a_e),
@@ -82,7 +82,7 @@ mux_4 fwd_aluop2 (
     .in2       (alu_result_m),
     .in3       (32'b0),
     .sel       (fwd_rs2),
-    .out       (fwd_aloup2_out)
+    .out       (fwd_aluop2_out)
 );
 
 endmodule
