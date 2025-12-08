@@ -51,7 +51,6 @@ logic [3:0]       alu_ctrl_e;
 logic             alu_src_e;
 logic [2:0]       funct3_e;
 logic             jalr_e;
-logic             op1_pc_e;
 logic [WIDTH-1:0] rd1_e;
 logic [WIDTH-1:0] rd2_e;
 logic [WIDTH-1:0] pc_e;

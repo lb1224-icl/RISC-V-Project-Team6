@@ -3,6 +3,7 @@ module pc_reg #(
 ) (
     input  logic             clk,
     input  logic             rst,
+    input  logic             stall,
     input  logic [WIDTH-1:0] pc_in,
     output logic [WIDTH-1:0] pc_out
 );
@@ -10,7 +11,7 @@ module pc_reg #(
 always_ff @(posedge clk, posedge rst) begin
     if (rst)
         pc_out <= 0;
-    else
+    else if (!stall)
         pc_out <= pc_in;
 end
 

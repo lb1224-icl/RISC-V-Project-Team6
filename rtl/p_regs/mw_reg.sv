@@ -1,4 +1,4 @@
-module mw_register #(
+module mw_reg #(
     parameter WIDTH = 32
 ) (
     input  logic             clk,
@@ -13,7 +13,7 @@ module mw_register #(
     input  logic [WIDTH-1:0] read_data_m,
     input  logic [4:0]       rd_m,
     input  logic [WIDTH-1:0] pc_plus4_m,
-    
+
     // control signals to WB stage
     output logic             reg_write_w,
     output logic [1:0]       result_src_w,
@@ -25,13 +25,22 @@ module mw_register #(
     output logic [WIDTH-1:0] pc_plus4_w
 );
 
-always_ff @(posedge clk) begin
-    reg_write_w  <= reg_write_m;
-    result_src_w <= result_src_m;
-    alu_result_w <= alu_result_m;
-    rd_w         <= rd_m;
-    pc_plus4_w   <= pc_plus4_m;
-    read_data_w  <= read_data_m;
+always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+        reg_write_w  <= '0;
+        result_src_w <= '0;
+        alu_result_w <= '0;
+        read_data_w  <= '0;
+        rd_w         <= '0;
+        pc_plus4_w   <= '0;
+    end else begin
+        reg_write_w  <= reg_write_m;
+        result_src_w <= result_src_m;
+        alu_result_w <= alu_result_m;
+        read_data_w  <= read_data_m;
+        rd_w         <= rd_m;
+        pc_plus4_w   <= pc_plus4_m;
+    end
 end
 
 endmodule

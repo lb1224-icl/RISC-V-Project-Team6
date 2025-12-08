@@ -7,6 +7,8 @@ module sign_extend #(
 );
 
 always_comb begin
+    imm_op = '0;
+
     case (imm_src)
         // I-type (+jalr): imm[11:0] = ins[31:20]
         3'd0: imm_op = {{20{ins[31]}}, ins[31:20]};

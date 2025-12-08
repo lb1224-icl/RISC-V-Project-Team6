@@ -35,12 +35,12 @@ for file in "${files[@]}"; do
 
     # If verify.cpp -> we are testing the top module
     if [ $name == "verify.cpp" ]; then
-        name="top"
+        name="cpu"
     fi
 
     # Translate Verilog -> C++ including testbench
     verilator   -Wall --trace \
-                -cc ${RTL_FOLDER}/${name}.sv \
+                -cc -F tests/filenames.f \
                 --exe ${file} \
                 -y ${RTL_FOLDER} \
                 --prefix "Vdut" \
