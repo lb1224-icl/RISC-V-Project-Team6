@@ -4,7 +4,7 @@ module alu_decoder #(
     input logic  [2:0]        alu_op,           // logic condition
     input logic  [2:0]        funct3,           // logic condition
     input logic               funct7_5,         // logic condition
-    output logic [3:0]        alu_ctrl          // ALU operation signal
+    output logic [3:0]        alu_ctrl,          // ALU operation signal
 
     output logic [1:0]        mul_ctrl,
     output logic [1:0]        div_ctrl

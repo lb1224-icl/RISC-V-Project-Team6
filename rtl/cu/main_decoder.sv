@@ -1,6 +1,5 @@
 module main_decoder (
     input  logic [6:0]   opcode,
-    input  logic         eq,
 
     output logic         branch_d,
     output logic         jump_d,
@@ -14,7 +13,7 @@ module main_decoder (
     output logic         jalr,
 
     output logic         rs1_signal,
-    output logic         rs2_Signal,
+    output logic         rs2_signal,
 
     output logic         mul_en,
     output logic         div_en
@@ -22,7 +21,6 @@ module main_decoder (
 
 always_comb begin
     // -------- DEFAULT VALUES (prevents latches) --------
-    pc_src     = 0;
     result_src = 0;
     mem_write  = 0;
     alu_src    = 0;

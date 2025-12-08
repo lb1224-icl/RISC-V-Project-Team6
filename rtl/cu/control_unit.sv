@@ -34,9 +34,7 @@ assign funct3 = ins[14:12];
 
 
 main_decoder decoder_1 (    
-    .opcode     (opcode),
-    .eq         (eq),
-    .pc_src     (pc_src),      
+    .opcode     (opcode),   
     .result_src (result_src),   
     .mem_write  (mem_write),   
     .alu_src    (alu_src),     

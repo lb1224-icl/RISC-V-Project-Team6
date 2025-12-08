@@ -36,7 +36,7 @@ logic [D_WIDTH-1:0] fwd_aluop2_out;
 
 assign write_data_e   = fwd_aluop2_out;
 assign alu_result     = alu_res;
-assign pc_src_e = jump_e | (zero_e & branch_e)
+assign pc_src_e = jump_e | (zero_e & branch_e);
 
 alu ALU (
     .aluop1    (src_a_e),
