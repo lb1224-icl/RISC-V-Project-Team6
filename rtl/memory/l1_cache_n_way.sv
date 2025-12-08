@@ -47,13 +47,16 @@ module l1_cache_n_way #(
     wire [TAG_BITS-1:0]    mem_tag   = mem_addr[ADDR_WIDTH-1 -: TAG_BITS];
     wire [SET_BITS-1:0]    mem_set   = mem_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
     wire [OFFSET_BITS-1:0] mem_off   = mem_addr[OFFSET_BITS-1:0];
-    wire [WORD_SEL_BITS-1:0] mem_word_index = mem_off[OFFSET_BITS-1 : $clog2(BYTES_PER_WORD)];
+    wire [WORD_SEL_BITS-1:0] mem_word_index =
+        mem_off[OFFSET_BITS-1 : $clog2(BYTES_PER_WORD)];
 
     // lookup
     logic [WAYS-1:0]       way_hit;
+    logic [LINE_BITS-1:0]  way_data  [0:WAYS-1];
 
     always_comb begin
         for (int w = 0; w < WAYS; w++) begin
+            way_data[w] = data_array[mem_set][w];
             way_hit[w]  = valid_array[mem_set][w] && (tag_array[mem_set][w] == mem_tag);
         end
     end
@@ -68,10 +71,10 @@ module l1_cache_n_way #(
         for (int w = 0; w < WAYS; w++) begin
             if (way_hit[w]) begin
                 case (mem_word_index)
-                    0: selected_word = data_array[mem_set][w][31:0];
-                    1: selected_word = data_array[mem_set][w][63:32];
-                    2: selected_word = data_array[mem_set][w][95:64];
-                    3: selected_word = data_array[mem_set][w][127:96];
+                    0: selected_word = way_data[w][31:0];
+                    1: selected_word = way_data[w][63:32];
+                    2: selected_word = way_data[w][95:64];
+                    3: selected_word = way_data[w][127:96];
                     default: selected_word = '0;
                 endcase
             end
@@ -96,10 +99,11 @@ module l1_cache_n_way #(
     end
 
     // sequential logic
+    integer s, w;
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
-            for (int s = 0; s < SETS; s++) begin
-                for (int w = 0; w < WAYS; w++) begin
+            for (s = 0; s < SETS; s++) begin
+                for (w = 0; w < WAYS; w++) begin
                     valid_array[s][w] = 1'b0;
                     tag_array[s][w]   = '0;
                     data_array[s][w]  = '0;
@@ -109,15 +113,15 @@ module l1_cache_n_way #(
         end else begin
             // write hit -> update word
             if (mem_valid && mem_we && cache_hit) begin
-                for (int w = 0; w < WAYS; w++) begin
-                    if (way_hit[w]) begin
+                for (int ww = 0; ww < WAYS; ww++) begin
+                    if (way_hit[ww]) begin
                         case (mem_word_index)
-                            0: data_array[mem_set][w][31:0]     <= mem_w_data;
-                            1: data_array[mem_set][w][63:32]    <= mem_w_data;
-                            2: data_array[mem_set][w][95:64]    <= mem_w_data;
-                            3: data_array[mem_set][w][127:96]   <= mem_w_data;
+                            0: data_array[mem_set][ww][31:0]     <= mem_w_data;
+                            1: data_array[mem_set][ww][63:32]    <= mem_w_data;
+                            2: data_array[mem_set][ww][95:64]    <= mem_w_data;
+                            3: data_array[mem_set][ww][127:96]   <= mem_w_data;
                         endcase
-                        rr_ptr[mem_set] <= (w + 1) % WAYS;
+                        rr_ptr[mem_set] <= (ww + 1) % WAYS;
                     end
                 end
             end

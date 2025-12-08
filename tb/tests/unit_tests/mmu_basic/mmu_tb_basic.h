@@ -5,19 +5,14 @@
 #include "verilated_vcd_c.h"
 #include "gtest/gtest.h"
 
-#include <cstdint>
-
 #define MAX_SIM_CYC 20000
 
-class MmuTestbench : public ::testing::Test {
+class MmuBasicTb : public ::testing::Test {
 public:
-    Vmmu*              top;
-    VerilatedContext*  context;
-    VerilatedVcdC*     tfp;
-    uint64_t           ticks;
-
-    int read_hits   = 0;
-    int read_misses = 0;
+    Vmmu* top;
+    VerilatedContext* context;
+    VerilatedVcdC* tfp;
+    uint64_t ticks;
 
     void SetUp() override {
         context = new VerilatedContext;
@@ -27,9 +22,9 @@ public:
         top = new Vmmu(context);
         tfp = new VerilatedVcdC();
         top->trace(tfp, 99);
-        tfp->open("mmu_test.vcd");
+        tfp->open("mmu_basic.vcd");
 
-        // init signals
+        // Safe reset
         top->clk       = 0;
         top->rst       = 1;
         top->mem_valid = 0;
@@ -39,7 +34,7 @@ public:
 
         cycle(5);
         top->rst = 0;
-        cycle(1);
+        cycle(2);  // let everything settle
     }
 
     void TearDown() override {
@@ -51,39 +46,40 @@ public:
 
     void cycle(int n = 1) {
         for (int i = 0; i < n; ++i) {
-            // rising edge
-            top->clk = 0;
-            top->eval();
-            tfp->dump((ticks * 2) + 0);
-
-            top->clk = 1;
-            top->eval();
-            tfp->dump((ticks * 2) + 1);
-
-            ticks++;
+            for (int ph = 0; ph < 2; ++ph) {
+                top->eval();
+                tfp->dump(ticks * 2 + ph);
+                top->clk = !top->clk;
+            }
+            ++ticks;
         }
     }
 
-    // write -> wait until mem_ready = 1
-    void writeWord(uint32_t addr, uint32_t data) {
+    // write -> wait until mem_ready == 1, then drop request
+    void writeWord(uint32_t addr, uint32_t data, int &cycles_used) {
         top->mem_valid  = 1;
         top->mem_we     = 1;
         top->mem_addr   = addr;
         top->mem_w_data = data;
 
+        cycles_used = 0;
         int guard = 0;
+
         while (!top->mem_ready && guard < MAX_SIM_CYC) {
             cycle();
-            guard++;
+            ++guard;
+            ++cycles_used;
         }
-        // one extra cycle to settle back toward IDLE
-        cycle();
 
+        // Drop the request
         top->mem_valid = 0;
         top->mem_we    = 0;
+
+        // One extra cycle to let MMU return to IDLE
+        cycle();
     }
 
-    // read -> wait until mem_ready = 1, then sample mem_r_data
+    // read -> wait until mem_ready == 1, sample mem_r_data/cache_hit *immediately*
     uint32_t readWord(uint32_t addr, int &cycles_used, bool &hit_out) {
         top->mem_valid = 1;
         top->mem_we    = 0;
@@ -94,22 +90,17 @@ public:
 
         while (!top->mem_ready && guard < MAX_SIM_CYC) {
             cycle();
-            guard++;
-            cycles_used++;
+            ++guard;
+            ++cycles_used;
         }
 
-        // first cycle where mem_ready is high
+        // mem_ready is high *now* – sample result & hit
         uint32_t r = top->mem_r_data;
-        hit_out = top->cache_hit;
+        hit_out    = top->cache_hit;
 
-        // one more cycle to let FSM transition back
-        cycle();
-        cycles_used++;
-
+        // Drop request
         top->mem_valid = 0;
-
-        if (hit_out) read_hits++;
-        else         read_misses++;
+        cycle();  // let FSM go back to IDLE
 
         return r;
     }

@@ -44,9 +44,7 @@ public:
         }
     }
 
-    // ------------------------------------------------
-    // FIXED WRITE HANDSHAKE
-    // ------------------------------------------------
+    // write
     void writeWord(uint32_t addr, uint32_t data, bool &hit_out) {
         top->mem_valid = 1;
         top->mem_we    = 1;
@@ -69,9 +67,7 @@ public:
         else miss_count++;
     }
 
-    // ------------------------------------------------
-    // FIXED READ HANDSHAKE
-    // ------------------------------------------------
+    // read word
     uint32_t readWord(uint32_t addr, bool &hit_out) {
         top->mem_valid = 1;
         top->mem_we    = 0;

@@ -47,22 +47,25 @@ module l3_cache_n_way #(
     wire [WORD_SEL_BITS-1:0] mem_word_index = mem_off[OFFSET_BITS-1 : $clog2(BYTES_PER_WORD)];
 
     logic [WAYS-1:0]       way_hit;
+    logic [LINE_BITS-1:0]  way_data  [0:WAYS-1];
 
     always_comb begin
         for (int w = 0; w < WAYS; w++) begin
+            way_data[w] = data_array[mem_set][w];
             way_hit[w]  = valid_array[mem_set][w] && (tag_array[mem_set][w] == mem_tag);
         end
     end
 
-    assign cache_hit = |way_hit;
+    assign cache_hit = |way_hit; // or all results
 
+    // pick whole line from hit way
     logic [LINE_BITS-1:0] selected_line;
 
     always_comb begin
         selected_line = '0;
         for (int w = 0; w < WAYS; w++) begin
             if (way_hit[w])
-                selected_line = data_array[mem_set][w];
+                selected_line =  way_data[w]; // if we had a hit store that way
         end
     end
 
