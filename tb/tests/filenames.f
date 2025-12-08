@@ -24,10 +24,10 @@
 
 ../../rtl/sign_extend/sign_extend.sv
 
-../../rtl/sub_top_files/cpu.sv
 ../../rtl/sub_top_files/fetch.sv
 ../../rtl/sub_top_files/decode.sv
 ../../rtl/sub_top_files/execute.sv
 ../../rtl/sub_top_files/memory.sv
 ../../rtl/sub_top_files/writeback.sv
 
+../../rtl/cpu.sv

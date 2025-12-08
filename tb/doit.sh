@@ -42,13 +42,9 @@ for file in "${files[@]}"; do
     verilator   -Wall --trace \
                 -cc -F tests/filenames.f \
                 --exe ${file} \
-                -y ${RTL_FOLDER} \
                 --prefix "Vdut" \
                 -o Vdut \
-                -LDFLAGS "-lgtest -lgtest_main -lpthread" \
-                -Wno-fatal -Wno-WIDTH -Wno-UNOPTFLAT -Wno-LITENDIAN \
-                -Wno-MODDUP -Wno-CASEINCOMPLETE -Wno-UNUSED -Wno-BLKANDNBLK \
-                -Wno-DECLFILENAME -Wno-LATCH -Wno-UNDRIVEN -Wno-IMPLICIT -Wno-PINMISSING
+                -LDFLAGS "-lgtest -lgtest_main -lpthread"
 
     # Build C++ project with automatically generated Makefile
     make -j -C obj_dir/ -f Vdut.mk
