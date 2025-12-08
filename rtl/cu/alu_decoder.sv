@@ -13,7 +13,10 @@ module alu_decoder #(
 
 //--------     DECODER     --------//
 
-always_comb
+always_comb begin
+mul_ctrl = 2'b00;
+div_ctrl = 2'b00;
+alu_ctrl = 4'b0000;
 case (alu_op) // to determine the ALU operation type
 
     3'b0:   alu_ctrl = 4'b0; // memory addressing calucations e.g. lw, sw  
@@ -21,14 +24,14 @@ case (alu_op) // to determine the ALU operation type
     3'b1:   alu_ctrl = 4'b1; // b-type
 
     3'b10: begin
-        if (funct3 == 3'b0)    // R-type ins and other logical/arithemetic-based instructions
-            if (opcode_5 && funct7_5) 
+        alu_ctrl = 4'b0; // default to add/addi
+        if (funct3 == 3'b0) begin
+            if (opcode_5 && funct7_5)
                 alu_ctrl = 4'b1;    // sub (only for R-type SUB/SRA)
-        else
-            alu_ctrl = 4'b0;        // add/addi
-
-        else if (funct3 == 3'b1)
-            alu_ctrl = 4'b111;       // logical shift left
+            else
+                alu_ctrl = 4'b0;    // add/addi
+        end else if (funct3 == 3'b1)
+            alu_ctrl = 4'b111;      // logical shift left
 
         else if (funct3 == 3'b10)
             alu_ctrl = 4'b101;      // set less than
@@ -58,40 +61,45 @@ case (alu_op) // to determine the ALU operation type
     3'b11:   alu_ctrl = 4'b1111; // lui
 
     // multiply
-    3'b100: begin if (funct3 == 3'b0)
-                mul_ctrl = 2'b0;
-
-            else if (funct3 == 3'b1)
-                mul_ctrl = 2'b1;
-            
-            else if (funct3 == 3'b10)
-                mul_ctrl = 2'b10;
-            
-            else if (funct3 == 3'b11)
-                mul_ctrl = 2'b11;
-            
-            else
-                $error("ALU_Decoder Error: funct3 out of range!");
+    3'b100: begin
+        mul_ctrl = 2'b00;
+        if (funct3 == 3'b0)
+            mul_ctrl = 2'b0;
+        
+        else if (funct3 == 3'b1)
+            mul_ctrl = 2'b1;
+        
+        else if (funct3 == 3'b10)
+            mul_ctrl = 2'b10;
+        
+        else if (funct3 == 3'b11)
+            mul_ctrl = 2'b11;
+        
+        else
+            $error("ALU_Decoder Error: funct3 out of range!");
     end
 
     // divide
-    3'b101: begin if (funct3 == 3'b0)
-                div_ctrl = 2'b0;
+    3'b101: begin
+        div_ctrl = 2'b00;
+        if (funct3 == 3'b0)
+            div_ctrl = 2'b0;
 
-            else if (funct3 == 3'b1)
-                div_ctrl = 2'b1;
-            
-            else if (funct3 == 3'b10)
-                div_ctrl = 2'b10;
-            
-            else if (funct3 == 3'b11)
-                div_ctrl = 2'b11;
-            
-            else
-                $error("ALU_Decoder Error: funct3 out of range!");
+        else if (funct3 == 3'b1)
+            div_ctrl = 2'b1;
+        
+        else if (funct3 == 3'b10)
+            div_ctrl = 2'b10;
+        
+        else if (funct3 == 3'b11)
+            div_ctrl = 2'b11;
+        
+        else
+            $error("Error (alu_decoder): funct3 out of range!");
     end
-
-    default: $error("ALU_Decoder Error: alu_op out of range!");
+    
+    default: $error("Error (alu_decoder): alu_op out of range!");
 endcase
+end
 
 endmodule 

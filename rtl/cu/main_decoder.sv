@@ -205,7 +205,7 @@ always_comb begin
         end
 
         default: begin // treat anything else as NOP (including opcode = 0)
-            $display("ERROR: Invalid opcode %0d", opcode);
+            // no-op
         end
 
     endcase

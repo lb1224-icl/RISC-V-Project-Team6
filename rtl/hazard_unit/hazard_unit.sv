@@ -55,7 +55,7 @@ always_comb begin
         stall = 1'b1;
     end
 
-    if (!div_done_e) begin
+    if (div_en_e && !div_done_e) begin
         div_stall = 1'b1;
     end
 

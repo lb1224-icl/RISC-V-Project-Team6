@@ -4,7 +4,10 @@ module cpu #(
     input  logic clk,
     input  logic rst,
     input  logic trigger,
-    output logic [WIDTH-1:0] a0
+    output logic [WIDTH-1:0] a0,
+    // debug visibility for simulation
+    output logic [WIDTH-1:0] debug_pc_f,
+    output logic [WIDTH-1:0] debug_instr_f
 );
 
 // trigger is unused but kept for compatibility with the testbench
@@ -113,6 +116,10 @@ fetch #(.WIDTH(WIDTH)) u_fetch (
     .instr_f       (instr_f)
 );
 
+// expose for debugging
+assign debug_pc_f    = pc_f;
+assign debug_instr_f = instr_f;
+
 fd_reg #(.WIDTH(WIDTH)) fd_register (
     .clk           (clk),
     .rst           (rst),
@@ -218,6 +225,8 @@ de_reg #(.WIDTH(WIDTH)) de_register (
 );
 
 execute #(.D_WIDTH(WIDTH)) u_execute (
+    .clk           (clk),
+    .rst           (rst),
     .alu_ctrl_e    (alu_ctrl_e),
     .alu_src_e     (alu_src_e),
     .rd1_e         (rd1_e),

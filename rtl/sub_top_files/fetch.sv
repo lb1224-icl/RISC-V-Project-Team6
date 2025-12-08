@@ -16,6 +16,7 @@ module fetch #(
 );
 
 logic [WIDTH-1:0] next_pc;
+logic [3:0]       dbg_count;
 logic [WIDTH-1:0] pc_plus4;
 
 assign pc_plus4_f = pc_plus4;
@@ -40,9 +41,19 @@ pc_reg #(.WIDTH(WIDTH)) u_pc_reg (
     .pc_out (pc_f)
 );
 
-instr_mem u_instr_mem (
-    .addr (pc_f),
-    .dout (instr_f)
-);
+    instr_mem u_instr_mem (
+        .addr (pc_f),
+        .dout (instr_f)
+    );
+
+    // debug: show first few fetched instructions
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            dbg_count <= 0;
+        end else if (dbg_count < 5) begin
+            dbg_count <= dbg_count + 1'b1;
+            $display("FETCH dbg%0d: pc=%h instr=%h", dbg_count, pc_f, instr_f);
+        end
+    end
 
 endmodule
