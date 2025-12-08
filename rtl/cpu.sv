@@ -42,6 +42,10 @@ logic             jalr_d;
 logic             op1_pc_d;
 logic             rs1_used_d;
 logic             rs2_used_d;
+logic [1:0]       mul_ctrl_d;
+logic [1:0]       div_ctrl_d;
+logic             mul_en_d;
+logic             div_en_d;
 
 logic             reg_write_e;
 logic [1:0]       result_src_e;
@@ -63,12 +67,17 @@ logic [WIDTH-1:0] imm_ext_e;
 logic [WIDTH-1:0] pc_plus4_e;
 logic             rs1_used_e;
 logic             rs2_used_e;
+logic [1:0]       mul_ctrl_e;
+logic [1:0]       div_ctrl_e;
+logic             mul_en_e;
+logic             div_en_e;
 
 logic [WIDTH-1:0] alu_result_m;
 logic [1:0]       fwd_rs1;
 logic [1:0]       fwd_rs2;
 logic [WIDTH-1:0] alu_result_e;
 logic [WIDTH-1:0] write_data_e;
+logic             div_done_e;
 
 logic             reg_write_m;
 logic [1:0]       result_src_m;
@@ -87,6 +96,7 @@ logic [WIDTH-1:0] pc_plus4_w;
 
 logic             stall;
 logic             flush;
+logic             div_stall;
 
 // default to using register operand for aluop1 unless explicitly overridden
 assign op1_pc_e = 1'b0;
@@ -111,6 +121,7 @@ fd_reg #(.WIDTH(WIDTH)) fd_register (
     .pc_f          (pc_f),
     .pc_plus4_f    (pc_plus4_f),
     .instr_f       (instr_f),
+    .div_stall     (div_stall),
 
     .pc_d          (pc_d),
     .pc_plus4_d    (pc_plus4_d),
@@ -142,7 +153,11 @@ decode #(.DATA_WIDTH(WIDTH)) u_decode (
     .jalr_d        (jalr_d),
     .op1_pc_d      (op1_pc_d),
     .rs1_used_d    (rs1_used_d),
-    .rs2_used_d    (rs2_used_d)
+    .rs2_used_d    (rs2_used_d),
+    .mul_ctrl_d    (mul_ctrl_d),
+    .div_ctrl_d    (div_ctrl_d),
+    .mul_en_d      (mul_en_d),
+    .div_en_d      (div_en_d)
 );
 
 de_reg #(.WIDTH(WIDTH)) de_register (
@@ -170,6 +185,11 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .rs2_d         (rs2_d),
     .imm_ext_d     (imm_ext_d),
     .pc_plus4_d    (pc_plus4_d),
+    .mul_ctrl_d    (mul_ctrl_d),
+    .div_ctrl_d    (div_ctrl_d),
+    .mul_en_d      (mul_en_d),
+    .div_en_d      (div_en_d),
+    .div_stall     (div_stall),
 
     .reg_write_e   (reg_write_e),
     .result_src_e  (result_src_e),
@@ -190,7 +210,11 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .imm_ext_e     (imm_ext_e),
     .pc_plus4_e    (pc_plus4_e),
     .rs1_used_e    (rs1_used_e),
-    .rs2_used_e    (rs2_used_e)
+    .rs2_used_e    (rs2_used_e),
+    .mul_ctrl_e    (mul_ctrl_e),
+    .div_ctrl_e    (div_ctrl_e),
+    .mul_en_e      (mul_en_e),
+    .div_en_e      (div_en_e)
 );
 
 execute #(.D_WIDTH(WIDTH)) u_execute (
@@ -209,11 +233,16 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .alu_result_m  (alu_result_m),
     .fwd_rs1       (fwd_rs1),
     .fwd_rs2       (fwd_rs2),
+    .mul_ctrl_e    (mul_ctrl_e),
+    .div_ctrl_e    (div_ctrl_e),
+    .mul_en_e      (mul_en_e),
+    .div_en_e      (div_en_e),
 
     .pc_src_e      (pc_src_e),
     .alu_result_e  (alu_result_e),
     .write_data_e  (write_data_e),
-    .pc_target_e   (pc_target_e)
+    .pc_target_e   (pc_target_e),
+    .div_done_e    (div_done_e)
 );
 
 em_reg #(.WIDTH(WIDTH)) em_register (
@@ -227,6 +256,7 @@ em_reg #(.WIDTH(WIDTH)) em_register (
     .rd_e          (rd_e),
     .pc_plus4_e    (pc_plus4_e),
     .funct3_e      (funct3_e),
+    .div_stall     (div_stall),
 
     .reg_write_m   (reg_write_m),
     .result_src_m  (result_src_m),
@@ -291,11 +321,14 @@ hazard_unit hu (
     .reg_write_w   (reg_write_w),
     .load_e        (result_src_e == 2'b01),
     .branch_taken  (pc_src_e),
+    .div_done_e    (div_done_e),
+    .div_en_e      (div_en_e),
 
     .stall         (stall),
     .flush         (flush),
     .fwd_rs1       (fwd_rs1),
-    .fwd_rs2       (fwd_rs2)
+    .fwd_rs2       (fwd_rs2),
+    .div_stall     (div_stall)
 );
 
 endmodule

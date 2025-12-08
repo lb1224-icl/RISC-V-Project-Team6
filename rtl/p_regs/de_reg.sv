@@ -29,6 +29,12 @@ module de_reg #(
     input  logic [4:0]       rs2_d,
     input  logic [WIDTH-1:0] imm_ext_d,
     input  logic [WIDTH-1:0] pc_plus4_d,
+
+    input  logic [1:0]       mul_ctrl_d,
+    input  logic [1:0]       div_ctrl_d,
+    input  logic             mul_en_d,
+    input  logic             div_en_d,
+    input  logic             div_stall,
     
     // control signals to EXECUTE stage
     output logic             reg_write_e,
@@ -54,7 +60,12 @@ module de_reg #(
 
     //control signals to hazard unit
     output logic             rs1_used_e,
-    output logic             rs2_used_e
+    output logic             rs2_used_e,
+
+    output logic [1:0]       mul_ctrl_e,
+    output logic [1:0]       div_ctrl_e,
+    output logic             mul_en_e,
+    output logic             div_en_e
 );
 
 always_ff @(posedge clk or posedge rst) begin
@@ -79,6 +90,10 @@ always_ff @(posedge clk or posedge rst) begin
         pc_plus4_e   <= '0;
         rs1_used_e   <= '0;
         rs2_used_e   <= '0;
+        mul_ctrl_e   <= '0;
+        div_ctrl_e   <= '0;
+        mul_en_e     <= '0;
+        div_en_e     <= '0;
     end else if (flush) begin
         reg_write_e  <= '0;
         result_src_e <= '0;
@@ -100,6 +115,10 @@ always_ff @(posedge clk or posedge rst) begin
         pc_plus4_e   <= '0;
         rs1_used_e   <= '0;
         rs2_used_e   <= '0;
+        mul_ctrl_e   <= '0;
+        div_ctrl_e   <= '0;
+        mul_en_e     <= '0;
+        div_en_e     <= '0;
     end else if (stall) begin
         // insert bubble into EX stage
         reg_write_e  <= '0;
@@ -122,7 +141,11 @@ always_ff @(posedge clk or posedge rst) begin
         pc_plus4_e   <= '0;
         rs1_used_e   <= '0;
         rs2_used_e   <= '0;
-    end else begin
+        mul_ctrl_e   <= '0;
+        div_ctrl_e   <= '0;
+        mul_en_e     <= '0;
+        div_en_e     <= '0;
+    end else if (!div_stall) begin
         reg_write_e  <= reg_write_d;
         result_src_e <= result_src_d;
         mem_write_e  <= mem_write_d;
@@ -143,6 +166,10 @@ always_ff @(posedge clk or posedge rst) begin
         pc_plus4_e   <= pc_plus4_d;
         rs1_used_e   <= rs1_used_d;
         rs2_used_e   <= rs2_used_d;
+        mul_ctrl_e   <= mul_ctrl_d;
+        div_ctrl_e   <= div_ctrl_d;
+        mul_en_e     <= mul_en_d;
+        div_en_e     <= div_en_d;
     end
 end
 

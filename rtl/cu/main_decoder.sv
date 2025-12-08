@@ -12,7 +12,9 @@ module main_decoder (
     output logic       jalr,
     output logic       op1_pc,
     output logic       rs1_signal,
-    output logic       rs2_signal   
+    output logic       rs2_signal,
+    output logic       mul_en,
+    output logic       div_en
 );
 
 always_comb begin
@@ -29,6 +31,8 @@ always_comb begin
     op1_pc     = 0;
     rs1_signal = 0;
     rs2_signal = 0;
+    mul_en     = 0;
+    div_en     = 0;
     
     /* verilator lint_off CASEINCOMPLETE */
     /* verilator lint_off CASEOVERLAP */
@@ -44,6 +48,8 @@ always_comb begin
             alu_op     = 2; // ALU decider will choose ADD/SUB/etc.
             rs1_signal = 1;
             rs2_signal = 1;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd3: begin         // I-type --> load op
@@ -57,6 +63,8 @@ always_comb begin
             alu_op     = 0; // ADD for address calculation
             rs1_signal = 1;
             rs2_signal = 0;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd19: begin        // I-type --> logic op
@@ -70,6 +78,8 @@ always_comb begin
             alu_op     = 2; // handled in ALU decoder
             rs1_signal = 1;
             rs2_signal = 0;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd35: begin        // S-type 
@@ -82,6 +92,8 @@ always_comb begin
             alu_op     = 0;
             rs1_signal = 1;
             rs2_signal = 1;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd99: begin        // B-type
@@ -94,6 +106,8 @@ always_comb begin
             alu_op     = 1; // SUB for compare
             rs1_signal = 1;
             rs2_signal = 1;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd103: begin       // I-type --> jalr
@@ -108,6 +122,8 @@ always_comb begin
             jalr       = 1;
             rs1_signal = 1;
             rs2_signal = 0;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd111: begin       // J-type --> jal
@@ -120,7 +136,9 @@ always_comb begin
             reg_write  = 1;
             jalr       = 0;
             rs1_signal = 0;
-            rs2_signal = 0;       
+            rs2_signal = 0;
+            mul_en     = 0;
+            div_en     = 0;    
         end
 
         7'd55: begin        // U-type --> lui
@@ -135,6 +153,8 @@ always_comb begin
             jalr       = 0;
             rs1_signal = 0;
             rs2_signal = 0;
+            mul_en     = 0;
+            div_en     = 0;
         end
 
         7'd23: begin        // U-type --> auipc
@@ -150,9 +170,42 @@ always_comb begin
             jalr       = 0;
             rs1_signal = 0; // rs1 unused
             rs2_signal = 0;
+            mul_en     = 0;
+            div_en     = 0;
+        end
+
+        7'd67: begin        // M-type
+            jump_d     = 0;
+            branch_d   = 0;
+            result_src = 0; 
+            mem_write  = 0;
+            alu_src    = 1;
+            reg_write  = 1;
+            alu_op     = 4;
+            jalr       = 0;
+            rs1_signal = 1;
+            rs2_signal = 1;
+            mul_en     = 1;
+            div_en     = 0;
+        end
+
+        7'd68: begin        // D-type
+            jump_d     = 0;
+            branch_d   = 0;
+            result_src = 0; 
+            mem_write  = 0;
+            alu_src    = 1;
+            reg_write  = 1;
+            alu_op     = 5;
+            jalr       = 0;
+            rs1_signal = 1;
+            rs2_signal = 1;
+            mul_en     = 0;
+            div_en     = 1;
         end
 
         default: begin // treat anything else as NOP (including opcode = 0)
+            $display("ERROR: Invalid opcode %0d", opcode);
         end
 
     endcase

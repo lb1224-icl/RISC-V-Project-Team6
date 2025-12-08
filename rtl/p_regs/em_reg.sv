@@ -15,6 +15,8 @@ module em_reg #(
     input  logic [4:0]       rd_e,
     input  logic [WIDTH-1:0] pc_plus4_e,
     input  logic [2:0]       funct3_e,
+
+    input  logic             div_stall,
     
     // control signals to MEM stage
     output logic             reg_write_m,
@@ -31,6 +33,15 @@ module em_reg #(
 
 always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
+        reg_write_m  <= '0;
+        result_src_m <= '0;
+        mem_write_m  <= '0;
+        alu_result_m <= '0;
+        write_data_m <= '0;
+        rd_m         <= '0;
+        pc_plus4_m   <= '0;
+        funct3_m     <= '0;
+    end else if (div_stall) begin
         reg_write_m  <= '0;
         result_src_m <= '0;
         mem_write_m  <= '0;

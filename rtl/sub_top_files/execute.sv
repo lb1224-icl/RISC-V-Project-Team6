@@ -20,10 +20,17 @@ module execute #(
     input logic [1:0]          fwd_rs1,
     input logic [1:0]          fwd_rs2,
 
+    input logic [1:0]          mul_ctrl_e,
+    input logic [1:0]          div_ctrl_e,
+    input logic                mul_en_e,
+    input logic                div_en_e,
+
     output logic               pc_src_e,
     output logic [D_WIDTH-1:0] alu_result_e,
     output logic [D_WIDTH-1:0] write_data_e,
-    output logic [D_WIDTH-1:0] pc_target_e
+    output logic [D_WIDTH-1:0] pc_target_e,
+
+    output logic               div_done_e
 );
 
 logic               zero_e;
@@ -34,9 +41,12 @@ logic [D_WIDTH-1:0] pc_imm;
 logic [D_WIDTH-1:0] fwd_aluop1_raw;
 logic [D_WIDTH-1:0] fwd_aluop2_out;
 
+logic [D_WIDTH-1:0] mul_out_e;
+logic [D_WIDTH-1:0] div_out_e;
+
 assign pc_src_e     = jump_e | (zero_e & branch_e);
 assign write_data_e = fwd_aluop2_out;
-assign alu_result_e = alu_res;
+assign alu_result_e = mda_out;
 
 alu ALU (
     .aluop1    (src_a_e),
@@ -83,6 +93,32 @@ mux_4 fwd_aluop2 (
     .in3       (32'b0),
     .sel       (fwd_rs2),
     .out       (fwd_aluop2_out)
+);
+
+mul multiplier (
+    .rd1(rd1_e),
+    .rd2(rd2_e),
+    .mul_ctrl(mul_ctrl_e),
+    .result(mul_out_e)
+);
+
+div divider (
+    .clk(clk),
+    .start(div_en_e),
+    .div_ctrl(div_ctrl_e),
+    .numerator(rd1_e),
+    .denominator(rd2_e),
+    .result(div_out_e),
+    .division_done(div_done_e)
+);
+
+mux_4 mul_div_alu (
+    .in0(alu_res),
+    .in1(mul_out_e),
+    .in2(div_out_e),
+    .in3(32'b0),
+    .sel({div_en_e, mul_en_e}),
+    .out(mda_out)
 );
 
 // select operand sources: allow PC or zero when registers are unused

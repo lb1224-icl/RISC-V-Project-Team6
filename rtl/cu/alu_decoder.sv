@@ -5,7 +5,10 @@ module alu_decoder #(
     input  logic       opcode_5, // distinguishes R-type vs I-type
     input  logic [2:0] funct3,   // logic condition
     input  logic       funct7_5, // logic condition
-    output logic [3:0] alu_ctrl  // ALU operation signal
+    output logic [3:0] alu_ctrl, // ALU operation signal
+
+    output logic [1:0] mul_ctrl,
+    output logic [1:0] div_ctrl
 );
 
 //--------     DECODER     --------//
@@ -53,6 +56,40 @@ case (alu_op) // to determine the ALU operation type
     end
 
     3'b11:   alu_ctrl = 4'b1111; // lui
+
+    // multiply
+    3'b100: begin if (funct3 == 3'b0)
+                mul_ctrl = 2'b0;
+
+            else if (funct3 == 3'b1)
+                mul_ctrl = 2'b1;
+            
+            else if (funct3 == 3'b10)
+                mul_ctrl = 2'b10;
+            
+            else if (funct3 == 3'b11)
+                mul_ctrl = 2'b11;
+            
+            else
+                $error("ALU_Decoder Error: funct3 out of range!");
+    end
+
+    // divide
+    3'b101: begin if (funct3 == 3'b0)
+                div_ctrl = 2'b0;
+
+            else if (funct3 == 3'b1)
+                div_ctrl = 2'b1;
+            
+            else if (funct3 == 3'b10)
+                div_ctrl = 2'b10;
+            
+            else if (funct3 == 3'b11)
+                div_ctrl = 2'b11;
+            
+            else
+                $error("ALU_Decoder Error: funct3 out of range!");
+    end
 
     default: $error("ALU_Decoder Error: alu_op out of range!");
 endcase

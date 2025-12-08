@@ -1,4 +1,6 @@
 ../../rtl/alu/alu.sv
+../../rtl/alu/div.sv
+../../rtl/alu/mul.sv
 ../../rtl/alu/reg_file.sv
 
 ../../rtl/cu/main_decoder.sv

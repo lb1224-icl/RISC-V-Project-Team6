@@ -27,7 +27,12 @@ module decode #(
     output logic                  op1_pc_d,
 
     output logic                  rs1_used_d,
-    output logic                  rs2_used_d
+    output logic                  rs2_used_d,
+
+    output logic [1:0]            mul_ctrl_d,
+    output logic [1:0]            div_ctrl_d,
+    output logic                  mul_en_d,
+    output logic                  div_en_d
 );
 
 // datapaths that just pass through
@@ -52,7 +57,11 @@ control_unit cu (
     .funct3     (funct3_d),
     .jalr       (jalr_d),
     .rs1_signal (rs1_used_d),
-    .rs2_signal (rs2_used_d)
+    .rs2_signal (rs2_used_d),
+    .mul_ctrl   (mul_ctrl_d),
+    .div_ctrl   (div_ctrl_d),
+    .mul_en     (mul_en_d),
+    .div_en     (div_en_d)
 );
 
  reg_file rf (     

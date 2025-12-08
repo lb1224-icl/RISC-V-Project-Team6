@@ -14,18 +14,22 @@ module hazard_unit (
     input  logic       reg_write_w,
     input  logic       load_e,       // 1 if EX-stage instruction is a load
     input  logic       branch_taken,
+    input  logic       div_done_e,
+    input  logic       div_en_e,
     output logic       stall,
     output logic       flush,
     output logic [1:0] fwd_rs1,      // forward to rs1
-    output logic [1:0] fwd_rs2       // forward to rs2
+    output logic [1:0] fwd_rs2,      // forward to rs2
+    output logic       div_stall
 );
 
 always_comb begin
     // defaults
-    stall   = 1'b0;
-    flush   = 1'b0;
-    fwd_rs1 = 2'b00;
-    fwd_rs2 = 2'b00;
+    stall     = 1'b0;
+    flush     = 1'b0;
+    div_stall = 1'b0;
+    fwd_rs1   = 2'b00;
+    fwd_rs2   = 2'b00;
 
     // forwarding priority: MEM stage has highest priority (newest data)
     // RS1 forwarding
@@ -49,6 +53,10 @@ always_comb begin
     // load-use stall: stall if a load is in EX and ID-stage needs its result
     if (load_e && ((rs1_used_d && (rd_e == rs1_d)) || (rs2_used_d && (rd_e == rs2_d)))) begin
         stall = 1'b1;
+    end
+
+    if (!div_done_e) begin
+        div_stall = 1'b1;
     end
 
     // flush on branch taken

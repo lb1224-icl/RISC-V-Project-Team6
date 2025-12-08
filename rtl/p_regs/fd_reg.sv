@@ -10,6 +10,8 @@ module fd_reg #(
     input  logic [WIDTH-1:0] pc_f,
     input  logic [WIDTH-1:0] pc_plus4_f,
     input  logic [WIDTH-1:0] instr_f, // this arrives one cycle later due to sync read
+
+    input  logic             div_stall,
     
     // outputs to DECODE stage
     output logic [WIDTH-1:0] pc_d,
@@ -26,7 +28,7 @@ always_ff @(posedge clk or posedge rst) begin
         pc_d       <= '0;
         pc_plus4_d <= '0;
         instr_d    <= '0;
-    end else if (!stall) begin
+    end else if (!stall && !div_stall) begin
         pc_d       <= pc_f;
         pc_plus4_d <= pc_plus4_f;
         instr_d    <= instr_f;
