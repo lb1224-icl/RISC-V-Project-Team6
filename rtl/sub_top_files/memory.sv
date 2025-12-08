@@ -1,25 +1,13 @@
 module memory #(
     parameter WIDTH = 32
 )(
-    input  logic [WIDTH-1:0] alu_result_m_i,
     input  logic [WIDTH-1:0] write_data_m,
+    input  logic [WIDTH-1:0] alu_result_m,
     input  logic             clk,
     input  logic             mem_write_m,
-    input  logic             reg_write_m_i,
-    input  logic [1:0]       result_src_m_i,
-    input  logic [4:0]       rd_m_i,
-    input  logic [WIDTH-1:0] pc_plus4_m_i,
+    input  logic [2:0]       funct3_m,
 
-    // forwarding inputs
-    input  logic             fwd_ls_w,
-    input  logic [WIDTH-1:0] result_w,
-
-    output logic [WIDTH-1:0] read_data,
-    output logic             reg_write_m_o,
-    output logic [1:0]       result_src_m_o,
-    output logic [4:0]       rd_m_o,
-    output logic [WIDTH-1:0] pc_plus4_m_o,
-    output logic [WIDTH-1:0] alu_result_m_o
+    output logic [WIDTH-1:0] read_data_m,
 );
 
 logic [WIDTH-1:0] fwd_ls_out;
