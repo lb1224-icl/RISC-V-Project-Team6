@@ -35,6 +35,7 @@ module de_reg #(
     input  logic             mul_en_d,
     input  logic             div_en_d,
     input  logic             div_stall,
+    input  logic             cache_stall_m,
     
     // control signals to EXECUTE stage
     output logic             reg_write_e,
@@ -145,7 +146,7 @@ always_ff @(posedge clk or posedge rst) begin
         div_ctrl_e   <= '0;
         mul_en_e     <= '0;
         div_en_e     <= '0;
-    end else if (!div_stall) begin
+    end else if (!div_stall && !cache_stall_m) begin
         reg_write_e  <= reg_write_d;
         result_src_e <= result_src_d;
         mem_write_e  <= mem_write_d;

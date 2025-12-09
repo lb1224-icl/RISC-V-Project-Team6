@@ -12,9 +12,8 @@ module ram #(
 logic [DATA_WIDTH-1:0] data_array [2**SIZE-1:0];
 
 wire [16:0] index = addr[16:0];
-/* verilator lint_off UNUSED */
 wire        unused_upper_addr = |addr[WIDTH-1:17];
-/* verilator lint_on UNUSED */
+
 
 initial begin
     for (int i = 0; i < 2**SIZE; i++) begin

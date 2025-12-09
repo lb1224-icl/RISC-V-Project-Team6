@@ -2,11 +2,14 @@ module memory #(
     parameter WIDTH = 32
 ) (
     input  logic             clk,
+    input  logic             rst,
+    input  logic             mem_valid,
     input  logic [WIDTH-1:0] alu_result_m,
     input  logic [WIDTH-1:0] write_data_m,
     input  logic             mem_write_m,
     input  logic [2:0]       funct3_m,
 
+    output logic             mem_ready,
     output logic [WIDTH-1:0] read_data_m
 );
 
@@ -28,13 +31,20 @@ always_comb begin
     endcase
 end
 
-ram data_mem (
-    .addr         (alu_result_m),
-    .write_data   (store_data),
-    .clk          (clk),
-    .write_enable (mem_write_m),
-    .byte_en      (mem_write_m ? byte_en : 4'b0000),
-    .read_data    (mem_word)
+mmu #(
+    .DATA_WIDTH (WIDTH),
+    .ADDR_WIDTH (WIDTH)
+) u_mmu (
+    .clk         (clk),
+    .rst         (rst),
+    .mem_valid   (mem_valid),
+    .mem_we      (mem_write_m),
+    .mem_addr    (alu_result_m),
+    .mem_w_data  (store_data),
+    .mem_byte_en (mem_write_m ? byte_en : 4'b0000),
+    .mem_r_data  (mem_word),
+    .mem_ready   (mem_ready),
+    .cache_hit   () // testbench only
 );
 
 // choose and extend read data for load variations

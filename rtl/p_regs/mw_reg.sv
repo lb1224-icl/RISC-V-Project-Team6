@@ -13,6 +13,7 @@ module mw_reg #(
     input  logic [WIDTH-1:0] read_data_m,
     input  logic [4:0]       rd_m,
     input  logic [WIDTH-1:0] pc_plus4_m,
+    input  logic             cache_stall_m,
 
     // control signals to WB stage
     output logic             reg_write_w,
@@ -33,6 +34,13 @@ always_ff @(posedge clk or posedge rst) begin
         read_data_w  <= '0;
         rd_w         <= '0;
         pc_plus4_w   <= '0;
+    end else if (cache_stall_m) begin
+        reg_write_w  <= 0;
+        result_src_w <= 0;
+        alu_result_w <= 0;
+        read_data_w  <= 0;
+        rd_w         <= 0;
+        pc_plus4_w   <= 0;
     end else begin
         reg_write_w  <= reg_write_m;
         result_src_w <= result_src_m;

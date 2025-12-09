@@ -44,7 +44,10 @@ for file in "${files[@]}"; do
                 --exe ${file} \
                 --prefix "Vdut" \
                 -o Vdut \
-                -LDFLAGS "-lgtest -lgtest_main -lpthread"
+                -LDFLAGS "-lgtest -lgtest_main -lpthread" \
+                -Wno-fatal -Wno-WIDTH -Wno-UNOPTFLAT -Wno-LITENDIAN \
+                -Wno-MODDUP -Wno-CASEINCOMPLETE -Wno-UNUSED -Wno-BLKANDNBLK \
+                -Wno-DECLFILENAME -Wno-BLKSEQ -Wno-PINCONNECTEMPTY
 
     # Build C++ project with automatically generated Makefile
     make -j -C obj_dir/ -f Vdut.mk

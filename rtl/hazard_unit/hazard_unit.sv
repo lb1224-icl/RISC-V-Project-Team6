@@ -16,11 +16,14 @@ module hazard_unit (
     input  logic       branch_taken,
     input  logic       div_done_e,
     input  logic       div_en_e,
+    input  logic       mem_ready_m,
+
     output logic       stall,
     output logic       flush,
     output logic [1:0] fwd_rs1,      // forward to rs1
     output logic [1:0] fwd_rs2,      // forward to rs2
-    output logic       div_stall
+    output logic       div_stall,
+    output logic       cache_stall
 );
 
 always_comb begin
@@ -28,6 +31,7 @@ always_comb begin
     stall     = 1'b0;
     flush     = 1'b0;
     div_stall = 1'b0;
+    cache_stall = 1'b0;
     fwd_rs1   = 2'b00;
     fwd_rs2   = 2'b00;
 
@@ -57,6 +61,10 @@ always_comb begin
 
     if (div_en_e && !div_done_e) begin
         div_stall = 1'b1;
+    end
+
+    if (!mem_ready_m) begin
+        cache_stall = 1'b1;
     end
 
     // flush on branch taken

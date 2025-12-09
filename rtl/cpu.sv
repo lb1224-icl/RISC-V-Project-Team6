@@ -89,6 +89,8 @@ logic [WIDTH-1:0] write_data_m;
 logic [4:0]       rd_m;
 logic [WIDTH-1:0] pc_plus4_m;
 logic [2:0]       funct3_m;
+logic             mem_valid_m;
+logic             mem_ready_m;
 
 logic [WIDTH-1:0] read_data_m;
 
@@ -100,6 +102,7 @@ logic [WIDTH-1:0] pc_plus4_w;
 logic             stall;
 logic             flush;
 logic             div_stall;
+logic             cache_stall_m;
 
 // default to using register operand for aluop1 unless explicitly overridden
 assign op1_pc_e = 1'b0;
@@ -129,6 +132,7 @@ fd_reg #(.WIDTH(WIDTH)) fd_register (
     .pc_plus4_f    (pc_plus4_f),
     .instr_f       (instr_f),
     .div_stall     (div_stall),
+    .cache_stall_m (cache_stall_m),
 
     .pc_d          (pc_d),
     .pc_plus4_d    (pc_plus4_d),
@@ -197,6 +201,7 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .mul_en_d      (mul_en_d),
     .div_en_d      (div_en_d),
     .div_stall     (div_stall),
+    .cache_stall_m (cache_stall_m),
 
     .reg_write_e   (reg_write_e),
     .result_src_e  (result_src_e),
@@ -266,6 +271,7 @@ em_reg #(.WIDTH(WIDTH)) em_register (
     .pc_plus4_e    (pc_plus4_e),
     .funct3_e      (funct3_e),
     .div_stall     (div_stall),
+    .cache_stall_m (cache_stall_m),
 
     .reg_write_m   (reg_write_m),
     .result_src_m  (result_src_m),
@@ -277,13 +283,17 @@ em_reg #(.WIDTH(WIDTH)) em_register (
     .funct3_m      (funct3_m)
 );
 
+assign mem_valid_m = mem_write_m | (result_src_m == 2'b01);
+
 memory #(.WIDTH(WIDTH)) u_memory (
     .clk           (clk),
+    .rst           (rst),
+    .mem_valid     (mem_valid_m),
     .alu_result_m  (alu_result_m),
     .write_data_m  (write_data_m),
     .mem_write_m   (mem_write_m),
     .funct3_m      (funct3_m),
-
+    .mem_ready     (mem_ready_m),
     .read_data_m   (read_data_m)
 );
 
@@ -296,6 +306,7 @@ mw_reg #(.WIDTH(WIDTH)) mw_register (
     .read_data_m   (read_data_m),
     .rd_m          (rd_m),
     .pc_plus4_m    (pc_plus4_m),
+    .cache_stall_m (cache_stall_m),
 
     .reg_write_w   (reg_write_w),
     .result_src_w  (result_src_w),
@@ -332,12 +343,15 @@ hazard_unit hu (
     .branch_taken  (pc_src_e),
     .div_done_e    (div_done_e),
     .div_en_e      (div_en_e),
+    
+    .mem_ready_m   (mem_ready_m),
 
     .stall         (stall),
     .flush         (flush),
     .fwd_rs1       (fwd_rs1),
     .fwd_rs2       (fwd_rs2),
-    .div_stall     (div_stall)
+    .div_stall     (div_stall),
+    .cache_stall   (cache_stall_m)
 );
 
 endmodule

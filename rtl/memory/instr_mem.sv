@@ -12,7 +12,7 @@ module instr_mem #(
 
     initial begin
         $display("Loading Instruction Memory (byte-addressed) from program.hex...");
-        $readmemh("../../rtl/memory/instr.mem", mem_array);
+        $readmemh("program.hex", mem_array);
         $display("Loaded Instruction Memory from program.hex!");
     end
 
