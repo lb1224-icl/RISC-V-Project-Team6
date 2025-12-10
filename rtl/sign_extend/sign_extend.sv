@@ -6,10 +6,6 @@ module sign_extend #(
     output logic [WIDTH-1:0] imm_op   // output sign extended imm
 );
 
-/* verilator lint_off UNUSED */
-wire unused_opcode_bits = |ins[6:0];
-/* verilator lint_on UNUSED */
-
 always_comb begin
     // default to avoid unintended latches
     imm_op = '0;

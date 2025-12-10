@@ -1,21 +1,21 @@
 module l3_cache_n_way #(
     parameter DATA_WIDTH = 32,
     parameter ADDR_WIDTH = 32,
-    parameter CACHE_SIZE = 65536,   // bytes
-    parameter LINE_SIZE  = 16,      // bytes
+    parameter CACHE_SIZE = 65536, // bytes
+    parameter LINE_SIZE  = 16,    // bytes
     parameter WAYS       = 8
 )(
     input  logic                   clk,
     input  logic                   rst,
 
     // upper level (L2 / MMU)
-    input  logic                   mem_valid,
-    input  logic                   mem_we,
-    input  logic [ADDR_WIDTH-1:0]  mem_addr,
-    input  logic [DATA_WIDTH-1:0]  mem_w_data,        // word in on write hit
+    input  logic                       mem_valid,
+    input  logic                       mem_we,
+    input  logic [ADDR_WIDTH-1:0]      mem_addr,
+    input  logic [DATA_WIDTH-1:0]      mem_w_data,  // word in on write hit
     input  logic [(DATA_WIDTH/8)-1:0]  mem_byte_en,
-    output logic [LINE_SIZE*8-1:0] mem_r_data,        // full line out on hit
-    output logic                   cache_hit,
+    output logic [LINE_SIZE*8-1:0]     mem_r_data,  // full line out on hit
+    output logic                       cache_hit,
 
     // block fill from RAM via MMU
     input  logic                   fill_en,
@@ -24,11 +24,11 @@ module l3_cache_n_way #(
     input  logic                   fill_mark_valid
 );
 
-    localparam int LINES         = CACHE_SIZE / LINE_SIZE;
-    localparam int SETS          = LINES / WAYS;
-    localparam int OFFSET_BITS   = $clog2(LINE_SIZE);
-    localparam int SET_BITS      = $clog2(SETS);
-    localparam int TAG_BITS      = ADDR_WIDTH - SET_BITS - OFFSET_BITS;
+    localparam int LINES          = CACHE_SIZE / LINE_SIZE;
+    localparam int SETS           = LINES / WAYS;
+    localparam int OFFSET_BITS    = $clog2(LINE_SIZE);
+    localparam int SET_BITS       = $clog2(SETS);
+    localparam int TAG_BITS       = ADDR_WIDTH - SET_BITS - OFFSET_BITS;
 
     localparam int BYTES_PER_WORD = DATA_WIDTH / 8;
     localparam int WORDS_PER_LINE = LINE_SIZE / BYTES_PER_WORD;
@@ -42,13 +42,13 @@ module l3_cache_n_way #(
 
     logic [WAY_BITS-1:0]  rr_ptr      [0:SETS-1];
 
-    wire [TAG_BITS-1:0]    mem_tag   = mem_addr[ADDR_WIDTH-1 -: TAG_BITS];
-    wire [SET_BITS-1:0]    mem_set   = mem_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
-    wire [OFFSET_BITS-1:0] mem_off   = mem_addr[OFFSET_BITS-1:0];
+    wire [TAG_BITS-1:0]      mem_tag        = mem_addr[ADDR_WIDTH-1 -: TAG_BITS];
+    wire [SET_BITS-1:0]      mem_set        = mem_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
+    wire [OFFSET_BITS-1:0]   mem_off        = mem_addr[OFFSET_BITS-1:0];
     wire [WORD_SEL_BITS-1:0] mem_word_index = mem_off[OFFSET_BITS-1 : $clog2(BYTES_PER_WORD)];
 
-    logic [WAYS-1:0]       way_hit;
-    logic [LINE_BITS-1:0]  way_data  [0:WAYS-1];
+    logic [WAYS-1:0]      way_hit;
+    logic [LINE_BITS-1:0] way_data [0:WAYS-1];
 
     always_comb begin
         for (int w = 0; w < WAYS; w++) begin
@@ -66,18 +66,18 @@ module l3_cache_n_way #(
         selected_line = '0;
         for (int w = 0; w < WAYS; w++) begin
             if (way_hit[w])
-                selected_line =  way_data[w]; // if we had a hit store that way
+                selected_line = way_data[w]; // if we had a hit store that way
         end
     end
 
     assign mem_r_data = selected_line;
 
-    wire [TAG_BITS-1:0]   fill_tag = fill_addr[ADDR_WIDTH-1 -: TAG_BITS];
-    wire [SET_BITS-1:0]   fill_set = fill_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
+    wire [TAG_BITS-1:0] fill_tag = fill_addr[ADDR_WIDTH-1 -: TAG_BITS];
+    wire [SET_BITS-1:0] fill_set = fill_addr[OFFSET_BITS + SET_BITS - 1 -: SET_BITS];
 
     logic [WAY_BITS-1:0] repl_way;
 
-    // Byte enable mask
+    // byte enable mask
     logic [DATA_WIDTH-1:0] byte_mask;
     always_comb begin
         for (int b = 0; b < BYTES_PER_WORD; b++) begin
@@ -114,19 +114,19 @@ module l3_cache_n_way #(
                         case (mem_word_index)
                             0: begin
                                 cur_word = data_array[mem_set][w][31:0];
-                                data_array[mem_set][w][31:0]     <= (cur_word & ~byte_mask) | masked_write;
+                                data_array[mem_set][w][31:0]   <= (cur_word & ~byte_mask) | masked_write;
                             end
                             1: begin
                                 cur_word = data_array[mem_set][w][63:32];
-                                data_array[mem_set][w][63:32]    <= (cur_word & ~byte_mask) | masked_write;
+                                data_array[mem_set][w][63:32]  <= (cur_word & ~byte_mask) | masked_write;
                             end
                             2: begin
                                 cur_word = data_array[mem_set][w][95:64];
-                                data_array[mem_set][w][95:64]    <= (cur_word & ~byte_mask) | masked_write;
+                                data_array[mem_set][w][95:64]  <= (cur_word & ~byte_mask) | masked_write;
                             end
                             3: begin
                                 cur_word = data_array[mem_set][w][127:96];
-                                data_array[mem_set][w][127:96]   <= (cur_word & ~byte_mask) | masked_write;
+                                data_array[mem_set][w][127:96] <= (cur_word & ~byte_mask) | masked_write;
                             end
                         endcase
                         rr_ptr[mem_set] <= (w + 1) % WAYS;

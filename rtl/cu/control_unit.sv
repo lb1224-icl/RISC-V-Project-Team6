@@ -35,15 +35,6 @@ assign opcode = ins[6:0];
 assign funct7 = ins[31:25];
 assign funct3 = ins[14:12];
 
-/* verilator lint_off UNUSED */
-logic unused_ins_bits;
-logic unused_funct7_bits;
-
-assign unused_ins_bits    = |ins[24:15] | |ins[11:7];
-assign unused_funct7_bits = |funct7[6]  | |funct7[4:0];
-/* verilator lint_on UNUSED */
-
-
 main_decoder decoder_1 (    
     .opcode     (opcode),
     .jump_d     (jump_d),

@@ -12,8 +12,6 @@ module ram #(
 logic [DATA_WIDTH-1:0] data_array [2**SIZE-1:0];
 
 wire [16:0] index = addr[16:0];
-wire        unused_upper_addr = |addr[WIDTH-1:17];
-
 
 initial begin
     for (int i = 0; i < 2**SIZE; i++) begin
@@ -38,6 +36,6 @@ always_ff @(posedge clk) begin
         if (byte_en[2]) data_array[index + 2] <= write_data[23:16];
         if (byte_en[3]) data_array[index + 3] <= write_data[31:24];
     end
-end   
+end
 
 endmodule

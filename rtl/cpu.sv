@@ -5,9 +5,6 @@ module cpu #(
     input  logic rst,
     input  logic trigger,
     output logic [WIDTH-1:0] a0,
-    // debug visibility for simulation
-    output logic [WIDTH-1:0] debug_pc_f,
-    output logic [WIDTH-1:0] debug_instr_f
 );
 
 // trigger is unused but kept for compatibility with the testbench
@@ -102,15 +99,13 @@ logic [WIDTH-1:0] pc_plus4_w;
 logic             stall;
 logic             flush;
 logic             div_stall;
-logic             cache_stall_m;
-
-// default to using register operand for aluop1 unless explicitly overridden
-assign op1_pc_e = 1'b0;
+logic             cache_stall;
 
 fetch #(.WIDTH(WIDTH)) u_fetch (
     .clk           (clk),
     .rst           (rst),
     .stall         (stall),
+    .cache_stall   (cache_stall),
     .pc_target_e   (pc_target_e),
     .pc_src_e      (pc_src_e),
 
@@ -118,10 +113,6 @@ fetch #(.WIDTH(WIDTH)) u_fetch (
     .pc_f          (pc_f),
     .instr_f       (instr_f)
 );
-
-// expose for debugging
-assign debug_pc_f    = pc_f;
-assign debug_instr_f = instr_f;
 
 fd_reg #(.WIDTH(WIDTH)) fd_register (
     .clk           (clk),
@@ -132,7 +123,7 @@ fd_reg #(.WIDTH(WIDTH)) fd_register (
     .pc_plus4_f    (pc_plus4_f),
     .instr_f       (instr_f),
     .div_stall     (div_stall),
-    .cache_stall_m (cache_stall_m),
+    .cache_stall   (cache_stall),
 
     .pc_d          (pc_d),
     .pc_plus4_d    (pc_plus4_d),
@@ -201,7 +192,7 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .mul_en_d      (mul_en_d),
     .div_en_d      (div_en_d),
     .div_stall     (div_stall),
-    .cache_stall_m (cache_stall_m),
+    .cache_stall   (cache_stall),
 
     .reg_write_e   (reg_write_e),
     .result_src_e  (result_src_e),
@@ -271,7 +262,7 @@ em_reg #(.WIDTH(WIDTH)) em_register (
     .pc_plus4_e    (pc_plus4_e),
     .funct3_e      (funct3_e),
     .div_stall     (div_stall),
-    .cache_stall_m (cache_stall_m),
+    .cache_stall   (cache_stall),
 
     .reg_write_m   (reg_write_m),
     .result_src_m  (result_src_m),
@@ -306,7 +297,7 @@ mw_reg #(.WIDTH(WIDTH)) mw_register (
     .read_data_m   (read_data_m),
     .rd_m          (rd_m),
     .pc_plus4_m    (pc_plus4_m),
-    .cache_stall_m (cache_stall_m),
+    .cache_stall   (cache_stall),
 
     .reg_write_w   (reg_write_w),
     .result_src_w  (result_src_w),
@@ -343,7 +334,6 @@ hazard_unit hu (
     .branch_taken  (pc_src_e),
     .div_done_e    (div_done_e),
     .div_en_e      (div_en_e),
-    
     .mem_ready_m   (mem_ready_m),
 
     .stall         (stall),
@@ -351,7 +341,7 @@ hazard_unit hu (
     .fwd_rs1       (fwd_rs1),
     .fwd_rs2       (fwd_rs2),
     .div_stall     (div_stall),
-    .cache_stall   (cache_stall_m)
+    .cache_stall   (cache_stall)
 );
 
 endmodule

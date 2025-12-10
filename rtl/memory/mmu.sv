@@ -1,26 +1,26 @@
 module mmu #(
     parameter DATA_WIDTH  = 32,
     parameter ADDR_WIDTH  = 32,
-    parameter LINE_SIZE   = 16        // bytes per cache line (4 words)
+    parameter LINE_SIZE   = 16  // bytes per cache line (4 words)
 )(
-    input  logic clk,
-    input  logic rst,
+    input  logic                      clk,
+    input  logic                      rst,
 
     // CPU -> MMU
-    input  logic                  mem_valid,
-    input  logic                  mem_we,
-    input  logic [ADDR_WIDTH-1:0] mem_addr,
-    input  logic [DATA_WIDTH-1:0] mem_w_data,
+    input  logic                      mem_valid,
+    input  logic                      mem_we,
+    input  logic [ADDR_WIDTH-1:0]     mem_addr,
+    input  logic [DATA_WIDTH-1:0]     mem_w_data,
     input  logic [(DATA_WIDTH/8)-1:0] mem_byte_en,
 
     // MMU -> CPU
-    output logic [DATA_WIDTH-1:0] mem_r_data,
-    output logic                  mem_ready,   // 1 -> MMU can accept / complete an access
-    output logic                  cache_hit    // 1 -> last completed READ was a cache hit (used in test benches)
+    output logic [DATA_WIDTH-1:0]     mem_r_data,
+    output logic                      mem_ready,  // 1 -> MMU can accept / complete an access
+    output logic                      cache_hit   // 1 -> last completed READ was a cache hit (used in test benches)
 );
 
     localparam int BYTES_PER_WORD = DATA_WIDTH/8;
-    localparam int WORDS_PER_LINE = LINE_SIZE / BYTES_PER_WORD; // 4
+    localparam int WORDS_PER_LINE = LINE_SIZE / BYTES_PER_WORD;  // 4
     localparam int BLOCK_BITS     = DATA_WIDTH * WORDS_PER_LINE; // 128
     localparam int OFFSET_BITS    = $clog2(LINE_SIZE);
     localparam int WORD_SEL_BITS  = $clog2(WORDS_PER_LINE);      // 2
@@ -69,67 +69,67 @@ module mmu #(
     l1_cache_n_way #(
         .DATA_WIDTH (DATA_WIDTH),
         .ADDR_WIDTH (ADDR_WIDTH),
-        .CACHE_SIZE (4096),   // 4 KiB
+        .CACHE_SIZE (4096),       // 4 KiB
         .LINE_SIZE  (LINE_SIZE),
         .WAYS       (2)
     ) u_l1 (
-        .clk            (clk),
-        .rst            (rst),
-        .mem_valid      (mem_valid),
-        .mem_we         (mem_we),
-        .mem_addr       (mem_addr),
-        .mem_w_data     (mem_w_data),
-        .mem_byte_en    (mem_byte_en),
-        .mem_r_data     (l1_r_word),
-        .cache_hit      (l1_hit),
-        .fill_en        (l1_fill_en),
-        .fill_addr      (l1_fill_addr),
-        .fill_data      (l1_fill_data),
-        .fill_mark_valid(l1_fill_mark_valid)
+        .clk             (clk),
+        .rst             (rst),
+        .mem_valid       (mem_valid),
+        .mem_we          (mem_we),
+        .mem_addr        (mem_addr),
+        .mem_w_data      (mem_w_data),
+        .mem_byte_en     (mem_byte_en),
+        .mem_r_data      (l1_r_word),
+        .cache_hit       (l1_hit),
+        .fill_en         (l1_fill_en),
+        .fill_addr       (l1_fill_addr),
+        .fill_data       (l1_fill_data),
+        .fill_mark_valid (l1_fill_mark_valid)
     );
 
     l2_cache_n_way #(
         .DATA_WIDTH (DATA_WIDTH),
         .ADDR_WIDTH (ADDR_WIDTH),
-        .CACHE_SIZE (16384),  // 16 KiB
+        .CACHE_SIZE (16384),      // 16 KiB
         .LINE_SIZE  (LINE_SIZE),
         .WAYS       (4)
     ) u_l2 (
-        .clk            (clk),
-        .rst            (rst),
-        .mem_valid      (mem_valid),
-        .mem_we         (mem_we),
-        .mem_addr       (mem_addr),
-        .mem_w_data     (mem_w_data),
-        .mem_byte_en    (mem_byte_en),
-        .mem_r_data     (l2_r_block),
-        .cache_hit      (l2_hit),
-        .fill_en        (l2_fill_en),
-        .fill_addr      (l2_fill_addr),
-        .fill_data      (l2_fill_data),
-        .fill_mark_valid(l2_fill_mark_valid)
+        .clk             (clk),
+        .rst             (rst),
+        .mem_valid       (mem_valid),
+        .mem_we          (mem_we),
+        .mem_addr        (mem_addr),
+        .mem_w_data      (mem_w_data),
+        .mem_byte_en     (mem_byte_en),
+        .mem_r_data      (l2_r_block),
+        .cache_hit       (l2_hit),
+        .fill_en         (l2_fill_en),
+        .fill_addr       (l2_fill_addr),
+        .fill_data       (l2_fill_data),
+        .fill_mark_valid (l2_fill_mark_valid)
     );
 
     l3_cache_n_way #(
         .DATA_WIDTH (DATA_WIDTH),
         .ADDR_WIDTH (ADDR_WIDTH),
-        .CACHE_SIZE (65536),  // 64 KiB
+        .CACHE_SIZE (65536),      // 64 KiB
         .LINE_SIZE  (LINE_SIZE),
         .WAYS       (8)
     ) u_l3 (
-        .clk            (clk),
-        .rst            (rst),
-        .mem_valid      (mem_valid),
-        .mem_we         (mem_we),
-        .mem_addr       (mem_addr),
-        .mem_w_data     (mem_w_data),
-        .mem_byte_en    (mem_byte_en),
-        .mem_r_data     (l3_r_block),
-        .cache_hit      (l3_hit),
-        .fill_en        (l3_fill_en),
-        .fill_addr      (l3_fill_addr),
-        .fill_data      (l3_fill_data),
-        .fill_mark_valid(l3_fill_mark_valid)
+        .clk             (clk),
+        .rst             (rst),
+        .mem_valid       (mem_valid),
+        .mem_we          (mem_we),
+        .mem_addr        (mem_addr),
+        .mem_w_data      (mem_w_data),
+        .mem_byte_en     (mem_byte_en),
+        .mem_r_data      (l3_r_block),
+        .cache_hit       (l3_hit),
+        .fill_en         (l3_fill_en),
+        .fill_addr       (l3_fill_addr),
+        .fill_data       (l3_fill_data),
+        .fill_mark_valid (l3_fill_mark_valid)
     );
 
     ram u_ram (
@@ -158,8 +158,8 @@ module mmu #(
     endfunction
 
     typedef enum logic [0:0] {
-        S_IDLE,   // ready for new access, no outstanding miss
-        S_FILL    // reading 4 words from RAM into block_buf
+        S_IDLE, // ready for new access, no outstanding miss
+        S_FILL  // reading 4 words from RAM into block_buf
     } state_t;
 
     state_t state;
@@ -168,9 +168,9 @@ module mmu #(
     logic [WORD_SEL_BITS-1:0] saved_word_index;
 
     logic [1:0]               fill_count;   
-    logic [BLOCK_BITS-1:0]    block_buf;    // assembled block from RAM
+    logic [BLOCK_BITS-1:0]    block_buf;  // assembled block from RAM
 
-    logic                     resp_valid;   // goes high after 4 clock cycles of a full read miss
+    logic                     resp_valid; // goes high after 4 clock cycles of a full read miss
     logic [WORD_SEL_BITS-1:0] resp_word_index;
 
     logic last_read_hit;
@@ -179,23 +179,23 @@ module mmu #(
     always_comb begin
         if (state == S_FILL) begin
             // block base for saved address + (fill_count << 2)
-            ram_addr = { saved_addr[ADDR_WIDTH-1:OFFSET_BITS],
-                         {OFFSET_BITS{1'b0}} }
-                       + {fill_count, 2'b00};
+            ram_addr = {saved_addr[ADDR_WIDTH-1:OFFSET_BITS], {OFFSET_BITS{1'b0}}} + {fill_count, 2'b00};
         end else begin
             // normal case: just follow CPU
-            ram_addr = mem_addr;
+            // word-align the address so byte lanes are selected via byte_en
+            ram_addr = {mem_addr[ADDR_WIDTH-1:2], 2'b00};
         end
     end
 
-    assign mem_ready = (state != S_FILL);
+    // stall the CPU on a miss immediately (same cycle) and while refilling
+    assign mem_ready = (state != S_FILL) && !(mem_valid && !mem_we && !(l1_hit | l2_hit | l3_hit));
 
     logic [DATA_WIDTH-1:0] resp_data_comb;
 
     always_comb begin
         resp_data_comb = '0;
 
-        // Only meaningful for reads; writes don't care about mem_r_data.
+        // only meaningful for reads; writes don't care about mem_r_data
         if (!mem_we) begin
             if (resp_valid) begin
                 resp_data_comb = word_from_block(block_buf, resp_word_index);
@@ -203,27 +203,26 @@ module mmu #(
                 unique case (state)
 
                     S_IDLE: begin
-                        // No outstanding miss. We just look at cache hits
+                        // no outstanding miss; we just look at cache hits
                         if (l1_hit) begin
                             resp_data_comb = l1_r_word; // L1 is word out
                         end else if (l2_hit) begin
-                            resp_data_comb = word_from_block(l2_r_block,
-                                                             addr_word_index);
+                            resp_data_comb = word_from_block(l2_r_block, addr_word_index);
                         end else if (l3_hit) begin
-                            resp_data_comb = word_from_block(l3_r_block,
-                                                             addr_word_index);
+                            resp_data_comb = word_from_block(l3_r_block, addr_word_index);
                         end else begin
-                            // Read miss in all 3. We are about to go to FILL
+                            // read miss in all 3; we are about to go to FILL
                             resp_data_comb = '0;
                         end
                     end
 
                     S_FILL: begin
-                        // In the middle of a miss. mem_ready = 0 so CPU must stall.
+                        // in the middle of a miss; mem_ready = 0 so CPU must stall
                         resp_data_comb = '0;
                     end
 
                     default: resp_data_comb = '0;
+
                 endcase
             end
         end
@@ -231,16 +230,16 @@ module mmu #(
 
     assign mem_r_data = resp_data_comb;
 
-    // Sequential part – miss tracking, fills, write-through, stats
+    // sequential part - miss tracking, fills, write-through, stats
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
-            state            <= S_IDLE;
-            saved_addr       <= '0;
-            saved_word_index <= '0;
-            fill_count       <= 2'd0;
-            block_buf        <= '0;
-            resp_valid       <= 1'b0;
-            resp_word_index  <= '0;
+            state              <= S_IDLE;
+            saved_addr         <= '0;
+            saved_word_index   <= '0;
+            fill_count         <= 2'd0;
+            block_buf          <= '0;
+            resp_valid         <= 1'b0;
+            resp_word_index    <= '0;
 
             l1_fill_en         <= 1'b0;
             l1_fill_addr       <= '0;
@@ -257,10 +256,10 @@ module mmu #(
             l3_fill_data       <= '0;
             l3_fill_mark_valid <= 1'b0;
 
-            last_read_hit   <= 1'b0;
+            last_read_hit      <= 1'b0;
 
         end else begin
-            // Defaults every cycle
+            // defaults every cycle
             l1_fill_en         <= 1'b0;
             l1_fill_mark_valid <= 1'b0;
             l2_fill_en         <= 1'b0;
@@ -274,7 +273,7 @@ module mmu #(
 
             case (state)
 
-                // S_IDLE -> normal operation, no outstanding miss
+                // S_IDLE ==> normal operation, no outstanding miss
                 S_IDLE: begin
                     if (mem_valid) begin
                         if (!mem_we) begin
@@ -305,32 +304,32 @@ module mmu #(
                                     l1_fill_mark_valid <= 1'b1;
                                 end
                             end else begin
-                                // MISS in all 3 levels -> start a 4-cycle block fetch from RAM.
-                                last_read_hit   <= 1'b0;
-                                saved_addr        <= mem_addr;
-                                saved_word_index  <= addr_word_index;
-                                fill_count        <= 2'd0;
-                                block_buf         <= '0;
-                                state             <= S_FILL;
-                                resp_valid        <= 1'b0;
+                                // MISS in all 3 levels ==> start a 4-cycle block fetch from RAM.
+                                last_read_hit    <= 1'b0;
+                                saved_addr       <= mem_addr;
+                                saved_word_index <= addr_word_index;
+                                fill_count       <= 2'd0;
+                                block_buf        <= '0;
+                                state            <= S_FILL;
+                                resp_valid       <= 1'b0;
                             end
                         end
                     end
                 end
 
-                // S_FILL -> we are fetching 4 words from RAM
+                // S_FILL ==> we are fetching 4 words from RAM
                 S_FILL: begin
                     logic [BLOCK_BITS-1:0] block_next;
                     block_next = block_buf;
 
                     unique case (fill_count)
-                        2'd0: block_next[31:0]    = ram_r_data;
-                        2'd1: block_next[63:32]   = ram_r_data;
-                        2'd2: block_next[95:64]   = ram_r_data;
-                        2'd3: block_next[127:96]  = ram_r_data;
+                        2'd0: block_next[31:0]   = ram_r_data;
+                        2'd1: block_next[63:32]  = ram_r_data;
+                        2'd2: block_next[95:64]  = ram_r_data;
+                        2'd3: block_next[127:96] = ram_r_data;
                     endcase
 
-                    // Commit updated block into block_buf
+                    // commit updated block into block_buf
                     block_buf <= block_next;
 
                     if (fill_count == 2'd3) begin
@@ -354,10 +353,10 @@ module mmu #(
                         l1_fill_data       <= block_next;
                         l1_fill_mark_valid <= 1'b1;
 
-                        resp_valid       <= 1'b1;
-                        resp_word_index  <= saved_word_index;
+                        resp_valid         <= 1'b1;
+                        resp_word_index    <= saved_word_index;
 
-                        // Next cycle -> back to IDLE so we can accept another request
+                        // next cycle ==> back to IDLE so we can accept another request
                         state <= S_IDLE;
                     end else begin
                         fill_count <= fill_count + 2'd1;

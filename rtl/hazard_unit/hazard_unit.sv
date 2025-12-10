@@ -28,12 +28,12 @@ module hazard_unit (
 
 always_comb begin
     // defaults
-    stall     = 1'b0;
-    flush     = 1'b0;
-    div_stall = 1'b0;
+    stall       = 1'b0;
+    flush       = 1'b0;
+    div_stall   = 1'b0;
     cache_stall = 1'b0;
-    fwd_rs1   = 2'b00;
-    fwd_rs2   = 2'b00;
+    fwd_rs1     = 2'b00;
+    fwd_rs2     = 2'b00;
 
     // forwarding priority: MEM stage has highest priority (newest data)
     // RS1 forwarding
@@ -67,10 +67,11 @@ always_comb begin
         cache_stall = 1'b1;
     end
 
-    // flush on branch taken
+    // flush only for control-flow changes; cache stalls are handled by holding pipeline regs
     if (branch_taken) begin
         flush = 1'b1;
     end
 end
+
 
 endmodule
