@@ -5,3 +5,5 @@ tb/unit/obj_dir
 tb/unit/div_tb.vcd
 tb/unit/div_test.vcd
 tb/unit/div.vcd
+
+tb/tests/obj_dir

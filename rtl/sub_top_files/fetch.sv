@@ -4,6 +4,7 @@ module fetch #(
     input  logic             clk,
     input  logic             rst,
     input  logic             stall,
+    input  logic             div_stall,
     input  logic             cache_stall,
 
     // from EXECUTE stage for jumps/branches
@@ -37,6 +38,7 @@ pc_reg #(.WIDTH(WIDTH)) u_pc_reg (
     .clk         (clk),
     .rst         (rst),
     .stall       (stall),
+    .div_stall   (div_stall),
     .cache_stall (cache_stall),
     .pc_in       (next_pc),
     .pc_out      (pc_f)

@@ -26,6 +26,7 @@ module execute #(
     input  logic [1:0]         div_ctrl_e,
     input  logic               mul_en_e,
     input  logic               div_en_e,
+    input  logic               div_start_e,
 
     output logic               pc_src_e,
     output logic [D_WIDTH-1:0] ex_out_e,
@@ -46,6 +47,10 @@ logic [D_WIDTH-1:0] fwd_aluop2_out;
 logic [D_WIDTH-1:0] mul_out_e;
 logic [D_WIDTH-1:0] div_out_e;
 logic [D_WIDTH-1:0] ex_result;
+logic [D_WIDTH-1:0] div_num_reg;
+logic [D_WIDTH-1:0] div_den_reg;
+logic               div_start_reg;
+logic [1:0]         div_ctrl_reg;
 
 assign pc_src_e     = jump_e | (zero_e & branch_e);
 assign write_data_e = fwd_aluop2_out;
@@ -108,13 +113,25 @@ mul multiplier (
 div divider (
     .clk           (clk),
     .rst           (rst),
-    .start         (div_en_e),
-    .div_ctrl      (div_ctrl_e),
-    .numerator     (src_a_e),
-    .denominator   (src_b_e),
+    .start         (div_start_reg),
+    .div_ctrl      (div_ctrl_reg),
+    .numerator     (div_num_reg),
+    .denominator   (div_den_reg),
     .result        (div_out_e),
     .div_busy      (div_busy_e)
 );
+
+always_ff @(posedge clk) begin
+    if (div_start_e) begin
+        div_num_reg  <= src_a_e;
+        div_den_reg  <= src_b_e;
+        div_ctrl_reg <= div_ctrl_e;
+        div_start_reg<= 1'b1;
+        $display("DIV START pc=%h rs1=%0d rs2=%0d ctrl=%0b", pc_e, src_a_e, src_b_e, div_ctrl_e);
+    end else begin
+        div_start_reg<= 1'b0;
+    end
+end
 
 mux_4 mul_div_alu (
     .in0           (alu_res),

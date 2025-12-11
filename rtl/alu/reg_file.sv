@@ -13,6 +13,7 @@ module reg_file #(
     output logic [D_WIDTH-1:0]       a0
 );
 
+(* verilator public_flat *)
 logic [D_WIDTH-1:0] ram_array [0:(1<<ADDRESS_WIDTH)-1];
 
 // initialize to zero

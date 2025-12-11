@@ -71,6 +71,8 @@ logic [1:0]       mul_ctrl_e;
 logic [1:0]       div_ctrl_e;
 logic             mul_en_e;
 logic             div_en_e;
+logic             div_start_e;
+logic             div_busy_e;
 
 logic [WIDTH-1:0] ex_out_m;
 logic [1:0]       fwd_rs1;
@@ -105,6 +107,7 @@ fetch #(.WIDTH(WIDTH)) u_fetch (
     .clk           (clk),
     .rst           (rst),
     .stall         (stall),
+    .div_stall     (div_stall),
     .cache_stall   (cache_stall),
     .pc_target_e   (pc_target_e),
     .pc_src_e      (pc_src_e),
@@ -217,7 +220,8 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .mul_ctrl_e    (mul_ctrl_e),
     .div_ctrl_e    (div_ctrl_e),
     .mul_en_e      (mul_en_e),
-    .div_en_e      (div_en_e)
+    .div_en_e      (div_en_e),
+    .div_start_e   (div_start_e)
 );
 
 execute #(.D_WIDTH(WIDTH)) u_execute (
@@ -242,6 +246,7 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .div_ctrl_e    (div_ctrl_e),
     .mul_en_e      (mul_en_e),
     .div_en_e      (div_en_e),
+    .div_start_e   (div_start_e),
 
     .pc_src_e      (pc_src_e),
     .ex_out_e      (ex_out_e),
@@ -318,6 +323,8 @@ writeback #(.D_WIDTH(WIDTH)) u_writeback (
 );
 
 hazard_unit hu (
+    .clk           (clk),
+    .rst           (rst),
     .rd_e          (rd_e),
     .rd_m          (rd_m),
     .rd_w          (rd_w),
@@ -329,6 +336,7 @@ hazard_unit hu (
     .rs2_used_d    (rs2_used_d),
     .rs1_used_e    (rs1_used_e),
     .rs2_used_e    (rs2_used_e),
+    .div_en_e      (div_en_e),
     .reg_write_m   (reg_write_m),
     .reg_write_w   (reg_write_w),
     .load_e        (result_src_e == 2'b01),

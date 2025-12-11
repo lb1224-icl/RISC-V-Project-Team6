@@ -1,4 +1,6 @@
 module hazard_unit (
+    input  logic       clk,
+    input  logic       rst,
     input  logic [4:0] rd_e,
     input  logic [4:0] rd_m,
     input  logic [4:0] rd_w,
@@ -10,6 +12,7 @@ module hazard_unit (
     input  logic       rs2_used_d,   // 1 if current ID-stage instruction actually uses rs2
     input  logic       rs1_used_e,   // 1 if current EX-stage instruction actually uses rs1
     input  logic       rs2_used_e,   // 1 if current EX-stage instruction actually uses rs2
+    input  logic       div_en_e,
     input  logic       reg_write_m,
     input  logic       reg_write_w,
     input  logic       load_e,       // 1 if EX-stage instruction is a load
@@ -24,6 +27,15 @@ module hazard_unit (
     output logic       div_stall,
     output logic       cache_stall
 );
+
+logic div_busy_q;
+
+always_ff @(posedge clk or posedge rst) begin
+    if (rst)
+        div_busy_q <= 1'b0;
+    else
+        div_busy_q <= div_busy_e;
+end
 
 always_comb begin
     // defaults
@@ -58,7 +70,20 @@ always_comb begin
         stall = 1'b1;
     end
 
-    if (div_busy_e) begin
+    // for long-running div instructions, stall until source operands are no longer pending writes
+    if (div_en_e) begin
+        if ((rs1_used_e && ((rd_m != 5'd0 && reg_write_m && (rd_m == rs1_e)) ||
+                            (rd_w != 5'd0 && reg_write_w && (rd_w == rs1_e))))) begin
+            stall = 1'b1;
+        end
+        if ((rs2_used_e && ((rd_m != 5'd0 && reg_write_m && (rd_m == rs2_e)) ||
+                            (rd_w != 5'd0 && reg_write_w && (rd_w == rs2_e))))) begin
+            stall = 1'b1;
+        end
+    end
+
+    // hold pipeline one extra cycle after divider finishes so DONE result is visible
+    if (div_busy_e || div_busy_q) begin
         div_stall = 1'b1;
     end
 

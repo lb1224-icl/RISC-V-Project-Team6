@@ -29,6 +29,8 @@ cd $SCRIPT_DIR
 # Wipe previous test output
 rm -rf test_out/*
 
+export CCACHE_DISABLE=1
+
 # Iterate through files
 for file in "${files[@]}"; do
     name=$(basename "$file" _tb.cpp | cut -f1 -d\-)

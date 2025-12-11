@@ -43,14 +43,7 @@ always_ff @(posedge clk or posedge rst) begin
         pc_plus4_m   <= '0;
         funct3_m     <= '0;
     end else if (div_stall) begin
-        reg_write_m  <= '0;
-        result_src_m <= '0;
-        mem_write_m  <= '0;
-        ex_out_m     <= '0;
-        write_data_m <= '0;
-        rd_m         <= '0;
-        pc_plus4_m   <= '0;
-        funct3_m     <= '0;
+        // hold current MEM-stage values while divider runs
     end else if (!cache_stall) begin
         reg_write_m  <= reg_write_e;
         result_src_m <= result_src_e;

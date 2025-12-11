@@ -28,6 +28,7 @@ logic [D_WIDTH:0]   div_r;
 logic [D_WIDTH-1:0] div_q;
 logic [D_WIDTH-1:0] div_shift;
 logic [D_WIDTH:0]   div_d;
+logic [1:0]         div_ctrl_reg;
 
 logic               sign_q;
 logic               sign_r;
@@ -37,7 +38,7 @@ logic               start_q;
 logic               start_pulse;
 
 assign start_pulse = start & ~start_q;
-assign is_signed   = (div_ctrl == 2'b00) || (div_ctrl == 2'b10);
+assign is_signed   = (div_ctrl_reg == 2'b00) || (div_ctrl_reg == 2'b10);
 
 always_comb begin
     next_state = state;
@@ -56,6 +57,7 @@ always_ff @(posedge clk or posedge rst) begin
         state   <= IDLE;
         counter <= 6'd0;
         start_q <= 1'b0;
+        div_ctrl_reg <= 2'b00;
     end else begin
         state   <= next_state;
 
@@ -63,6 +65,9 @@ always_ff @(posedge clk or posedge rst) begin
             start_q <= 1'b0;
         else
             start_q <= start;
+
+        if (start_pulse)
+            div_ctrl_reg <= div_ctrl;
 
         // counter management
         if (state == IDLE || state == DONE)
@@ -95,11 +100,13 @@ always_ff @(posedge clk) begin
                 sign_r <= numerator[31];
                 div_shift <= numerator[31] ? -numerator : numerator;
                 div_d <= {1'b0, denominator[31] ? -denominator : denominator};
+                $display("DIV INIT signed num=%0d den=%0d abs_num=%0d abs_den=%0d", numerator, denominator, numerator[31] ? -numerator : numerator, denominator[31] ? -denominator : denominator);
             end else begin
                 sign_q <= 1'b0;
                 sign_r <= 1'b0;
                 div_shift <= numerator;
                 div_d <= {1'b0, denominator};
+                $display("DIV INIT uns num=%0d den=%0d", numerator, denominator);
             end
         end
         DIVIDE: begin
@@ -120,7 +127,8 @@ always_ff @(posedge clk) begin
             end
         end
         DONE: begin
-            case (div_ctrl)
+            $display("DIV DONE ctrl=%0b q=%0d r=%0d sign_q=%0b sign_r=%0b", div_ctrl_reg, div_q, div_r, sign_q, sign_r);
+            case (div_ctrl_reg)
                 2'b00: result <= sign_q ? -div_q : div_q;                           // DIV
                 2'b01: result <= div_q;                                             // DIVU
                 2'b10: result <= sign_r ? -div_r[D_WIDTH-1:0] : div_r[D_WIDTH-1:0]; // REM
