@@ -70,6 +70,15 @@ TEST_F(CpuTestbench, TestMulDiv)
     EXPECT_EQ(top_->a0, 1431655730);
 }
 
+TEST_F(CpuTestbench, TestDivCache)
+{
+    setupTest("9_div_cache");
+    setData("reference/gaussian.mem");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, 161);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
