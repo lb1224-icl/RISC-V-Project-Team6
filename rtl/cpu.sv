@@ -72,10 +72,10 @@ logic [1:0]       div_ctrl_e;
 logic             mul_en_e;
 logic             div_en_e;
 
-logic [WIDTH-1:0] alu_result_m;
+logic [WIDTH-1:0] ex_out_m;
 logic [1:0]       fwd_rs1;
 logic [1:0]       fwd_rs2;
-logic [WIDTH-1:0] alu_result_e;
+logic [WIDTH-1:0] ex_out_e;
 logic [WIDTH-1:0] write_data_e;
 logic             div_done_e;
 
@@ -92,7 +92,7 @@ logic             mem_ready_m;
 logic [WIDTH-1:0] read_data_m;
 
 logic [1:0]       result_src_w;
-logic [WIDTH-1:0] alu_result_w;
+logic [WIDTH-1:0] ex_out_w;
 logic [WIDTH-1:0] read_data_w;
 logic [WIDTH-1:0] pc_plus4_w;
 
@@ -235,7 +235,7 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .jalr_e        (jalr_e),
     .op1_pc_e      (op1_pc_e),
     .result_w      (result_w),
-    .alu_result_m  (alu_result_m),
+    .ex_out_m      (ex_out_m),
     .fwd_rs1       (fwd_rs1),
     .fwd_rs2       (fwd_rs2),
     .mul_ctrl_e    (mul_ctrl_e),
@@ -244,10 +244,10 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .div_en_e      (div_en_e),
 
     .pc_src_e      (pc_src_e),
-    .alu_result_e  (alu_result_e),
+    .ex_out_e      (ex_out_e),
     .write_data_e  (write_data_e),
     .pc_target_e   (pc_target_e),
-    .div_done_e    (div_done_e)
+    .div_busy_e    (div_busy_e)
 );
 
 em_reg #(.WIDTH(WIDTH)) em_register (
@@ -256,7 +256,7 @@ em_reg #(.WIDTH(WIDTH)) em_register (
     .reg_write_e   (reg_write_e),
     .result_src_e  (result_src_e),
     .mem_write_e   (mem_write_e),
-    .alu_result_e  (alu_result_e),
+    .ex_out_e      (ex_out_e),
     .write_data_e  (write_data_e),
     .rd_e          (rd_e),
     .pc_plus4_e    (pc_plus4_e),
@@ -267,7 +267,7 @@ em_reg #(.WIDTH(WIDTH)) em_register (
     .reg_write_m   (reg_write_m),
     .result_src_m  (result_src_m),
     .mem_write_m   (mem_write_m),
-    .alu_result_m  (alu_result_m),
+    .ex_out_m      (ex_out_m),
     .write_data_m  (write_data_m),
     .rd_m          (rd_m),
     .pc_plus4_m    (pc_plus4_m),
@@ -280,10 +280,11 @@ memory #(.WIDTH(WIDTH)) u_memory (
     .clk           (clk),
     .rst           (rst),
     .mem_valid     (mem_valid_m),
-    .alu_result_m  (alu_result_m),
+    .ex_out_m      (ex_out_m),
     .write_data_m  (write_data_m),
     .mem_write_m   (mem_write_m),
     .funct3_m      (funct3_m),
+
     .mem_ready     (mem_ready_m),
     .read_data_m   (read_data_m)
 );
@@ -293,7 +294,7 @@ mw_reg #(.WIDTH(WIDTH)) mw_register (
     .rst           (rst),
     .reg_write_m   (reg_write_m),
     .result_src_m  (result_src_m),
-    .alu_result_m  (alu_result_m),
+    .ex_out_m      (ex_out_m),
     .read_data_m   (read_data_m),
     .rd_m          (rd_m),
     .pc_plus4_m    (pc_plus4_m),
@@ -301,7 +302,7 @@ mw_reg #(.WIDTH(WIDTH)) mw_register (
 
     .reg_write_w   (reg_write_w),
     .result_src_w  (result_src_w),
-    .alu_result_w  (alu_result_w),
+    .ex_out_w      (ex_out_w),
     .read_data_w   (read_data_w),
     .rd_w          (rd_w),
     .pc_plus4_w    (pc_plus4_w)
@@ -309,7 +310,7 @@ mw_reg #(.WIDTH(WIDTH)) mw_register (
 
 writeback #(.D_WIDTH(WIDTH)) u_writeback (
     .result_src_w  (result_src_w),
-    .alu_result_w  (alu_result_w),
+    .ex_out_w      (ex_out_w),
     .read_data_w   (read_data_w),
     .pc_plus4_w    (pc_plus4_w),
 
@@ -332,8 +333,7 @@ hazard_unit hu (
     .reg_write_w   (reg_write_w),
     .load_e        (result_src_e == 2'b01),
     .branch_taken  (pc_src_e),
-    .div_done_e    (div_done_e),
-    .div_en_e      (div_en_e),
+    .div_busy_e    (div_busy_e),
     .mem_ready_m   (mem_ready_m),
 
     .stall         (stall),

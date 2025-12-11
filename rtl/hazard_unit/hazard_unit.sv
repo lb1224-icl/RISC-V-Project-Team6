@@ -14,8 +14,7 @@ module hazard_unit (
     input  logic       reg_write_w,
     input  logic       load_e,       // 1 if EX-stage instruction is a load
     input  logic       branch_taken,
-    input  logic       div_done_e,
-    input  logic       div_en_e,
+    input  logic       div_busy_e,
     input  logic       mem_ready_m,
 
     output logic       stall,
@@ -59,7 +58,7 @@ always_comb begin
         stall = 1'b1;
     end
 
-    if (div_en_e && !div_done_e) begin
+    if (div_busy_e) begin
         div_stall = 1'b1;
     end
 

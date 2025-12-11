@@ -37,6 +37,8 @@ assign funct3 = ins[14:12];
 
 main_decoder decoder_1 (    
     .opcode     (opcode),
+    .funct3     (funct3),
+    .funct7     (funct7),
     .jump_d     (jump_d),
     .branch_d   (branch_d),     
     .result_src (result_src),   

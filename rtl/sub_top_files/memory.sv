@@ -4,7 +4,7 @@ module memory #(
     input  logic             clk,
     input  logic             rst,
     input  logic             mem_valid,
-    input  logic [WIDTH-1:0] alu_result_m,
+    input  logic [WIDTH-1:0] ex_out_m,
     input  logic [WIDTH-1:0] write_data_m,
     input  logic             mem_write_m,
     input  logic [2:0]       funct3_m,
@@ -21,7 +21,7 @@ logic [15:0]      selected_half;
 logic [1:0]       byte_offset;
 logic [4:0]       byte_shift;
 
-assign byte_offset = alu_result_m[1:0];     // position within word (00 ==> [7:0], 01 ==> [15:8], etc.)
+assign byte_offset = ex_out_m[1:0];         // position within word (00 ==> [7:0], 01 ==> [15:8], etc.)
 assign byte_shift  = {byte_offset, 3'b000}; // byte_offset * 8 (00 ==> 0, 01 ==> 8, etc.)
 
 // byte enables for store instructions (SB/SH/SW)
@@ -51,7 +51,7 @@ mmu #(
     .rst         (rst),
     .mem_valid   (mem_valid),
     .mem_we      (mem_write_m),
-    .mem_addr    (alu_result_m),
+    .mem_addr    (ex_out_m),
     .mem_w_data  (store_data),
     .mem_byte_en (mem_write_m ? byte_en : 4'b0000),
     .mem_r_data  (mem_word),

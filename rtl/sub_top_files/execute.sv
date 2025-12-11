@@ -18,7 +18,7 @@ module execute #(
 
     // forwarding inputs
     input  logic [D_WIDTH-1:0] result_w,
-    input  logic [D_WIDTH-1:0] alu_result_m,
+    input  logic [D_WIDTH-1:0] ex_out_m,
     input  logic [1:0]         fwd_rs1,
     input  logic [1:0]         fwd_rs2,
 
@@ -28,11 +28,11 @@ module execute #(
     input  logic               div_en_e,
 
     output logic               pc_src_e,
-    output logic [D_WIDTH-1:0] alu_result_e,
+    output logic [D_WIDTH-1:0] ex_out_e,
     output logic [D_WIDTH-1:0] write_data_e,
     output logic [D_WIDTH-1:0] pc_target_e,
 
-    output logic               div_done_e
+    output logic               div_busy_e
 );
 
 logic               zero_e;
@@ -45,11 +45,11 @@ logic [D_WIDTH-1:0] fwd_aluop2_out;
 
 logic [D_WIDTH-1:0] mul_out_e;
 logic [D_WIDTH-1:0] div_out_e;
-logic [D_WIDTH-1:0] mda_out;
+logic [D_WIDTH-1:0] ex_result;
 
 assign pc_src_e     = jump_e | (zero_e & branch_e);
 assign write_data_e = fwd_aluop2_out;
-assign alu_result_e = mda_out;
+assign ex_out_e     = ex_result;
 
 alu ALU (
     .aluop1        (src_a_e),
@@ -83,7 +83,7 @@ mux_2 pc_mux (
 mux_4 fwd_aluop1 (
     .in0           (rd1_e),
     .in1           (result_w),
-    .in2           (alu_result_m),
+    .in2           (ex_out_m),
     .in3           (32'b0),
     .sel           (fwd_rs1),
     .out           (fwd_aluop1_raw)
@@ -92,15 +92,15 @@ mux_4 fwd_aluop1 (
 mux_4 fwd_aluop2 (
     .in0           (rd2_e),
     .in1           (result_w),
-    .in2           (alu_result_m),
+    .in2           (ex_out_m),
     .in3           (32'b0),
     .sel           (fwd_rs2),
     .out           (fwd_aluop2_out)
 );
 
 mul multiplier (
-    .rd1           (rd1_e),
-    .rd2           (rd2_e),
+    .op1           (src_a_e),
+    .op2           (src_b_e),
     .mul_ctrl      (mul_ctrl_e),
     .result        (mul_out_e)
 );
@@ -110,10 +110,10 @@ div divider (
     .rst           (rst),
     .start         (div_en_e),
     .div_ctrl      (div_ctrl_e),
-    .numerator     (rd1_e),
-    .denominator   (rd2_e),
+    .numerator     (src_a_e),
+    .denominator   (src_b_e),
     .result        (div_out_e),
-    .division_done (div_done_e)
+    .div_busy      (div_busy_e)
 );
 
 mux_4 mul_div_alu (
@@ -122,7 +122,7 @@ mux_4 mul_div_alu (
     .in2           (div_out_e),
     .in3           (32'b0),
     .sel           ({div_en_e, mul_en_e}),
-    .out           (mda_out)
+    .out           (ex_result)
 );
 
 // select operand sources: allow PC or zero when registers are unused

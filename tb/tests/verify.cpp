@@ -46,6 +46,30 @@ TEST_F(CpuTestbench, TestPdf)
     EXPECT_EQ(top_->a0, 15363);
 }
 
+TEST_F(CpuTestbench, TestMul)
+{
+    setupTest("6_mul");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, 1073741802); // 0x3fffffea
+}
+
+TEST_F(CpuTestbench, TestDiv)
+{
+    setupTest("7_div");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, 1431655749);
+}
+
+TEST_F(CpuTestbench, TestMulDiv)
+{
+    setupTest("8_mul_div");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, 1431655730);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

@@ -1,17 +1,16 @@
 module div #(
     parameter D_WIDTH = 32
-)
-(
+) (
     input  logic               clk,
     input  logic               rst,
-    input  logic               start,        // div_en
-
+    input  logic               start,       // div_en
     input  logic [1:0]         div_ctrl,
 
-    input  logic [D_WIDTH-1:0] numerator,    // rd1
-    input  logic [D_WIDTH-1:0] denominator,  // rd2
+    input  logic [D_WIDTH-1:0] numerator,   // op1
+    input  logic [D_WIDTH-1:0] denominator, // op2
+
     output logic [D_WIDTH-1:0] result,
-    output logic               division_done // busy
+    output logic               div_busy     // busy
 );
 
 logic [5:0] counter;
@@ -25,40 +24,45 @@ typedef enum logic [1:0] {
 
 state_t state, next_state;
 
-logic [D_WIDTH:0]   rem;
-logic [D_WIDTH-1:0] quo;
+logic [D_WIDTH:0]   div_r;
+logic [D_WIDTH-1:0] div_q;
 logic [D_WIDTH-1:0] div_shift;
-logic [D_WIDTH:0]   den;
+logic [D_WIDTH:0]   div_d;
 
 logic               sign_q;
 logic               sign_r;
 logic               is_signed;
 
-assign is_signed = (div_ctrl == 2'b00) || (div_ctrl == 2'b10);
+logic               start_q;
+logic               start_pulse;
+
+assign start_pulse = start & ~start_q;
+assign is_signed   = (div_ctrl == 2'b00) || (div_ctrl == 2'b10);
 
 always_comb begin
     next_state = state;
     case (state)
-        IDLE: if (start) next_state = INIT;
+        IDLE: if (start_pulse)
+            next_state = INIT;
         INIT: next_state = DIVIDE;
-        DIVIDE: if (counter == 6'd31) next_state = DONE;
+        DIVIDE: if (counter == 6'd31)
+            next_state = DONE;
         DONE: next_state = IDLE;
     endcase
 end
 
 always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
-        state         <= IDLE;
-        division_done <= 1'b1;
-        counter       <= 6'd0;
+        state   <= IDLE;
+        counter <= 6'd0;
+        start_q <= 1'b0;
     end else begin
-        state <= next_state;
+        state   <= next_state;
 
-        // track busy/done
-        if (state == IDLE && start)
-            division_done <= 1'b0;
-        else if (state == DONE)
-            division_done <= 1'b1;
+        if (state == DONE)
+            start_q <= 1'b0;
+        else
+            start_q <= start;
 
         // counter management
         if (state == IDLE || state == DONE)
@@ -68,48 +72,59 @@ always_ff @(posedge clk or posedge rst) begin
     end
 end
 
+always_comb begin
+    div_busy = 1'b0;
+
+    unique case (state)
+        IDLE:   div_busy = start;
+        INIT:   div_busy = 1'b1;
+        DIVIDE: div_busy = 1'b1;
+        DONE:   div_busy = 1'b0;
+    endcase
+end
+
 always_ff @(posedge clk) begin
     case (state)
         IDLE: begin
         end
         INIT: begin
-            rem <= 33'b0;
-            quo <= 32'b0;
+            div_r <= 33'b0;
+            div_q <= 32'b0;
             if (is_signed) begin
                 sign_q <= numerator[31] ^ denominator[31];
                 sign_r <= numerator[31];
                 div_shift <= numerator[31] ? -numerator : numerator;
-                den <= {1'b0, denominator[31] ? -denominator : denominator};
-            end
-            else begin
+                div_d <= {1'b0, denominator[31] ? -denominator : denominator};
+            end else begin
                 sign_q <= 1'b0;
                 sign_r <= 1'b0;
                 div_shift <= numerator;
-                den <= {1'b0, denominator};
+                div_d <= {1'b0, denominator};
             end
         end
         DIVIDE: begin
-            logic [D_WIDTH:0] rem_next;
-            rem_next = {rem[D_WIDTH-1:0], div_shift[D_WIDTH-1]}; // shift left and bring top dividend bit
+            logic [D_WIDTH:0] div_r_next; // local remainder candidate
+
+            div_r_next = {div_r[D_WIDTH-1:0], div_shift[D_WIDTH-1]}; // shift left and bring top dividend bit
 
             // shift dividend left (consume top bit)
-            div_shift <= div_shift << 1;
+            div_shift  <= div_shift << 1;
 
             // decide subtract
-            if (rem_next >= den) begin
-                    rem <= rem_next - den;
-                    quo <= { quo[D_WIDTH-2:0], 1'b1 };
+            if (div_r_next >= div_d) begin
+                div_r <= div_r_next - div_d;
+                div_q <= {div_q[D_WIDTH-2:0], 1'b1};
             end else begin
-                    rem <= rem_next;
-                    quo <= { quo[D_WIDTH-2:0], 1'b0 };
+                div_r <= div_r_next;
+                div_q <= {div_q[D_WIDTH-2:0], 1'b0};
             end
         end
         DONE: begin
             case (div_ctrl)
-                2'b00: result <= sign_q ? -quo : quo;                           // DIV
-                2'b01: result <= quo;                                           // DIVU
-                2'b10: result <= sign_r ? -rem[D_WIDTH-1:0] : rem[D_WIDTH-1:0]; // REM
-                2'b11: result <= rem[D_WIDTH-1:0];                              // REMU
+                2'b00: result <= sign_q ? -div_q : div_q;                           // DIV
+                2'b01: result <= div_q;                                             // DIVU
+                2'b10: result <= sign_r ? -div_r[D_WIDTH-1:0] : div_r[D_WIDTH-1:0]; // REM
+                2'b11: result <= div_r[D_WIDTH-1:0];                                // REMU
             endcase
         end
     endcase

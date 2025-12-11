@@ -62,40 +62,12 @@ case (alu_op) // to determine the ALU operation type
 
     // multiply
     3'b100: begin
-        mul_ctrl = 2'b00;
-        if (funct3 == 3'b0)
-            mul_ctrl = 2'b0;
-        
-        else if (funct3 == 3'b1)
-            mul_ctrl = 2'b1;
-        
-        else if (funct3 == 3'b10)
-            mul_ctrl = 2'b10;
-        
-        else if (funct3 == 3'b11)
-            mul_ctrl = 2'b11;
-        
-        else
-            $error("ALU_Decoder Error: funct3 out of range!");
+        mul_ctrl = funct3[1:0];  // 00 = MUL, 01 = MULH, 10 = MULHSU, 11 = MULHU
     end
 
     // divide
     3'b101: begin
-        div_ctrl = 2'b00;
-        if (funct3 == 3'b0)
-            div_ctrl = 2'b0;
-
-        else if (funct3 == 3'b1)
-            div_ctrl = 2'b1;
-        
-        else if (funct3 == 3'b10)
-            div_ctrl = 2'b10;
-        
-        else if (funct3 == 3'b11)
-            div_ctrl = 2'b11;
-        
-        else
-            $error("Error (alu_decoder): funct3 out of range!");
+        div_ctrl = funct3[1:0];  // 00 = DIV, 01 = DIVU, 10 = REM, 11 = REMU
     end
     
     default: $error("Error (alu_decoder): alu_op out of range!");
