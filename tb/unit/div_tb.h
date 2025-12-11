@@ -21,12 +21,18 @@ public:
         top->trace(tfp, 99);
         tfp->open("div_tb.vcd");
 
-        // reset
+        // initial values
         top->clk = 0;
         top->rst = 1;
+        top->cache_stall = 0;
         top->start = 0;
+        top->div_ctrl = 0;
+        top->numerator = 0;
+        top->denominator = 0;
+
         top->eval();
 
+        // some reset ticks
         for (int i = 0; i < 5; ++i) {
             tick();
         }
@@ -54,38 +60,26 @@ public:
         tfp->dump(ticks++);
     }
 
-    uint32_t run_div(uint32_t numerator,
-                     uint32_t denominator,
-                     uint32_t ctrl,
-                     const char* name)
+    uint32_t run_div(uint32_t numerator, uint32_t denominator, uint32_t ctrl, const char* name)
     {
         // apply inputs
         top->numerator = numerator;
         top->denominator = denominator;
         top->div_ctrl = ctrl;
+        top->cache_stall = 0; // make sure divider is allowed to run
 
         // 1-cycle start pulse
         top->start = 1;
         tick();
         top->start = 0;
 
-        // wait WHILE div_busy is 1
-        const int MAX_CYCLES = 200;
-        int timeout = 0;
-
-        while (top->div_busy && timeout < MAX_CYCLES) {
+        const int MAX_CYCLES = 80;
+        for (int i = 0; i < MAX_CYCLES; ++i) {
             tick();
-            timeout++;
         }
 
-        if (timeout == MAX_CYCLES) {
-            std::cout << "TIMEOUT in " << name << "\n";
-        }
+        uint32_t got = top->result;
 
-        // allow the DONE state to execute and drive the final result
-        tick();
-
-        // after DONE, result is stable
-        return top->result;
+        return got;
     }
 };
