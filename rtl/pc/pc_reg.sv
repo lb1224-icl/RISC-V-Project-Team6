@@ -13,7 +13,7 @@ module pc_reg #(
 always_ff @(posedge clk, posedge rst) begin
     if (rst)
         pc_out <= 0;
-    else if (!stall && !cache_stall) begin
+    else if (!stall && !div_stall && !cache_stall) begin
         pc_out <= pc_in;
     end
 end

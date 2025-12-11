@@ -30,6 +30,9 @@ logic [D_WIDTH-1:0] div_q;
 logic [D_WIDTH-1:0] div_shift;
 logic [D_WIDTH:0]   div_d;
 
+logic [D_WIDTH-1:0] n_reg;
+logic [D_WIDTH-1:0] d_reg;
+
 logic               sign_q;
 logic               sign_r;
 logic               is_signed;
@@ -62,6 +65,12 @@ always_ff @(posedge clk or posedge rst) begin
     end else begin
         state   <= next_state;
 
+        // latch operand values to capture forwarding results
+        if (state == IDLE && start_pulse) begin
+            n_reg <= numerator;
+            d_reg <= denominator;
+        end
+
         if (state == IDLE)
             start_q <= 1'b0;
         else
@@ -90,15 +99,15 @@ always_ff @(posedge clk) begin
             div_r <= 33'b0;
             div_q <= 32'b0;
             if (is_signed) begin
-                sign_q <= numerator[31] ^ denominator[31];
-                sign_r <= numerator[31];
-                div_shift <= numerator[31] ? -numerator : numerator;
-                div_d <= {1'b0, denominator[31] ? -denominator : denominator};
+                sign_q <= n_reg[31] ^ d_reg[31];
+                sign_r <= n_reg[31];
+                div_shift <= n_reg[31] ? -n_reg : n_reg;
+                div_d <= {1'b0, d_reg[31] ? -d_reg : d_reg};
             end else begin
                 sign_q <= 1'b0;
                 sign_r <= 1'b0;
-                div_shift <= numerator;
-                div_d <= {1'b0, denominator};
+                div_shift <= n_reg;
+                div_d <= {1'b0, d_reg};
             end
         end
         DIVIDE: begin

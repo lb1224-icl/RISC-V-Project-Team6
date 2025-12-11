@@ -9,7 +9,7 @@ module fd_reg #(
     // inputs from FETCH stage
     input  logic [WIDTH-1:0] pc_f,
     input  logic [WIDTH-1:0] pc_plus4_f,
-    input  logic [WIDTH-1:0] instr_f, // this arrives one cycle later due to sync read
+    input  logic [WIDTH-1:0] instr_f,
 
     input  logic             div_stall,
     input  logic             cache_stall,
