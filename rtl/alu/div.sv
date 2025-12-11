@@ -3,6 +3,7 @@ module div #(
 ) (
     input  logic               clk,
     input  logic               rst,
+    input  logic               cache_stall,
     input  logic               start,       // div_en
     input  logic [1:0]         div_ctrl,
 
@@ -34,9 +35,10 @@ logic               sign_r;
 logic               is_signed;
 
 logic               start_q;
+logic               busy_q;
 logic               start_pulse;
 
-assign start_pulse = start & ~start_q;
+assign start_pulse = start & ~start_q & ~cache_stall;
 assign is_signed   = (div_ctrl == 2'b00) || (div_ctrl == 2'b10);
 
 always_comb begin
@@ -56,13 +58,19 @@ always_ff @(posedge clk or posedge rst) begin
         state   <= IDLE;
         counter <= 6'd0;
         start_q <= 1'b0;
+        busy_q  <= 1'b1;
     end else begin
         state   <= next_state;
 
-        if (state == DONE)
+        if (state == IDLE)
             start_q <= 1'b0;
         else
-            start_q <= start;
+            start_q <= 1'b1;
+
+        if (state == DONE)
+            busy_q  <= 1'b0;
+        else
+            busy_q  <= 1'b1;
 
         // counter management
         if (state == IDLE || state == DONE)
@@ -72,16 +80,7 @@ always_ff @(posedge clk or posedge rst) begin
     end
 end
 
-always_comb begin
-    div_busy = 1'b0;
-
-    unique case (state)
-        IDLE:   div_busy = start;
-        INIT:   div_busy = 1'b1;
-        DIVIDE: div_busy = 1'b1;
-        DONE:   div_busy = 1'b0;
-    endcase
-end
+assign div_busy = start & busy_q;
 
 always_ff @(posedge clk) begin
     case (state)

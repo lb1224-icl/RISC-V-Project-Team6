@@ -27,6 +27,8 @@ module execute #(
     input  logic               mul_en_e,
     input  logic               div_en_e,
 
+    input  logic               cache_stall,
+
     output logic               pc_src_e,
     output logic [D_WIDTH-1:0] ex_out_e,
     output logic [D_WIDTH-1:0] write_data_e,
@@ -108,6 +110,7 @@ mul multiplier (
 div divider (
     .clk           (clk),
     .rst           (rst),
+    .cache_stall   (cache_stall),
     .start         (div_en_e),
     .div_ctrl      (div_ctrl_e),
     .numerator     (src_a_e),

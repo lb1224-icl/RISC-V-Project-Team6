@@ -105,6 +105,7 @@ fetch #(.WIDTH(WIDTH)) u_fetch (
     .clk           (clk),
     .rst           (rst),
     .stall         (stall),
+    .div_stall     (div_stall),
     .cache_stall   (cache_stall),
     .pc_target_e   (pc_target_e),
     .pc_src_e      (pc_src_e),
