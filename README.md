@@ -1,12 +1,31 @@
 # Group 14 Pipelined RV32I
 
-#### If desired, please skip ahead to:
-1. [Repo Structure Explanation](#structure)
-2. [Evidence](#evidence)
-3.  [Test instructions](#test)
+## Table of Contents:
+1. [Overview](overview)
+2. [Group Details](group-details)
+3. [Work Split](work-split)
+4. [Repo Structure Explanation](#repo-structure)
+5. [Timeline](timeline) --> do we need this?
+6. [Evidence](#evidence) --> what is this?
+7. [Test instructions](#test) --> ??
+8. [RISCV Individual Modules](riscv-unit-modules)
+    - [Program Counter](program-counter)
+    - [Instruction Memory](instruction-memory)
+    - [Data Memory](data-memory)
+    - [Control Unit](control-unit)
+    - [Register File](register-file) 
+    - [Sign Extend](sign-extend)
+    - [Arithmetic Logic Unit](alu)
+    - [Multiplication & Division Units](multiplication-and-division-units)
+    - [Pipleine Registers](pipeline-registers)
+    - [Hazard Unit](hazard-unit)
+    - [Multi-Level Cache](multi-level-cache)
+9. [Sub Top Files: Fetch, Decode, Execute, Memory, Writeback](sub-top-files)
+10. [Top File: CPU.sv](cpu-top-file)
+
 
 ---
-## Quick summary
+## Overview
 
 The result of this coursework is 3 CPUS: blah blah blah
 
@@ -22,3 +41,38 @@ The result of this coursework is 3 CPUS: blah blah blah
 ---
 
 ## Work Split 
+
+## Repo Structure 
+
+## Timeline
+
+## Evidence
+## Test
+
+# RISCV Individual Modules
+
+## Program Counter
+
+## Instruction Memory
+
+## Data Memory
+
+## Control Unit
+
+## Register File
+
+## Sign Extend
+
+## ALU
+
+##  Multiplication and Division Units
+
+## Pipeline Registers
+
+## Hazard Unit
+
+## Multi Level Cache
+
+## Sub Top Files
+
+## CPU Top File
