@@ -16,6 +16,7 @@
 
 This document formalises the work I (GitHub handle `lb1224-icl`) carried out on the RISC-V core. Throughout, I emphasise cross-functional collaboration and show evidence via commit hashes so that you can `git show` any claim.
 My main areas of work were in the fetch stage for the single-cycle CPU, the single-cycle CPU.sv (top file) and the multi-level cache for the pipelined CPU. I also worked aside all 3 other members to debug all stages during integration steps
+
 ---
 
 ## 2. Machine/Assembly code for the F1 Demo
@@ -65,7 +66,7 @@ Once the files in sub_top_files were made, I integrated the data path into a sin
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
-| Integration lessons & debug | `statements/Lucca.md`, `tb/tests/cpu_tb.cpp` | `65e4747`, `1a691cb` (b-lucca & follow-ups) | Documented issues like RET muxing, testbench expectations, etc. |
+| Integration lessons & debug | `statements/Lucca.md`, `tb/tests/cpu_tb.cpp` | `65e4747`, `1a691cb` `(b-lucca & follow-ups)` | Documented issues like RET muxing, testbench expectations, etc. |
 
 **Debugging** Ryota, Ethan and I had to debug a lot of sections here as there were unreliable naming convensions used between files. This could have been avoided if we followed the brief from the beginning and stuck with the same naming conventions between modules. We learnt from this and did not make the same mistake when moving to a pipelined version. We were also missing signals such as a signal to indicate which jump type we were performing. 
 
@@ -79,18 +80,16 @@ The final input was architecting a cache hierarchy and coupling it to the pipeli
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
-| L1 N-way cache | `rtl/memory/l1_cache_n_way.sv` | `175fa74` | Two-way set-associative, write-through policy to minimise control complexity |
-| L2/L3 caches | `rtl/memory/l2_cache_n_way.sv`, `rtl/memory/l3_cache_n_way.sv` | `175fa74` | Shared block-wide interface to keep refill latency fixed at four beats |
-| MMU + fill FSM | `rtl/memory/mmu.sv` | `175fa74` | Handles promotion/demotion between cache levels, miss buffers, and RAM transactions |
-| Pipeline handshake | `rtl/cpu.sv`, `rtl/p_regs/*`, `rtl/hazard_unit/hazard_unit.sv` | `175fa74` | Added `mem_ready`, `cache_stall`, and gating so the pipeline only advances when the MMU responds. |
-| Unit tests | `tb/tests/unit_tests/*` | `175fa74` | Created cache/MMU Verilator harnesses (`cache_2way`, `mmu_basic`, `mmu_3level`) to regression-test the hierarchy in isolation |
+| L1 N-way cache | `rtl/memory/l1_cache_n_way.sv` | `175fa74 (p-memory)` | Two-way set-associative, write-through policy to minimise control complexity |
+| L2/L3 caches | `rtl/memory/l2_cache_n_way.sv`, `rtl/memory/l3_cache_n_way.sv` | `175fa74 (p-memory)` | Shared block-wide interface to keep refill latency fixed at four beats |
+| MMU + fill FSM | `rtl/memory/mmu.sv` | `175fa74 (p-memory)` | Handles promotion/demotion between cache levels, miss buffers, and RAM transactions |
+| Pipeline handshake | `rtl/cpu.sv`, `rtl/p_regs/*`, `rtl/hazard_unit/hazard_unit.sv` | `175fa74 (p-memory)` | Added `mem_ready`, `cache_stall`, and gating so the pipeline only advances when the MMU responds. |
 
 **Key Design Points.**
 - **FSM Coordination.** The MMU implements a two-state FSM (`IDLE`/`FILL`) that bursts four words from RAM while keeping L1 ⊂ L2 ⊂ L3 validity intact
 - **Promotion Policy.** Hits in lower levels trigger promotions (e.g., L3→L2→L1) in the same cycle
 - **Write Policy** Write-through policy was used for simplicity. Discussed more in "Future Work" Section 
 - **Pipeline Awareness.** The hazard unit exports `cache_stall`, letting every pipeline register freeze cleanly when `mem_ready=0`
-
 
 ---
 
