@@ -5,9 +5,9 @@
 2. [Group Details](group-details)
 3. [Work Split](work-split)
 4. [Repo Structure Explanation](#repo-structure)
-5. [Timeline](timeline) --> do we need this?
-6. [Evidence](#evidence) --> what is this?
-7. [Test instructions](#test) --> ??
+5. [Timeline](timeline) 
+6. [Evidence](#evidence)
+7. [Test instructions](#test) 
 8. [RISCV Individual Modules](riscv-unit-modules)
     - [Program Counter](program-counter)
     - [Instruction Memory](instruction-memory)
