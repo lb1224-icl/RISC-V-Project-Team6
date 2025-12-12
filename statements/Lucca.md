@@ -6,7 +6,7 @@
 3. [Fetch Stage](#3-fetch-stage)
 4. [Single-Cycle RAM ](#4-single-cycle-ram)
 5. [Single-Cycle CPU Integration](#5-single-cycle-cpu-integration)
-6. [Cache Hierarchy & MMU Bring-Up](#6-cache-hierarchy--mmu-bring-up)
+6. [Cache Hierarchy & MMU](#6-cache-hierarchy--mmu)
 7. [Verification & Tooling](#7-verification--tooling)
 8. [Lessons Learned & Future Work](#8-lessons-learned--future-work)
 
@@ -14,7 +14,7 @@
 
 ## 1. Introduction
 
-This document formalises the work I (GitHub handle `lb1224-icl`) carried out on the RISC-V core. Throughout, I emphasise cross-functional collaboration and show evidence via commit hashes so that you can `git show` any claim.
+This document formalises the work I (GitHub handle `lb1224-icl`) carried out on the RISC-V core. Throughout, I emphasise collaboration where it is due and show evidence via commit hashes so that you can `git show` any claim.
 My main areas of work were in the fetch stage for the single-cycle CPU, the single-cycle CPU.sv (top file) and the multi-level cache for the pipelined CPU. I also worked aside all 3 other members to debug all stages during integration steps
 
 ---
@@ -25,9 +25,9 @@ I began the project by providing runnable assembly/machine code for the F1 light
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
-| Basic sequencer for the F1 LEDs | `tb/tests/F1-BasicAssembly.s` | `e9ff1ba (b-playground)` | Created the initial ADDI/BNE loop to exercise fetch/decode. |
+| Basic sequencer for the F1 LEDs | `tb/tests/F1-BasicAssembly.s` | `e9ff1ba (b-playground)` | Created the initial loop |
 | Design cleanup & timing fixes | `tb/tests/F1-BasicAssembly.s` | `f68682e (b-playground)` | Removed redundant instructions and ensured deterministic state after reset. |
-| LFSR-driven pseudo-random wait | `tb/tests/F1-LFSRAssembly.s` | `46a7e90 (b-playground)` | Added a 4-bit LFSR so each lap features a unique dwell time. |
+| LFSR-driven pseudo-random wait | `tb/tests/F1-LFSRAssembly.s` | `46a7e90 (b-playground)` | Added a 4-bit LFSR so each lap features a unique reset time. |
 | Small Delay | `tb/tests/F1-LFSRAssembly.s` | `a85049c (b-playground)` | Inserted explicit delay counters so the animation was human-observable. |
 | Debugging | `rtl/memory/instr.mem` | `875a6ef (b-playground)` | Debugging due to incorrect machine code (done on ryota's computer) |
 
@@ -62,11 +62,12 @@ I designed the single cycle RAM and altered the instruction memory to be byte ad
 
 ## 5. Single-Cycle CPU Integration
 
-Once the files in sub_top_files were made, I integrated the data path into a single-cycle CPU top file to execute the given tests and our F1 sequence on.
+Once the files in sub_top_files were made, I integrated them into a single-cycle `CPU .sv` top file to execute the given tests and our F1 sequence on.
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
-| Integration lessons & debug | `statements/Lucca.md`, `tb/tests/cpu_tb.cpp` | `65e4747`, `1a691cb` `(b-lucca & follow-ups)` | Documented issues like RET muxing, testbench expectations, etc. |
+| First cpu.sv top-level | `rtl/sub_top_files/cpu.sv`, `rtl/sub_top_files/*` | `9f702c7 (b-playground)` | Brought fetch, decode, execute, memory, and writeback together for the single-cycle core |
+| Wiring/namespace clean-up | `rtl/sub_top_files/cpu.sv` | `5a3aa28 (b-playground)` | Normalised signal names and added the missing wires |
 
 **Debugging** Ryota, Ethan and I had to debug a lot of sections here as there were unreliable naming convensions used between files. This could have been avoided if we followed the brief from the beginning and stuck with the same naming conventions between modules. We learnt from this and did not make the same mistake when moving to a pipelined version. We were also missing signals such as a signal to indicate which jump type we were performing. 
 
@@ -74,22 +75,23 @@ Once the files in sub_top_files were made, I integrated the data path into a sin
 
 ---
 
-## 6. Cache Hierarchy & MMU Bring-Up
+## 6. Cache Hierarchy & MMU 
 
-The final input was architecting a cache hierarchy and coupling it to the pipeline through an MMU-style wrapper.  This work was primarily done on the `p-memory` branch and is captured cleanly in commit `175fa74` where i merged my work to lower branches.
+The final input was making a cache hierarchy and coupling it to the pipeline through an MMU wrapper.  This work was primarily done on the `p-memory` branch and is captured cleanly in commit `175fa74` where i merged my work to lower branches.
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
+| Direct-Mapped Cache | `rtl/memory/l1_cache_dm.sv` (no longer exists, is in previous commits)| `ec922909  (p-memory)` | Created a direct mapped cache to practice how caches work |
 | L1 N-way cache | `rtl/memory/l1_cache_n_way.sv` | `175fa74 (p-memory)` | Two-way set-associative, write-through policy to minimise control complexity |
-| L2/L3 caches | `rtl/memory/l2_cache_n_way.sv`, `rtl/memory/l3_cache_n_way.sv` | `175fa74 (p-memory)` | Shared block-wide interface to keep refill latency fixed at four beats |
+| L2/L3 caches | `rtl/memory/l2_cache_n_way.sv`, `rtl/memory/l3_cache_n_way.sv` | `175fa74 (p-memory)` | Shared block-wide interface to keep refill latency fixed at four cycles |
 | MMU + fill FSM | `rtl/memory/mmu.sv` | `175fa74 (p-memory)` | Handles promotion/demotion between cache levels, miss buffers, and RAM transactions |
-| Pipeline handshake | `rtl/cpu.sv`, `rtl/p_regs/*`, `rtl/hazard_unit/hazard_unit.sv` | `175fa74 (p-memory)` | Added `mem_ready`, `cache_stall`, and gating so the pipeline only advances when the MMU responds. |
+| Pipeline handshake | `rtl/cpu.sv`, `rtl/p_regs/*`, `rtl/hazard_unit/hazard_unit.sv` | `175fa74 (p-memory)` | Added `mem_ready`, `cache_stall`, and gating so the pipeline only advances when the MMU responds. Worked with Charlie to implement with hazard unit |
 
 **Key Design Points.**
 - **FSM Coordination.** The MMU implements a two-state FSM (`IDLE`/`FILL`) that bursts four words from RAM while keeping L1 ⊂ L2 ⊂ L3 validity intact
-- **Promotion Policy.** Hits in lower levels trigger promotions (e.g., L3→L2→L1) in the same cycle
+- **Promotion Policy.** Hits in lower levels trigger promotions (e.g., L3->L2->L1) in the same cycle
 - **Write Policy** Write-through policy was used for simplicity. Discussed more in "Future Work" Section 
-- **Pipeline Awareness.** The hazard unit exports `cache_stall`, letting every pipeline register freeze cleanly when `mem_ready=0`
+- **Pipeline Awareness.** The hazard unit exports `cache_stall`, letting every pipeline register freeze cleanly when `mem_ready==0`
 
 ---
 
@@ -100,10 +102,8 @@ To help with unit tests of the cache, I created lots of testbenches for each sec
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
 | CPU testbench tweaks for F1 | `tb/tests/cpu_tb.cpp`, `tb/tests/F1-LFSRAssembly.s` | `65e4747 (b-playground)` | Fixed assembly code and added debug error messages to find erros easier in future |
-| Generalised doit.sh for testbenches | `tb/unit_tests/doit.sh` | `[FIND COMMIT] p-memory` | Generalised shell file so other members could create their own testbenches for each of their sections |
-| Testbenches for cache | `tb/unit_tests/*` | `[FIND COMMITS] p-memory` | Created testbenches for the cache units using GTest |
-
-The combination of GTest (through `tb/doit.sh`) and standalone cache tests meant regressions were caught quickly whenever the memory subsystem changed.
+| Generalised doit.sh for testbenches | `tb/unit_tests_cache/cache.sh` | `7d50692  (p-memory)` | Generalised shell file so making new testbenches was easy |
+| Testbenches for cache | `tb/unit_tests_cache/*` | `be46f6a1`, `03f4197b`, `(p-memory)` | Created testbenches for the cache units using GTest |
 
 ---
 
@@ -111,8 +111,8 @@ The combination of GTest (through `tb/doit.sh`) and standalone cache tests meant
 
 ### What I Learnt
 - **SystemVerilog fluency.** Moving from simple RAMs to a three-level cache hierarchy tuned my understanding of blocking vs. non-blocking assignments, packed arrays, and parameterisable modules.
-- **Git Workflow.** Using topic branches (`b-memory`, `p-cache`, etc.) and descriptive commit messages (e.g., *“Byte address instr_mem and littel endian instr.mem”*) proved valuable when debugging later.
-- **Verification-first thinking.** Adding unit tests (`tb/tests/unit_tests/mmu_*`) and GTest harnesses early saved hours compared to debugging purely via GTKWave.
+- **Git Workflow.** Using topic branches (`b-memory`, `p-cache`, etc.) and descriptive commit messages (e.g., *“Byte address instr_mem and little endian instr.mem”*) proved valuable when debugging later.
+- **Verification-first thinking.** Adding unit tests and GTest harnesses early saved hours compared to debugging purely via GTKWave.
 
 ### What Went Wrong
 - **Assembly to Machine Code** Converting our assembly into machine code went wrong as we forgot about the lowest bit in jumps always being 0. Remembering this could have saved a lot of time in the integration stage
