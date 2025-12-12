@@ -10,7 +10,7 @@
 7. [Lessons Learned & Future Work](#7-lessons-learned--future-work)
 
 ---
-![Branch Prediction Unit](tb/Photos/bpu.jpg)
+
 ## 1. Introduction
 
 This document summarises the contributions I (GitHub user Ryota7hos1) made to the RISC-V core. 
@@ -115,7 +115,7 @@ The final input was making a branch prediction unit(bpu) with some functions of 
 
 - **Immediate Extraction.** Extracts immediates depending on instruction value to use for computing target PC value and flush correction. JAL immediates use J-type encoding, while branch immediates use B-type encoding.
   
-<img src="tb/Photos/bpu.pdf" alt="Branch Prediction Unit Planning" width="400">
+<img src="https://github.com/lb1224-icl/RISC-V-Project-Team6/blob/99a50ab3b2bba39f38c674fe3985c27d8d3f8527/tb/Photos/bpu.png" alt="Branch Prediction Unit Planning" width="400">
 
 ---
 
