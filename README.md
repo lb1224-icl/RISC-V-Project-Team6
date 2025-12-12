@@ -55,7 +55,8 @@ The result of this coursework is 3 CPUS: blah blah blah
 
 ## Working Simulation
 
-[![🎥 Watch the video](tb/Simulation_Video/VID-20251212-WA0014.gif)](tb/Simulation_Video/VID-20251212-WA0014.mp4)
+![](tb/Simulation_Video/VID-20251212-WA0014.gif)
+
 
 
 
