@@ -78,6 +78,7 @@ logic [1:0]       fwd_rs2;
 logic [WIDTH-1:0] ex_out_e;
 logic [WIDTH-1:0] write_data_e;
 logic             zero_e;
+logic             div_busy_e;
 
 logic             reg_write_m;
 logic [1:0]       result_src_m;
@@ -258,6 +259,7 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .div_ctrl_e    (div_ctrl_e),
     .mul_en_e      (mul_en_e),
     .div_en_e      (div_en_e),
+    .cache_stall   (cache_stall),
 
     .pc_src_e      (pc_src_e),
     .ex_out_e      (ex_out_e),

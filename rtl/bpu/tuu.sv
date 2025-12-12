@@ -43,8 +43,8 @@ assign write_en = (jump||branch);
 ///Next PC logic
 always_comb begin
     b_or_j = (ins[6:0] == 7'b1100011) ||  // BEQ / B-type
-             (ins[6:0] == 7'b1101111) ||  // JAL
-             (ins[6:0] == 7'b1100111);    // JALR
+             (ins[6:0] == 7'b1101111);     // JAL
+             // JALR (7'b1100111) excluded - target is register-dependent, cannot be predicted
 end
 
 cache bp_cache (

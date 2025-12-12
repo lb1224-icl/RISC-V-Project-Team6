@@ -46,6 +46,7 @@ tuu TUU (
 
 npu NPU (
     .pc_circuit(pc_circuit),
+    .pc_fetch(pc),
     .flush(flush),
     .pc_tu(pc_tu_o),
     .branch_en(branch_en),
