@@ -32,7 +32,7 @@ Each stage builds on the previous one, allowing functionality to be validated st
 | Lucca Butler-Cassar      | 02559782 | **lb1224-icl**  | lb1224@ic.ac.uk   | [Lucca's Statement](statements/Lucca.md)
 | Ryota Hosokawa           | 02591705 | **Ryota7hos1**  | rh1524@ic.ac.uk   | [Ryota's Statement](statements/Ryota.md)
 | Ethan Cann               | 02592695 | **EthanCann**   | ssc624@ic.ac.uk   | [Ethan's Statement](statements/Ethan.md)
-| Charlie Sampson          | 02?????? | **??????????**  | ??????@@ic.ac.uk  | [Charlie's Statement](statements/Charlie.md)
+| Charlie Sampson          | 02596094 | **charliejsampson**  | cs2024@ic.ac.uk  | [Charlie's Statement](statements/Charlie.md)
 
 
 
