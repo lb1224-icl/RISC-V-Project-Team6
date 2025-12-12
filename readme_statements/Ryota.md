@@ -114,6 +114,8 @@ The final input was making a branch prediction unit(bpu) with some functions of 
 - **JALR Exclusion.** JALR always jumps (it's unconditional), but the target address depends on register value (`rs1 + imm`), not PC-relative offset, so the target cannot be predicted statically. 
 
 - **Immediate Extraction.** Extracts immediates depending on instruction value to use for computing target PC value and flush correction. JAL immediates use J-type encoding, while branch immediates use B-type encoding.
+  
+<img src="tb/Photos/bpu.pdf" alt="Branch Prediction Unit Planning" width="400">
 
 ---
 
