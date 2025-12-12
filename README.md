@@ -53,12 +53,13 @@ The result of this coursework is 3 CPUS: blah blah blah
 
 ## Repo Structure 
 
-## Working Simulation
-
-[![Video preview](tb/Simulation_Video/F1_SIM.gif)](tb/Simulation_Video/F1_SIM.mp4)
+### Branch Visualization:
 
 
+## Working Simulation 
+### **Watch the Full Video:** [F1_SIMULATON_LIGHTS_VIDEO.mp4](tb/Simulation_Video/F1_SIM.mp4)
 
+[![Video preview](tb/Simulation_Video/F1_SIM.gif)]
 
 
 
