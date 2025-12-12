@@ -48,7 +48,7 @@ I created the sign extension module which passes through the different instructi
 
 ## 4. Decode Stage Top File
 
-To make the transition to pipelined stages much easier, I suggested that we split the single cycle CPU into 5 sub top files named after the 5 stages of a pipelined processor: Fetch, Decode, Execute, Memory and Writeback. I worked on creating the Decode.sv sub top file. It was logically just wiring up the control unit, sign extend and reg file together but I also had to make sure that any wires from the fetch stage that were just passing through to the execute stage were also included. After doing this and merging these together all into b-playground, I proof checked all the codes along with Lucca and Ryota and found a lot of syntax errors located in everyones code so went on to fix those.
+To make the transition to pipelined stages much easier, I suggested that we split the single cycle CPU into 5 sub top files named after the 5 stages of a pipelined processor: Fetch, Decode, Execute, Memory and Writeback. I worked on creating the Decode.sv sub top file. It was logically just wiring up the control unit, sign extend and reg file together but I also had to make sure that any wires from the fetch stage that were just passing through to the execute stage were also included. After doing this and merging these together all into b-playground, I proof checked all the codes along with Lucca and Ryota and found a lot of syntax errors located in everyones code so went on to fix those. In the process of debugging, a key method was to display certain values at the top level output so that we can keep track and see where it wetn wrong.
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
@@ -60,7 +60,7 @@ To make the transition to pipelined stages much easier, I suggested that we spli
 
 ### 5.1 Minimal Instructions
 
-One of the main roles I took was to create the control unit. For the single cycle RISCV processor, the number of instructions needed was about half of the total, However, trying to decode the logic and considering how the logic for the main_decoder and the alu_decoder cross over was an interesting difficulty. 
+One of the main roles I took was to create the control unit. For the single cycle RISCV processor, the number of instructions needed was about half of the total, However, trying to decode the logic and considering how the logic for the main_decoder and the alu_decoder cross over was an interesting difficulty. I also made sure to add error messages as the default case within these modules so that we can easily pinpoint where the RISCV processor had failed when we run it.
 
 ### 5.2 All Instructions
 
