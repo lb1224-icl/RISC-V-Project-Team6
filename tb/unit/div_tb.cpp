@@ -1,3 +1,6 @@
+// TOP: div
+// RTL: ../../rtl/alu/div.sv
+
 #include "div_tb.h"
 #include <cstdint>
 #include <iostream>

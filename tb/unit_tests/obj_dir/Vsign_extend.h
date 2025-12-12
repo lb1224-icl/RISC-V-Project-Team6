@@ -5,31 +5,29 @@
 // The class here is then constructed to instantiate the design.
 // See the Verilator manual for examples.
 
-#ifndef VERILATED_VCPU_H_
-#define VERILATED_VCPU_H_  // guard
+#ifndef VERILATED_VSIGN_EXTEND_H_
+#define VERILATED_VSIGN_EXTEND_H_  // guard
 
 #include "verilated.h"
 
-class Vcpu__Syms;
-class Vcpu___024root;
+class Vsign_extend__Syms;
+class Vsign_extend___024root;
 class VerilatedVcdC;
 
 // This class is the main interface to the Verilated model
-class Vcpu VL_NOT_FINAL : public VerilatedModel {
+class Vsign_extend VL_NOT_FINAL : public VerilatedModel {
   private:
     // Symbol table holding complete model state (owned by this class)
-    Vcpu__Syms* const vlSymsp;
+    Vsign_extend__Syms* const vlSymsp;
 
   public:
 
     // PORTS
     // The application code writes and reads these signals to
     // propagate new values into/out from the Verilated model.
-    VL_IN8(&clk,0,0);
-    VL_IN8(&rst,0,0);
-    VL_IN8(&trigger,0,0);
-    VL_IN8(&__pinNumber5,0,0);
-    VL_OUT(&a0,31,0);
+    VL_IN8(&imm_src,2,0);
+    VL_IN(&ins,31,0);
+    VL_OUT(&imm_op,31,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
@@ -37,19 +35,19 @@ class Vcpu VL_NOT_FINAL : public VerilatedModel {
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.
-    Vcpu___024root* const rootp;
+    Vsign_extend___024root* const rootp;
 
     // CONSTRUCTORS
     /// Construct the model; called by application code
     /// If contextp is null, then the model will use the default global context
     /// If name is "", then makes a wrapper with a
     /// single model invisible with respect to DPI scope names.
-    explicit Vcpu(VerilatedContext* contextp, const char* name = "TOP");
-    explicit Vcpu(const char* name = "TOP");
+    explicit Vsign_extend(VerilatedContext* contextp, const char* name = "TOP");
+    explicit Vsign_extend(const char* name = "TOP");
     /// Destroy the model; called (often implicitly) by application code
-    virtual ~Vcpu();
+    virtual ~Vsign_extend();
   private:
-    VL_UNCOPYABLE(Vcpu);  ///< Copying not allowed
+    VL_UNCOPYABLE(Vsign_extend);  ///< Copying not allowed
 
   public:
     // API METHODS
