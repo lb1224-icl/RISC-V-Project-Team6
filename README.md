@@ -55,7 +55,8 @@ The result of this coursework is 3 CPUS: blah blah blah
 
 ## Working Simulation
 
-![](tb/Simulation_Video/VID-20251212-WA0014.gif)
+[![Video preview](tb/Simulation_Video/F1_SIM.gif)](tb/Simulation_Video/F1_SIM.mp4)
+
 
 
 
