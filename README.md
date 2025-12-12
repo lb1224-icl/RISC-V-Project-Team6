@@ -5,16 +5,25 @@
 2. [Group Details](#group-details)
 3. [Work Split](#work-split)
 4. [Repo Structure Explanation](#repo-structure)
-5. [Test instructions](#test) 
+5. [Test instructions](#test-instructions) 
 6. [Evidence: F1 Simulation Lights](#working-simulation)
-7. [RISCV Stages](#riscv-stages)
 
 
 
 ---
 ## Overview
 
-The result of this coursework is 3 CPUS: blah blah blah
+The result of this coursework is 3 CPUS: blah blah blah `RYOTA DO THIS BIT`!
+
+
+| RISC-V Progressive Stages | Explanation |
+| :----  | :--- |
+| **1. Basic Single Cycle RISCV**    | The implementation of the RISCV that completes all the instructions within a single cycle and has only the minimal instructions required to run the F1 simulaton (b-playground). |
+| **2. Pipelined RISC-V**            | Introduced the pipeline registers inbetween sections to be able to speed up the processing speed. Also, created a hazard unit to manage the stalling, flushing and forwarding. |
+| **3. Multi-Level Cache**           | Created a Level 1,2 and 3 Cache to prevent the OS from having to fetch from the memory and have a very local storage to use for reoccuring data. In reality, this should increase the processing speed but will seem to be slower on software simulation. |
+| **4. Every Instruction**           | Went on to implement the logic for every possible instruction on RISCV so that we could theoretically run any assembly code fed into the instruction memory. |
+| **5. Multiplication and Division** | Included multiplication and division units as an extra set of instructions to have available to use. These are external modules to the ALU.|
+| **6. Branch Prediction**           | Implemented this an another module within our RISCV Processor to try predict when will branch and therefore prevent having to waste cycles when we have to flush after a branch instruction. |
 
 ## Group Details
 
@@ -61,6 +70,7 @@ The branches that are labelled:
 
 
 ## Working Simulation 
+
 ### **Watch the Full Video:** [F1_SIMULATON_LIGHTS_VIDEO.mp4](tb/Simulation_Video/F1_SIM.mp4)
 
 <img src="tb/Simulation_Video/F1_SIM.gif" alt="F1 Simulation" width="400">
@@ -69,12 +79,5 @@ The branches that are labelled:
 
 ## Test Instructions
 
+`CHARLIE DO HERE`
 
-## RISCV Stages
-
-[Basic Single Cycle RISCV]
-[Pipelined RISCV]
-[Multi-Level Cache]
-[Every Instruction]
-[Multiplication and Division]
-[Branch Prediction]
