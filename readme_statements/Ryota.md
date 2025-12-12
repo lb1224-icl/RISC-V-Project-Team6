@@ -115,7 +115,7 @@ The final input was making a branch prediction unit(bpu) with some functions of 
 
 - **Immediate Extraction.** Extracts immediates depending on instruction value to use for computing target PC value and flush correction. JAL immediates use J-type encoding, while branch immediates use B-type encoding.
   
-<img src="https://github.com/lb1224-icl/RISC-V-Project-Team6/blob/99a50ab3b2bba39f38c674fe3985c27d8d3f8527/tb/Photos/bpu.png" alt="Branch Prediction Unit Planning" width="400">
+<img src="https://github.com/lb1224-icl/RISC-V-Project-Team6/blob/99a50ab3b2bba39f38c674fe3985c27d8d3f8527/tb/Photos/bpu.png" alt="Branch Prediction Unit Planning" width="800">
 
 ---
 
