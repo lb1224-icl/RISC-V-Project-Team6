@@ -5,12 +5,12 @@
 2. [Machine/Assembly code & Instruction Memory](#2-machineassembly-code--instruction-memory)
 3. [Immediate Sign Extension](#3-immediate-sign-extension)
 4. [Decode Stage Top File](#4-decode-stage-top-file)
-5. [Control Unit](#5)
+5. [Control Unit](#5-control-unit)
     -  [Minimal Instructions](#51-minimal-instructions)
     -  [All Instructions](#52-all-instructions)
-6. [Multiplication and Division Controls](#6-multiplication-and-division-controls)
-7. [Unit Tests](#7-unit-tests)
-8. [Lessons Learned & Future Work](#8-lessons-learned--future-work)
+    -  [Multiplication and Division Controls](#53-multiplication-and-division-controls)
+6. [Unit Tests](#6-unit-tests)
+7. [Lessons Learned & Future Work](#7-lessons-learned--future-work)
 
 ---
 
@@ -69,52 +69,36 @@ Then proceeding onto implementing the rest of the other instructions was another
 - The jal and jalr instruction required another control signal outisde of the control unit within the execution stage to determine whether we took the ALU output (jalr) or the PC+Imm  (jal).
 - The lui instruction intially had no way to write back to the register file hence, I edited the ALU to include another route for the lui so that it can simply pass through. Likwise the auipc instruction required an extra mux with more select line logic to allow the PC value to also be fed into the ALU for calculation.
 
+### 5.3 Multiplication and Division Controls 
+
+Furthermore, Charlie and Ryota created a Multiplication and Division Unit which required a few signals as well as down to the hazard unit. Therefore, I decoded the instructions for each of the instructions using different opcode values to keep it simple. However, later on, Charlie and I realised that the opcode values that the processor can take is limited to very specific numbers hence we changed it to be funct3 and funct7 logic dependant while overlapping with the R type instructions.
+
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
 | Basic Control Unit | `rtl/cu/control_unit.sv`, `rtl/cu/main_decoder.sv`, `rtl/cu/alu_decoder.sv`| `e66ea2f (b-cu)` | Created the main decoder and alu decoder, successfully connecting the modules together and added the logic for the minimal instructions. |
 | Full Control Unit | `rtl/cu/control_unit.sv` | `d2817a2 (p-cu)` | Implemented all instructions for the RISCV processor as well as rerouting the lui instruction through the ALU. |
 | Branch Logic | `rtl/cu/*`, `rtl/sub_top_files/execute` | `d54bf7f (p-cu)` | Rerouted the branch logic to be in the execute stage of the pipeline. |
+| Mult and Div Logic | `rtl/cu/*` | `92ae214 (p-cu)` | Created the intial logics and wiring for the multiplication and division unit. |
 
 
 ---
 
-## 6. Multiplication and Division Controls 
+## 6. Unit Tests
 
-The final input was making a cache hierarchy and coupling it to the pipeline through an MMU wrapper.  This work was primarily done on the `p-memory` branch and is captured cleanly in commit `175fa74` where i merged my work to lower branches.
+To be able to confidently say that the RISCV system works correctly, I created unit tests for the majority of modules so that we can test all sorts of sequences of inputs and expected outputs and using Gtests really came in handy to run a smooth and very precise testing system. I often used a "golden model" for large-scale randomization which helped created unpredictable tests.
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
-| Direct-Mapped Cache | `rtl/memory/l1_cache_dm.sv` (no longer exists, is in previous commits)| `ec922909  (p-memory)` | Created a direct mapped cache to practice how caches work |
-| L1 N-way cache | `rtl/memory/l1_cache_n_way.sv` | `175fa74 (p-memory)` | Two-way set-associative, write-through policy to minimise control complexity |
-| L2/L3 caches | `rtl/memory/l2_cache_n_way.sv`, `rtl/memory/l3_cache_n_way.sv` | `175fa74 (p-memory)` | Shared block-wide interface to keep refill latency fixed at four cycles |
-| MMU + fill FSM | `rtl/memory/mmu.sv` | `175fa74 (p-memory)` | Handles promotion/demotion between cache levels, miss buffers, and RAM transactions |
-| Pipeline handshake | `rtl/cpu.sv`, `rtl/p_regs/*`, `rtl/hazard_unit/hazard_unit.sv` | `175fa74 (p-memory)` | Added `mem_ready`, `cache_stall`, and gating so the pipeline only advances when the MMU responds. Worked with Charlie to implement with hazard unit |
-
-**Key Design Points.**
-- **FSM Coordination.** The MMU implements a two-state FSM (`IDLE`/`FILL`) that bursts four words from RAM while keeping L1 ⊂ L2 ⊂ L3 validity intact
-- **Promotion Policy.** Hits in lower levels trigger promotions (e.g., L3->L2->L1) in the same cycle
-- **Write Policy** Write-through policy was used for simplicity. Discussed more in "Future Work" Section 
-- **Pipeline Awareness.** The hazard unit exports `cache_stall`, letting every pipeline register freeze cleanly when `mem_ready==0`
+| Unit Tests | `tb/tests/unit_tests/*`| `70cf282 (p-mul-div-debug)` | All units tests finished and were all successfully passed by the RISCV processor also made the unit_test_doit.sh file so that it can run all the unit tests instead of needing to have a seperate shell file for each. |
+| Cleaning Files | `tb/tests/*` | `8524010  (main)` | Kept all the unit tests in a single location. |
 
 ---
 
-## 7. Unit Tests
-
-To help with unit tests of the cache, I created lots of testbenches for each section to extensively test the number of cycles misses took, hit-miss ratios and correct data after continuous read and writes.
-
-| Feature | Files | Commit(s) | Notes |
-| --- | --- | --- | --- |
-| CPU testbench tweaks for F1 | `tb/tests/cpu_tb.cpp`, `tb/tests/F1-LFSRAssembly.s` | `65e4747 (b-playground)` | Fixed assembly code and added debug error messages to find erros easier in future |
-| Generalised doit.sh for testbenches | `tb/unit_tests_cache/cache.sh` | `7d50692  (p-memory)` | Generalised shell file so making new testbenches was easy |
-| Testbenches for cache | `tb/unit_tests_cache/*` | `be46f6a1`, `03f4197b`, `(p-memory)` | Created testbenches for the cache units using GTest |
-
----
-
-## 8. Lessons Learned & Future Work
+## 7. Lessons Learned & Future Work
 
 ### What I Learnt
-- **Using GitHub** Moving from simple RAMs to a three-level cache hierarchy tuned my understanding of blocking vs. non-blocking assignments, packed arrays, and parameterisable modules.
-- **Naming and coding conventions** Using topic branches (`b-memory`, `p-cache`, etc.) and descriptive commit messages (e.g., *“Byte address instr_mem and little endian instr.mem”*) proved valuable when debugging later.
+- **Using GitHub** GitHub has so many useful tools and I now understand why it is such a useful working environment.
+- **Naming and coding conventions** keeping naming conventions consistent would mean that linking up all the modules om top files would be much easier as you can easily understand where each logic is coming from.
 - **Unit Testing** Adding unit tests and GTest harnesses early saved hours compared to debugging purely via GTKWave and can give you confidence in working modules.
 
 ### What Went Wrong
