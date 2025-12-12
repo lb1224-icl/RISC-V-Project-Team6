@@ -7,7 +7,7 @@ module npu #(
     input  logic             branch_en,
     input  logic [WIDTH-1:0] pc_target,
     output logic [WIDTH-1:0] pc_next,
-    output logic             branch_predict_taken
+    output logic             branch_predicted
 );
 
 logic [WIDTH-1:0] pc_branch_en;
@@ -33,7 +33,7 @@ mux_2 #(.WIDTH(WIDTH)) pc_out_mux (
 );
 
 always_comb begin
-    branch_predict_taken = ((branch_en)&&(pc_next == pc_target));
+    branch_predicted = ((branch_en)&&(pc_next == pc_target));
 end
 
 endmodule

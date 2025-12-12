@@ -11,8 +11,10 @@ module cache #(
     input  logic [WIDTH-1:0]       data_in1,   // second 16-bit number
     input  logic [1:0]             data_in2,   // extra 2-bit data
     input  logic                   write_en,  // write enable
+    
     output logic [WIDTH-1:0]       data_out1, // second 16-bit number output
     output logic [1:0]             data_out2, // extra 2-bit output
+    output logic [1:0]             data_out3,
     output logic                   hit1,        // cache hit flag
     output logic                   hit2
 );
@@ -39,7 +41,7 @@ module cache #(
     logic [TAG_WIDTH-1:0] tag [CACHE_SIZE-1:0];
 
     // Write logic
-    always_ff @(posedge clk or posedge reset) begin
+    always_ff @(negedge clk or posedge reset) begin
         if (reset) begin
             for (int i = 0; i < CACHE_SIZE; i++) begin
                 valid[i]       <= 1'b0;
@@ -49,19 +51,21 @@ module cache #(
                 tag[i]         <= {TAG_WIDTH{1'b0}};
             end
         end else if (write_en) begin
-            cache_data0[line_index] <= data_in0;
-            cache_data1[line_index] <= data_in1;
-            state[line_index]       <= data_in2;
-            tag[line_index]         <= wr_addr_tag;
-            valid[line_index]       <= 1'b1;
+            cache_data0[wr_line_index] <= data_in0;
+            cache_data1[wr_line_index] <= data_in1;
+            state[wr_line_index]       <= data_in2;
+            tag[wr_line_index]         <= wr_addr_tag;
+            valid[wr_line_index]       <= 1'b1;
         end
     end
 
     // Hit detection: valid + tag match
-    assign hit = valid[rd_line_index] && (tag[rd_line_index] == rd_addr_tag);
+    assign hit1 = valid[rd_line_index] && (tag[rd_line_index] == rd_addr_tag);
+    assign hit2 = valid[wr_line_index] && (tag[wr_line_index] == wr_addr_tag);
 
     // Read logic: output only if hit
-    assign data_out1 = hit ? cache_data1[rd_line_index] : 32'd0;
-    assign data_out2 = hit ? state[rd_line_index]       : 2'd0;
+    assign data_out1 = hit1 ? cache_data1[rd_line_index] : 32'd0;
+    assign data_out2 = hit1 ? state[rd_line_index]       : 2'd0;
+    assign data_out3 = hit2 ? state[wr_line_index]       : 2'd0;
 
 endmodule
