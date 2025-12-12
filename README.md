@@ -65,8 +65,10 @@ The result of this coursework is 3 CPUS: blah blah blah `RYOTA DO THIS BIT`!
 
 The branches that are labelled:
 -  `b-playground` is our foundation for building the **single cycle RISCV processor** without any pipelining or further extensions. It has sub branches: `b-` which is where everyone did their individual work to merge back to b-playground at the end.
--  `p-playground` is our foundation for building **pipelined RICCV processor** and also include the further progressing stages e.g. **branch prediction, multi-level cache...**. It has sub branches: `p-` which is once again where everyone did their individual work to merge back to p-playground at the end. There are a few branches that end in words like "safety" and "debug" which are used individually to try debug and solve code errors after having merged everything together.
+-  `p-playground` is our foundation for building **pipelined RISCV processor** and also include the further progressing stages e.g. **branch prediction, multi-level cache...**. It has sub branches: `p-` which is once again where everyone did their individual work to merge back to p-playground at the end. There are a few branches that end in words like "safety" and "debug" which are used individually to try debug and solve code errors after having merged everything together.
 - `main` is the head branch where our **best performing RISCV Processor** and all testing codes are available.
+
+These `b-playground` and `p-playground` branches should have our working RISCV processor for the according stage and the `main` branch will have our final working processor with every implementation.
 
 
 ## Working Simulation 
