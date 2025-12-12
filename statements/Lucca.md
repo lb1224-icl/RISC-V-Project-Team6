@@ -35,7 +35,7 @@ I began the project by providing runnable assembly/machine code for the F1 light
 
 ## 3. Fetch Stage
 
-To make moving to pipelined stages easier, we split the single cycle CPU into 5 sub top files named after the 5 stages of a pipelined processor. I worked on the fetch stage.
+To make moving to pipelined stages easier, we split the single cycle CPU into 5 sub top files named after the 5 stages of a pipelined processor.
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
