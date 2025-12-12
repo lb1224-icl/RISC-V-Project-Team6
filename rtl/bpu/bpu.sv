@@ -49,6 +49,7 @@ npu NPU (
     .pc_fetch(pc),
     .flush(flush),
     .pc_tu(pc_tu_o),
+    .pcplusimm_tu(pcplusimm_tu),  // Pass execute stage target to npu
     .branch_en(branch_en),
     .pc_target(pc_target),
     .pc_next(pc_next),
