@@ -13,8 +13,8 @@
 ---
 ## Overview
 
-The result of this coursework is 3 CPUS: blah blah blah `RYOTA DO THIS BIT`!
-
+This project incrementally develops a RISC-V RV32I processor, progressing from a minimal single-cycle design to a fully pipelined implementation with advanced features such as multi-level caching, multiplication/division support, and branch prediction.
+Each stage builds on the previous one, allowing functionality to be validated step-by-step while managing design complexity.
 
 | RISC-V Progressive Stages | Explanation |
 | :----  | :--- |
