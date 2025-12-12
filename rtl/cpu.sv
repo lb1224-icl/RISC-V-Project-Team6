@@ -77,7 +77,7 @@ logic [1:0]       fwd_rs1;
 logic [1:0]       fwd_rs2;
 logic [WIDTH-1:0] ex_out_e;
 logic [WIDTH-1:0] write_data_e;
-logic             div_done_e;
+logic             zero_e;
 
 logic             reg_write_m;
 logic [1:0]       result_src_m;
@@ -101,6 +101,10 @@ logic             flush;
 logic             div_stall;
 logic             cache_stall;
 
+logic             bp_f;
+logic             bp_d;
+logic             bp_e;
+
 fetch #(.WIDTH(WIDTH)) u_fetch (
     .clk           (clk),
     .rst           (rst),
@@ -109,10 +113,17 @@ fetch #(.WIDTH(WIDTH)) u_fetch (
     .cache_stall   (cache_stall),
     .pc_target_e   (pc_target_e),
     .pc_src_e      (pc_src_e),
+    .zero_e        (zero_e),
+    .jump_e        (jump_e),
+    .branch_e      (branch_e),
+    .pc_e          (pc_e),
+    .bp_e          (bp_e), ///
 
     .pc_plus4_f    (pc_plus4_f),
     .pc_f          (pc_f),
-    .instr_f       (instr_f)
+    .instr_f       (instr_f),
+    .bp_f          (bp_f),
+    .flush         (flush)
 );
 
 fd_reg #(.WIDTH(WIDTH)) fd_register (
@@ -125,10 +136,12 @@ fd_reg #(.WIDTH(WIDTH)) fd_register (
     .instr_f       (instr_f),
     .div_stall     (div_stall),
     .cache_stall   (cache_stall),
+    .bp_f          (bp_f),
 
     .pc_d          (pc_d),
     .pc_plus4_d    (pc_plus4_d),
-    .instr_d       (instr_d)
+    .instr_d       (instr_d),
+    .bp_d          (bp_d)
 );
 
 decode #(.DATA_WIDTH(WIDTH)) u_decode (
@@ -194,6 +207,7 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .div_en_d      (div_en_d),
     .div_stall     (div_stall),
     .cache_stall   (cache_stall),
+    .bp_d          (bp_d),
 
     .reg_write_e   (reg_write_e),
     .result_src_e  (result_src_e),
@@ -218,7 +232,8 @@ de_reg #(.WIDTH(WIDTH)) de_register (
     .mul_ctrl_e    (mul_ctrl_e),
     .div_ctrl_e    (div_ctrl_e),
     .mul_en_e      (mul_en_e),
-    .div_en_e      (div_en_e)
+    .div_en_e      (div_en_e),
+    .bp_e          (bp_e)
 );
 
 execute #(.D_WIDTH(WIDTH)) u_execute (
@@ -248,6 +263,7 @@ execute #(.D_WIDTH(WIDTH)) u_execute (
     .ex_out_e      (ex_out_e),
     .write_data_e  (write_data_e),
     .pc_target_e   (pc_target_e),
+    .zero_e        (zero_e),
     .div_busy_e    (div_busy_e)
 );
 
@@ -333,12 +349,10 @@ hazard_unit hu (
     .reg_write_m   (reg_write_m),
     .reg_write_w   (reg_write_w),
     .load_e        (result_src_e == 2'b01),
-    .branch_taken  (pc_src_e),
     .div_busy_e    (div_busy_e),
     .mem_ready_m   (mem_ready_m),
 
     .stall         (stall),
-    .flush         (flush),
     .fwd_rs1       (fwd_rs1),
     .fwd_rs2       (fwd_rs2),
     .div_stall     (div_stall),

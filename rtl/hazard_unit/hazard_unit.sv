@@ -13,12 +13,10 @@ module hazard_unit (
     input  logic       reg_write_m,
     input  logic       reg_write_w,
     input  logic       load_e,       // 1 if EX-stage instruction is a load
-    input  logic       branch_taken,
     input  logic       div_busy_e,
     input  logic       mem_ready_m,
 
     output logic       stall,
-    output logic       flush,
     output logic [1:0] fwd_rs1,      // forward to rs1
     output logic [1:0] fwd_rs2,      // forward to rs2
     output logic       div_stall,
@@ -28,7 +26,6 @@ module hazard_unit (
 always_comb begin
     // defaults
     stall       = 1'b0;
-    flush       = 1'b0;
     div_stall   = 1'b0;
     cache_stall = 1'b0;
     fwd_rs1     = 2'b00;
@@ -64,11 +61,6 @@ always_comb begin
 
     if (!mem_ready_m) begin
         cache_stall = 1'b1;
-    end
-
-    // flush only for control-flow changes; cache stalls are handled by holding pipeline regs
-    if (branch_taken) begin
-        flush = 1'b1;
     end
 end
 

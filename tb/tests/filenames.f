@@ -3,6 +3,12 @@
 ../../rtl/alu/mul.sv
 ../../rtl/alu/reg_file.sv
 
+../../rtl/bpu/bpu.sv
+../../rtl/bpu/cache.sv
+../../rtl/bpu/fd.sv
+../../rtl/bpu/npu.sv
+../../rtl/bpu/tuu.sv
+
 ../../rtl/cu/main_decoder.sv
 ../../rtl/cu/alu_decoder.sv
 ../../rtl/cu/control_unit.sv

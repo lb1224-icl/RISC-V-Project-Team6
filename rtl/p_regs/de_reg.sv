@@ -36,6 +36,8 @@ module de_reg #(
     input  logic             div_en_d,
     input  logic             div_stall,
     input  logic             cache_stall,
+
+    input  logic             bp_d,
     
     // control signals to EXECUTE stage
     output logic             reg_write_e,
@@ -66,7 +68,9 @@ module de_reg #(
     output logic [1:0]       mul_ctrl_e,
     output logic [1:0]       div_ctrl_e,
     output logic             mul_en_e,
-    output logic             div_en_e
+    output logic             div_en_e,
+
+    output logic             bp_e
 );
 
 always_ff @(posedge clk or posedge rst) begin
@@ -95,6 +99,7 @@ always_ff @(posedge clk or posedge rst) begin
         div_ctrl_e   <= '0;
         mul_en_e     <= '0;
         div_en_e     <= '0;
+        bp_e         <= '0;
     end else if (flush) begin
         reg_write_e  <= '0;
         result_src_e <= '0;
@@ -120,6 +125,7 @@ always_ff @(posedge clk or posedge rst) begin
         div_ctrl_e   <= '0;
         mul_en_e     <= '0;
         div_en_e     <= '0;
+        bp_e         <= '0;
     end else if (stall && !cache_stall) begin
         // insert bubble into EX stage
         reg_write_e  <= '0;
@@ -146,6 +152,7 @@ always_ff @(posedge clk or posedge rst) begin
         div_ctrl_e   <= '0;
         mul_en_e     <= '0;
         div_en_e     <= '0;
+        bp_e         <= '0;
     end else if (!div_stall && !cache_stall) begin
         reg_write_e  <= reg_write_d;
         result_src_e <= result_src_d;
@@ -171,6 +178,7 @@ always_ff @(posedge clk or posedge rst) begin
         div_ctrl_e   <= div_ctrl_d;
         mul_en_e     <= mul_en_d;
         div_en_e     <= div_en_d;
+        bp_e         <= bp_d;
     end
 end
 

@@ -10,7 +10,8 @@ module bpu #(
     input  logic [WIDTH-1:0] pc_tu,    
     input  logic [WIDTH-1:0] pcplusimm_tu,
     input  logic             eq,         
-    input  logic             cu_branch,  
+    input  logic             jump,  
+    input  logic             branch,
     input  logic [WIDTH-1:0] pc_circuit,
     input  logic             branch_predicted_e,
 
@@ -34,7 +35,8 @@ tuu TUU (
     .pc_tu_i(pc_tu),    ///cache
     .pcplusimm_tu(pcplusimm_tu),///cache
     .eq(eq),         ///cache
-    .cu_branch(cu_branch),  ///cache
+    .jump(jump),  ///cache
+    .branch(branch),
     .branch_predicted_e(branch_predicted_e),
     .pc_tu_o(pc_tu_o),    ///next pc for flush
     .branch_en(branch_en),  ///next pc
@@ -50,5 +52,6 @@ npu NPU (
     .pc_target(pc_target),
     .pc_next(pc_next),
     .branch_predicted(branch_predicted)
-)
+);
+
 endmodule

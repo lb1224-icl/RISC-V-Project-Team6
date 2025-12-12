@@ -13,7 +13,7 @@ module npu #(
 logic [WIDTH-1:0] pc_branch_en;
 logic [WIDTH-1:0] pc_tu_p4;
 
-mux_2 #(.WIDTH(WIDTH)) pc_from_TUU_mux (
+mux_2 #(.D_WIDTH(WIDTH)) pc_from_TUU_mux (
     .in0(pc_circuit),
     .in1(pc_target),
     .sel(branch_en),
@@ -25,7 +25,7 @@ pc_inc #(.WIDTH(WIDTH)) u_pc_inc (
     .inc_pc (pc_tu_p4)
 );
 
-mux_2 #(.WIDTH(WIDTH)) pc_out_mux (
+mux_2 #(.D_WIDTH(WIDTH)) pc_out_mux (
     .in0(pc_branch_en),
     .in1(pc_tu_p4),
     .sel(flush),

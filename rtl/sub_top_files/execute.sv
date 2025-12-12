@@ -33,11 +33,11 @@ module execute #(
     output logic [D_WIDTH-1:0] ex_out_e,
     output logic [D_WIDTH-1:0] write_data_e,
     output logic [D_WIDTH-1:0] pc_target_e,
+    output logic               zero_e,
 
     output logic               div_busy_e
 );
 
-logic               zero_e;
 logic [D_WIDTH-1:0] src_a_e;
 logic [D_WIDTH-1:0] src_b_e;
 logic [D_WIDTH-1:0] alu_res;

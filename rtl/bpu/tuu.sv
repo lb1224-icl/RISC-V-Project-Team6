@@ -1,7 +1,6 @@
 ///table update unit
 module tuu #(
-    parameter WIDTH = 32,
-    parameter TABLE_SIZE = 16
+    parameter WIDTH = 32
 ) (
     input  logic             clk,
     input  logic             rst,
@@ -10,7 +9,8 @@ module tuu #(
     input  logic [WIDTH-1:0] pc_tu_i,    ///cache
     input  logic [WIDTH-1:0] pcplusimm_tu,///cache
     input  logic             eq,         ///cache
-    input  logic             cu_branch,  ///cache
+    input  logic             jump,  ///cache
+    input  logic             branch,
     input  logic             branch_predicted_e,
     output logic [WIDTH-1:0] pc_tu_o,    ///next pc for flush
     output logic             branch_en,  ///next pc
@@ -24,6 +24,7 @@ logic [1:0] next_state;
 logic [1:0] state_rd_intermediate;
 logic hit1;
 logic hit2;
+logic write_en;
 
 logic [WIDTH-1:0] pc_intermediate;
 
@@ -31,10 +32,13 @@ logic [WIDTH-1:0] pc_intermediate;
 fd FD(
     .eq(eq),
     .branch_predicted(branch_predicted_e),
+    .jump(jump),
+    .branch(branch),
     .flush(flush)
 );
 
 assign pc_tu_o = pc_tu_i;
+assign write_en = (jump||branch);
 
 ///Next PC logic
 always_comb begin
@@ -51,7 +55,7 @@ cache bp_cache (
     .data_in0(pc_tu_i),   // first 32-bit number
     .data_in1(pcplusimm_tu),   // second 32-bit number
     .data_in2(next_state),   // 2-bit state
-    .write_en(cu_branch),  // write enable
+    .write_en(write_en),  // write enable
     .data_out1(pc_intermediate), // second 16-bit number output
     .data_out2(state_rd_intermediate), // extra 2-bit output
     .data_out3(state_wr_int1),
@@ -70,26 +74,26 @@ assign branch_en = (b_or_j && hit1) ? state_rd_intermediate[1] : 1'b0;
 
 always_comb begin
     next_state = state_wr_int1; // no update
-    if (cu_branch) begin
+    if (write_en) begin
         if (!hit2) begin
             case (eq)
-                1'b0: next_state = 2'b01;
+                1'b0: next_state = 2'b00;
                 1'b1: next_state = 2'b10;
             endcase
         end
         else begin
             if (!eq) begin // NOT TAKEN
                 case (state_wr_int1)
-                    2'b00: next_state = 2'b00;
-                    2'b01: next_state = 2'b00;
-                    2'b10: next_state = 2'b01;
+                    2'b01: next_state = 2'b01;
+                    2'b00: next_state = 2'b01;
+                    2'b10: next_state = 2'b00;
                     2'b11: next_state = 2'b10;
                 endcase
             end 
             else begin // TAKEN
                 case (state_wr_int1)
-                    2'b00: next_state = 2'b01;
-                    2'b01: next_state = 2'b10;
+                    2'b01: next_state = 2'b00;
+                    2'b00: next_state = 2'b10;
                     2'b10: next_state = 2'b11;
                     2'b11: next_state = 2'b11;
                 endcase
