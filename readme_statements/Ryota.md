@@ -10,7 +10,7 @@
 7. [Lessons Learned & Future Work](#7-lessons-learned--future-work)
 
 ---
-![name it wtv](file directory fkshf/kwhf/fhf.jpg)
+![Branch Prediction Unit](tb/Photos/bpu.jpg)
 ## 1. Introduction
 
 This document summarises the contributions I (GitHub user Ryota7hos1) made to the RISC-V core. 
