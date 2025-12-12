@@ -79,7 +79,46 @@ These `b-playground` and `p-playground` branches should have our working RISCV p
 
 
 
-## Test Instructions
+### Test Instructions
 
-`CHARLIE DO HERE`
+## Verify.cpp Tests
 
+To run the verify.cpp tests, navigate to the testbench directory:
+
+```bash
+cd tb
+```
+
+Then run the verification script:
+
+```bash
+./doit.sh tests/verify.cpp
+```
+
+## Unit Tests
+
+To run any of the unit tests, first navigate to the unit_tests directory:
+
+```bash
+cd tb/tests/unit_tests
+```
+
+Then run a unit test of your choice (example: div_tb.cpp):
+
+```bash
+./unit_tests_doit.sh div_tb.cpp
+```
+
+## F1 Lights
+
+To run the F1 lights on Vbuddy, first connect Vbuddy and remember to change the vbuddy.cfg file to include the correct USB port number for your device. Then navigate to the testbench directory:
+
+```bash
+cd tb
+```
+
+Then run the following command:
+
+```bash
+./build.sh
+```
