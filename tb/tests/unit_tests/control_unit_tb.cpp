@@ -1,5 +1,5 @@
 // TOP: control_unit
-// RTL: ../../rtl/cu/control_unit.sv
+// RTL: ../../../rtl/cu/control_unit.sv
 
 #include "control_unit_testbench.h"
 

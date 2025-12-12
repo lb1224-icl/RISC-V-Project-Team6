@@ -1,5 +1,5 @@
 // TOP: sign_extend
-// RTL: ../../rtl/sign_extend/sign_extend.sv
+// RTL: ../../../rtl/sign_extend/sign_extend.sv
 
 #include "sign_extend_testbench.h"
 #include <random>

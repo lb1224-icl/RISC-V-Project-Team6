@@ -1,5 +1,5 @@
 // TOP: reg_file
-// RTL: ../../rtl/alu/reg_file.sv
+// RTL: ../../../rtl/alu/reg_file.sv
 
 #include "reg_file_testbench.h"
 

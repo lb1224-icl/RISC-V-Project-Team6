@@ -1,5 +1,5 @@
 // TOP: hazard_unit
-// RTL: ../../rtl/hazard_unit/hazard_unit.sv
+// RTL: ../../../rtl/hazard_unit/hazard_unit.sv
 
 #include "hu_tb.h"
 #include <iostream>

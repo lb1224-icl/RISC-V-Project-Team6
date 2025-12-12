@@ -1,5 +1,5 @@
 // TOP: alu
-// RTL: ../../rtl/alu/alu.sv
+// RTL: ../../../rtl/alu/alu.sv
 
 #include "alu_testbench.h"
 
