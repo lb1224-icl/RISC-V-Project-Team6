@@ -16,13 +16,13 @@
 // 4'b1001: SRA
 // 4'b1111: LUI (Special)
 
-// --- Helper function to construct an instruction with funct3/funct7 set ---
+// Helper function to construct an instruction with funct3/funct7 set
 uint32_t make_instr(uint8_t opcode, uint8_t funct3, uint8_t funct7) {
     uint32_t instr = 0;
     instr |= (uint32_t)opcode;         // Bits 6:0
     instr |= (uint32_t)funct3 << 12;   // Bits 14:12
     instr |= (uint32_t)funct7 << 25;   // Bits 31:25
-    // rd and rs fields are left at 0 for simplicity, only control fields matter
+    // rd and rs fields are left at 0 for simplicity because only the control fields matter
     return instr;
 }
 
@@ -41,7 +41,6 @@ TEST_F(control_unit_testbench, RType_Standard_Tests) {
     });
 
     // 2. SUB: funct3=0, funct7_5=1 -> ALU_CTRL=SUB (1)
-    // Note: funct7[5] is bit 30 of the instruction. Here, funct7 = 0b0100000 (32)
     check_instruction(make_instr(opcode, 0, 32), {
         .jump_d = 0, .branch_d = 0, .result_src = 0, .mem_write = 0, 
         .alu_ctrl = 1, .alu_src = 0, .imm_src = 0, .reg_write = 1, 

@@ -3,9 +3,7 @@
 
 #include "reg_file_testbench.h"
 
-// ==========================================
 // TEST 1: Basic Write and Read Verification
-// ==========================================
 TEST_F(reg_file_testbench, BasicWriteRead) {
     const uint8_t ADDR_A = 5;
     const uint8_t ADDR_B = 6;
@@ -27,9 +25,7 @@ TEST_F(reg_file_testbench, BasicWriteRead) {
     EXPECT_EQ(result.dout2, DATA_B) << "Read after write B failed";
 }
 
-// ==========================================
 // TEST 2: Write Protection for Register x0 (Zero Register)
-// ==========================================
 TEST_F(reg_file_testbench, X0Protection) {
     const uint8_t ADDR_X0 = 0;
     const uint32_t TEST_DATA = 0xCAFEBABE;
@@ -46,9 +42,7 @@ TEST_F(reg_file_testbench, X0Protection) {
     EXPECT_EQ(post_write.dout1, 0) << "Write to x0 incorrectly succeeded";
 }
 
-// ==========================================
 // TEST 3: Reading x0 (Zero Register) as a Source Operand
-// ==========================================
 TEST_F(reg_file_testbench, X0ReadSource) {
     const uint8_t ADDR_X0 = 0;
     const uint8_t ADDR_X1 = 1;
@@ -66,9 +60,7 @@ TEST_F(reg_file_testbench, X0ReadSource) {
     EXPECT_EQ(result.dout2, TEST_DATA) << "Reading x1 as dout2 failed";
 }
 
-// ==========================================
 // TEST 4: Dedicated a0 Output (x10)
-// ==========================================
 TEST_F(reg_file_testbench, A0DebugOutput) {
     const uint8_t ADDR_A0 = 10;
     const uint32_t DATA_A0 = 0xAA00AA00;
@@ -86,9 +78,7 @@ TEST_F(reg_file_testbench, A0DebugOutput) {
     EXPECT_EQ(result.a0, DATA_A0) << "Dedicated a0 debug output failed";
 }
 
-// ==========================================
 // TEST 5: Write-After-Read (WAR) Hazard Check
-// ==========================================
 TEST_F(reg_file_testbench, WriteAfterReadHazard) {
     const uint8_t ADDR = 2;
     const uint32_t DATA_OLD = 0x1;

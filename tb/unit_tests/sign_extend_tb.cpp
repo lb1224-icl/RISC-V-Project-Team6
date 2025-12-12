@@ -5,10 +5,7 @@
 #include <random>
 #include <iostream>
 
-// ==========================================
-// TEST 1: I-Type (ADDI, LW)
-// Logic: imm = ins[31:20]
-// ==========================================
+// TEST 1: I-Type (ADDI, LW)  Logic: imm = ins[31:20]
 TEST_F(sign_extend_testbench, ITypeTest) {
     // 1. Positive case: 0x001... -> 1
     uint32_t ins_pos = 0x00100000; 
@@ -19,10 +16,7 @@ TEST_F(sign_extend_testbench, ITypeTest) {
     EXPECT_EQ(EvalOp(ins_neg, 0), 0xFFFFFFFF);
 }
 
-// ==========================================
-// TEST 2: S-Type (SW)
-// Logic: imm = {ins[31:25], ins[11:7]}
-// ==========================================
+// TEST 2: S-Type (SW)  Logic: imm = {ins[31:25], ins[11:7]}
 TEST_F(sign_extend_testbench, STypeTest) {
     // Construct -1: needs all 1s in top 7 bits and bits 11:7
     // Top 7 bits (31:25) = 0x7F << 25 = 0xFE000000
@@ -31,10 +25,7 @@ TEST_F(sign_extend_testbench, STypeTest) {
     EXPECT_EQ(EvalOp(ins_neg, 1), 0xFFFFFFFF);
 }
 
-// ==========================================
-// TEST 3: B-Type (BEQ)
-// Logic: Scrambled immediate
-// ==========================================
+// TEST 3: B-Type (BEQ)   Logic: Scrambled immediate
 TEST_F(sign_extend_testbench, BTypeTest) {
     // Test known value: -2 (0xFFFFFFFE)
     // 13-bit representation: 1 11111 11111 0
@@ -46,10 +37,7 @@ TEST_F(sign_extend_testbench, BTypeTest) {
     EXPECT_EQ(EvalOp(ins_neg_two, 2), 0xFFFFFFFE);
 }
 
-// ==========================================
-// TEST 4: U-Type (LUI)
-// Logic: imm = {ins[31:12], 12'b0}
-// ==========================================
+// TEST 4: U-Type (LUI)   Logic: imm = {ins[31:12], 12'b0}
 TEST_F(sign_extend_testbench, UTypeTest) {
     uint32_t ins = 0x12345678;
     // Should mask off bottom 12 bits
@@ -57,9 +45,7 @@ TEST_F(sign_extend_testbench, UTypeTest) {
 }
 
 
-// ==========================================
-// GOLDEN MODEL FOR RANDOM TESTING
-// ==========================================
+// TEST 5: RANDOM TESTING
 int32_t golden_sign_extend(uint32_t ins, int src) {
     int32_t imm = 0;
     switch (src) {
@@ -111,10 +97,7 @@ int32_t golden_sign_extend(uint32_t ins, int src) {
 }
 
 
-// ==========================================
-// TEST 5: J-Type (JAL)
-// Logic: Complex Scramble
-// ==========================================
+// TEST 6: J-Type (JAL)
 TEST_F(sign_extend_testbench, JTypeTest) {
     // 1. Max Positive Offset (0x0001FFFFE)
     // Instruction 0x3FFFFFFF sets all non-sign bits (imm[1:20]) to 1.
@@ -128,9 +111,7 @@ TEST_F(sign_extend_testbench, JTypeTest) {
 }
 
 
-// ==========================================
-// TEST 6: Randomized Stress Test
-// ==========================================
+// TEST 7: Randomized Stress Test
 TEST_F(sign_extend_testbench, RandomStress) {
     std::mt19937 rng(12345);
     std::uniform_int_distribution<uint32_t> dist_word(0, 0xFFFFFFFF);

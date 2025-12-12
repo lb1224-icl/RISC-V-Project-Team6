@@ -71,7 +71,7 @@ public:
         EXPECT_EQ(top->rs1_signal, expected.rs1_signal) << "Instruction: 0x" << std::hex << instruction << " - Mismatch on rs1_signal";
         EXPECT_EQ(top->rs2_signal, expected.rs2_signal) << "Instruction: 0x" << std::hex << instruction << " - Mismatch on rs2_signal";
         
-        // ALU and M-Extension Checks
+        // M-Extension Checks
         EXPECT_EQ(top->mul_en, expected.mul_en) << "Instruction: 0x" << std::hex << instruction << " - Mismatch on mul_en";
         EXPECT_EQ(top->div_en, expected.div_en) << "Instruction: 0x" << std::hex << instruction << " - Mismatch on div_en";
         EXPECT_EQ(top->mul_ctrl, expected.mul_ctrl) << "Instruction: 0x" << std::hex << instruction << " - Mismatch on mul_ctrl";
