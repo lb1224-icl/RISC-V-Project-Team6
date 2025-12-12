@@ -2,15 +2,15 @@
 
 ## Table of Contents
 1. [Introduction](#1-introduction)
-2. [Register File & Data Memory](#2-machineassembly-code-for-the-f1-demo)
-3. [ALU](#3-fetch-stage)
-4. [ALU Extensions (MUL/DIV)](#4-single-cycle-ram)
-5. [Execution & Write Back Stage](#5-single-cycle-cpu-integration)
-6. [2-bit Branch Prediction](#6-cache-hierarchy--mmu)
+2. [Register File & Data Memory](#2-register-file--data-memory)
+3. [ALU](#3-alu)
+4. [ALU Extensions (MUL/DIV)](#4-alu-extensions-muldiv)
+5. [Execution & Write Back Stage](#5-execution--write-back-stage)
+6. [2-bit Branch Prediction](#6-2-bit-branch-prediction)
 7. [Lessons Learned & Future Work](#7-lessons-learned--future-work)
 
 ---
-
+![name it wtv](file directory fkshf/kwhf/fhf.jpg)
 ## 1. Introduction
 
 This document summarises the contributions I (GitHub user Ryota7hos1) made to the RISC-V core. 
@@ -46,7 +46,7 @@ In the task distribution for lab 4 I have been assigned the ALU unit and thus I 
 | Updated(2/2) ALU | `rtl/alu/alu.sv` | `d9d28ef (b-alu)` | Added more instructions and introduced new architecture for alu |
 | F1 ALU | `rtl/alu/alu.sv` | `ce4d44c (b-alu)` | Added all instructions needed for f1 task (single cycle) |
 
-## 4. ALU Extensions (MUL/DIV)
+## 4. ALU Extensions MUL/DIV
 
 I have added new units outside of the ALU in the execute stage to do multiplication and division covered. We have implemented the 32-cycle divider, because this is overall better than having a 1-cycle divider with huge combinational logic. The multiplication unit handles MUL, MULH, MULHSU, and MULHU instructions using a 64-bit intermediate result. The division unit implements a state machine (IDLE, INIT, DIVIDE, DONE) and provides a `div_busy` signal for hazard unit integration.
 
@@ -78,7 +78,7 @@ Changes to the execution stage (like adding the mul and div units or adding a mu
 
 ## 6. 2-bit Branch Prediction 
 
-The final input was making a branch prediction unit(bpu) with some functions of the hazard unit like flushing registers on a predict miss. This work was primarily done on paper for planning and on the `p-bpu` and `p-branch-prediction`  branches. The design of the branch prediction unit can be found below
+The final input was making a branch prediction unit(bpu) with some functions of the hazard unit like flushing registers on a predict miss. This work was primarily done on paper for planning and on the `p-bpu` and `p-branch-prediction`  branches. The design of the branch prediction unit can be found below. NPU = Next PC Unit, TUU = Table Update Unit, BPU = Branch Predict Unit.
 
 | Feature | Files | Commit(s) | Notes |
 | --- | --- | --- | --- |
