@@ -8,9 +8,6 @@
 5. [Test instructions](#test) 
 6. [Evidence: F1 Simulation Lights](#working-simulation)
 7. [RISCV Stages](#riscv-stages)
-    - [Basic Single Cycle RISCV](#single-cycle-processor)
-    - [Wiring and Datapaths](#data-memory)
-    - [Pipelined RISCV](#pipelined-riscv)
 
 
 
@@ -36,7 +33,7 @@ The result of this coursework is 3 CPUS: blah blah blah
 |-------------------------|:---------:|:---------:|:---------:|:-----------:|
 | Program Counter         | ✔️        |           |           |             |
 | Instruction Memory      | ✔️        |           | ✔️        |             |
-| Data Memory             | ✔️        |           |           |             |
+| Data Memory             | ✔️        | ✔️       |           |             |
 | Control Unit            |           |           | ✔️        |             |
 | Register File           |           | ✔️        |           |             |
 | Sign Extend             |           |           | ✔️        |             |
@@ -44,7 +41,7 @@ The result of this coursework is 3 CPUS: blah blah blah
 | Mult & Div Units        |           | ✔️        | ✔️        | ✔️         |
 | Pipeline Registers      |           |           |           | ✔️          |
 | Hazard Unit             |           |           |           | ✔️          |
-| Branch Pred Unit        |           |     ✔️    |           |             |
+| Branch Pred Unit        |           |  ✔️       |           |             |
 | Cache                   | ✔️        |           |           |             |
 | Muxes                   | ✔️        | ✔️        |           |             |
 | Top Level Datapaths     | ✔️        | ✔️        | ✔️        | ✔️          |
@@ -55,18 +52,29 @@ The result of this coursework is 3 CPUS: blah blah blah
 
 ### Branch Visualization:
 
+<img src="tb/Photos/Branches.jpeg" alt="Branch Visual" width="400">
+
+The branches that are labelled:
+-  `b-playground` is our foundation for building the **single cycle RISCV processor** without any pipelining or further extensions. It has sub branches: `b-` which is where everyone did their individual work to merge back to b-playground at the end.
+-  `p-playground` is our foundation for building **pipelined RICCV processor** and also include the further progressing stages e.g. **branch prediction, multi-level cache...**. It has sub branches: `p-` which is once again where everyone did their individual work to merge back to p-playground at the end. There are a few branches that end in words like "safety" and "debug" which are used individually to try debug and solve code errors after having merged everything together.
+- `main` is the head branch where our **best performing RISCV Processor** and all testing codes are available.
+
 
 ## Working Simulation 
 ### **Watch the Full Video:** [F1_SIMULATON_LIGHTS_VIDEO.mp4](tb/Simulation_Video/F1_SIM.mp4)
 
-[![Video preview](tb/Simulation_Video/F1_SIM.gif)]
+<img src="tb/Simulation_Video/F1_SIM.gif" alt="F1 Simulation" width="400">
 
 
 
 ## Test Instructions
 
 
-
-
 ## RISCV Stages
 
+[Basic Single Cycle RISCV]
+[Pipelined RISCV]
+[Multi-Level Cache]
+[Every Instruction]
+[Multiplication and Division]
+[Branch Prediction]
