@@ -1,0 +1,50 @@
+
+a.out.reloc:     file format elf32-littleriscv
+architecture: riscv:rv32, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0xbfc00000
+
+
+Disassembly of section .text:
+
+bfc00000 <init>:
+bfc00000:	0ff00913          	li	s2,255
+bfc00004:	00300993          	li	s3,3
+bfc00008:	00100693          	li	a3,1
+bfc0000c:	0040006f          	j	bfc00010 <rst>
+
+bfc00010 <rst>:
+bfc00010:	00000513          	li	a0,0
+bfc00014:	00000713          	li	a4,0
+bfc00018:	0040006f          	j	bfc0001c <on_seq>
+
+bfc0001c <on_seq>:
+bfc0001c:	04c000ef          	jal	ra,bfc00068 <delay>
+bfc00020:	00151313          	slli	t1,a0,0x1
+bfc00024:	00130513          	addi	a0,t1,1
+bfc00028:	ff251ae3          	bne	a0,s2,bfc0001c <on_seq>
+bfc0002c:	0040006f          	j	bfc00030 <random_wait>
+
+bfc00030 <random_wait>:
+bfc00030:	0016d613          	srli	a2,a3,0x1
+bfc00034:	00467613          	andi	a2,a2,4
+bfc00038:	00d64633          	xor	a2,a2,a3
+bfc0003c:	00467613          	andi	a2,a2,4
+bfc00040:	00365613          	srli	a2,a2,0x3
+bfc00044:	00169693          	slli	a3,a3,0x1
+bfc00048:	00c6e6b3          	or	a3,a3,a2
+bfc0004c:	00f6f693          	andi	a3,a3,15
+bfc00050:	00000713          	li	a4,0
+bfc00054:	0040006f          	j	bfc00058 <random_loop>
+
+bfc00058 <random_loop>:
+bfc00058:	fad70ce3          	beq	a4,a3,bfc00010 <rst>
+bfc0005c:	00c000ef          	jal	ra,bfc00068 <delay>
+bfc00060:	00170713          	addi	a4,a4,1
+bfc00064:	ff5ff06f          	j	bfc00058 <random_loop>
+
+bfc00068 <delay>:
+bfc00068:	00158593          	addi	a1,a1,1
+bfc0006c:	ff359ee3          	bne	a1,s3,bfc00068 <delay>
+bfc00070:	00000593          	li	a1,0
+bfc00074:	00008067          	ret

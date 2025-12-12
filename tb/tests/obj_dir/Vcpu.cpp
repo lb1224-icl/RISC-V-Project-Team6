@@ -14,9 +14,8 @@ Vcpu::Vcpu(VerilatedContext* _vcontextp__, const char* _vcname__)
     , clk{vlSymsp->TOP.clk}
     , rst{vlSymsp->TOP.rst}
     , trigger{vlSymsp->TOP.trigger}
+    , __pinNumber5{vlSymsp->TOP.__pinNumber5}
     , a0{vlSymsp->TOP.a0}
-    , debug_pc_f{vlSymsp->TOP.debug_pc_f}
-    , debug_instr_f{vlSymsp->TOP.debug_instr_f}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context
