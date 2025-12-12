@@ -1,3 +1,6 @@
+// TOP: sign_extend
+// RTL: ../../rtl/sign_extend/sign_extend.sv
+
 #include "sign_extend_testbench.h"
 #include <random>
 #include <iostream>
@@ -9,11 +12,11 @@
 TEST_F(sign_extend_testbench, ITypeTest) {
     // 1. Positive case: 0x001... -> 1
     uint32_t ins_pos = 0x00100000; 
-    EXPECT_EQ(evalOp(ins_pos, 0), 1);
+    EXPECT_EQ(EvalOp(ins_pos, 0), 1);
 
     // 2. Negative case: 0xFFF... -> -1
     uint32_t ins_neg = 0xFFF00000;
-    EXPECT_EQ(evalOp(ins_neg, 0), 0xFFFFFFFF);
+    EXPECT_EQ(EvalOp(ins_neg, 0), 0xFFFFFFFF);
 }
 
 // ==========================================
@@ -25,7 +28,7 @@ TEST_F(sign_extend_testbench, STypeTest) {
     // Top 7 bits (31:25) = 0x7F << 25 = 0xFE000000
     // Bot 5 bits (11:7)  = 0x1F << 7  = 0x00000F80
     uint32_t ins_neg = 0xFE000F80;
-    EXPECT_EQ(evalOp(ins_neg, 1), 0xFFFFFFFF);
+    EXPECT_EQ(EvalOp(ins_neg, 1), 0xFFFFFFFF);
 }
 
 // ==========================================
@@ -40,7 +43,7 @@ TEST_F(sign_extend_testbench, BTypeTest) {
     // all relevant high bits to 1, effectively creating a -2 for B-type
     // due to the 0 at bit 0.
     uint32_t ins_neg_two = 0xFE000F80;
-    EXPECT_EQ(evalOp(ins_neg_two, 2), 0xFFFFFFFE);
+    EXPECT_EQ(EvalOp(ins_neg_two, 2), 0xFFFFFFFE);
 }
 
 // ==========================================
@@ -50,7 +53,7 @@ TEST_F(sign_extend_testbench, BTypeTest) {
 TEST_F(sign_extend_testbench, UTypeTest) {
     uint32_t ins = 0x12345678;
     // Should mask off bottom 12 bits
-    EXPECT_EQ(evalOp(ins, 4), 0x12345000);
+    EXPECT_EQ(EvalOp(ins, 4), 0x12345000);
 }
 
 
@@ -107,8 +110,26 @@ int32_t golden_sign_extend(uint32_t ins, int src) {
     return imm;
 }
 
+
 // ==========================================
-// TEST 5: Randomized Stress Test
+// TEST 5: J-Type (JAL)
+// Logic: Complex Scramble
+// ==========================================
+TEST_F(sign_extend_testbench, JTypeTest) {
+    // 1. Max Positive Offset (0x0001FFFFE)
+    // Instruction 0x3FFFFFFF sets all non-sign bits (imm[1:20]) to 1.
+    uint32_t ins_pos_max = 0x7FFFF000; 
+    EXPECT_EQ(EvalOp(ins_pos_max, 3), 0x000FFFFE);
+
+    // 2. Max Negative Offset (0xFFF80000)
+    // Instruction 0x80000000 sets only the sign bit (ins[31]) to 1.
+    uint32_t ins_neg_min = 0x80000000;
+    EXPECT_EQ(EvalOp(ins_neg_min, 3), 0xFFF00000);
+}
+
+
+// ==========================================
+// TEST 6: Randomized Stress Test
 // ==========================================
 TEST_F(sign_extend_testbench, RandomStress) {
     std::mt19937 rng(12345);
@@ -124,7 +145,7 @@ TEST_F(sign_extend_testbench, RandomStress) {
         int src = dist_src(rng);
 
         // Hardware Output
-        uint32_t hw_result = evalOp(instruction, src);
+        uint32_t hw_result = EvalOp(instruction, src);
 
         // Software "Golden Model" Output
         uint32_t sw_result = (uint32_t)golden_sign_extend(instruction, src);
