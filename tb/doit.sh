@@ -39,12 +39,17 @@ for file in "${files[@]}"; do
     fi
 
     # Translate Verilog -> C++ including testbench
+    # Get gtest include and library paths
+    GTEST_CFLAGS=$(pkg-config --cflags gtest 2>/dev/null || echo "-I/opt/homebrew/include")
+    GTEST_LDFLAGS=$(pkg-config --libs gtest 2>/dev/null || echo "-L/opt/homebrew/lib -lgtest")
+    
     verilator   -Wall --trace \
                 -cc -F tests/filenames.f \
                 --exe ${file} \
                 --prefix "Vdut" \
                 -o Vdut \
-                -LDFLAGS "-lgtest -lgtest_main -lpthread" \
+                -CFLAGS "${GTEST_CFLAGS}" \
+                -LDFLAGS "${GTEST_LDFLAGS} -lgtest_main -lpthread" \
                 -Wno-fatal -Wno-WIDTH -Wno-UNOPTFLAT -Wno-LITENDIAN \
                 -Wno-MODDUP -Wno-CASEINCOMPLETE -Wno-UNUSED -Wno-BLKANDNBLK \
                 -Wno-DECLFILENAME -Wno-BLKSEQ -Wno-PINCONNECTEMPTY
